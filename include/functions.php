@@ -167,5 +167,12 @@
 			$result = $create_obj->GetGodownLinkedCount($godown_id);
 			return $result;
 		}
+		public function getInwardMaterialList($row, $rowperpage, $searchValue, $from_date, $to_date, $supplier_id, $cancelled, $order_column, $order_direction) {
+			$create_obj = "";
+			$create_obj = $this->creation_function_object();
+			$result = "";
+			$result = $create_obj->getInwardMaterialList($row, $rowperpage, $searchValue, $from_date, $to_date, $supplier_id, $cancelled, $order_column, $order_direction);
+			return $result;
+		}
 	}
 ?>

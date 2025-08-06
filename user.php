@@ -2,6 +2,12 @@
 	$page_title = "User";
 	include("include_user_check_and_files.php");
 	$page_number = $GLOBALS['page_number']; $page_limit = $GLOBALS['page_limit'];
+
+    $user_list = array(); $user_count = 0;
+    $user_list = $obj->getTableRecords($GLOBALS['user_table'], '', '');
+    if(!empty($user_list)) {
+        $user_count = count($user_list);
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,7 +35,14 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-2 col-md-2 col-4">
-                                            <button class="btn btn-danger float-end" style="font-size:11px;" type="button" onclick="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '');"> <i class="fa fa-plus-circle"></i> Add </button>
+                                            <?php if($user_count < $GLOBALS['max_user_count'])  { ?>
+                                                <button class="btn btn-danger float-end" style="font-size:11px;" type="button" onclick="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '');"> <i class="fa fa-plus-circle"></i> Add </button>
+                                             <?php } ?>
+                                        </div>
+                                        <div class="col-lg-12 text-end pt-2">
+                                            <?php if(!empty($GLOBALS['max_unit_count'])) { ?>
+                                                <div class="new_smallfnt">Max <?php echo $GLOBALS['max_unit_count']; ?> Unit Allowed</div>
+                                            <?php } ?>
                                         </div>
                                         <form name="table_listing_form" method="post">
                                             <div class="col-sm-6 col-xl-8">

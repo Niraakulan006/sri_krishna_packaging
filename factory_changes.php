@@ -59,7 +59,7 @@
                 <div class="col-lg-3 col-md-4 col-12 py-2 px-lg-1">
                     <div class="form-group">
                         <div class="form-label-group in-border">
-                            <input type="text" id="location" name="location" class="form-control shadow-none" onkeydown="Javascript:KeyboardControls(this,'text');" placeholder="" value="<?php if(!empty($location)){echo $location;} ?>">
+                            <textarea class="form-control" name="location" placeholder="Enter location" rows="3" ><?php if(!empty($location)){echo $location;} ?></textarea>
                             <label>Location</label>
                         </div>
                     </div>
@@ -109,10 +109,10 @@
             }
             if(!empty($location_error)){
                 if(!empty($valid_factory)){
-                    $valid_factory = $valid_factory." ".$valid->error_display($form_name,'location',$location_error,'text');
+                    $valid_factory = $valid_factory." ".$valid->error_display($form_name,'location',$location_error,'textarea');
                 }
                 else{
-                    $valid_factory = $valid->error_display($form_name,'location',$location_error,'text');
+                    $valid_factory = $valid->error_display($form_name,'location',$location_error,'textarea');
                 }
             }
         }

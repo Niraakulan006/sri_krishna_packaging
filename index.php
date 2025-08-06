@@ -2,7 +2,7 @@
     $page_title = "Login";
 	include("include_files.php");
     $user_list = array(); $users_count = 0;
-	$user_list = $obj->getTableRecords($GLOBALS['user_table'], '', '', '');
+	$user_list = $obj->getTableRecords($GLOBALS['user_table'], '', '');
     if(!empty($user_list)) {
         $users_count = count($user_list);
     }
@@ -58,7 +58,7 @@
 		
 		$result = "";
         $user_list = array(); $users_count = 0;
-        $user_list = $obj->getTableRecords($GLOBALS['user_table'], '', '', '');
+        $user_list = $obj->getTableRecords($GLOBALS['user_table'], '', '');
         if(!empty($user_list)) {
             $users_count = count($user_list);
         }
@@ -148,7 +148,7 @@
 			if(!empty($username)) {
 				$username = strtolower($username);
 				$encrypted_username = $obj->encode_decode('encrypt', $username);
-				$check_users = $obj->getTableRecords($GLOBALS['user_table'], 'lower_case_login_id', $encrypted_username, '');
+				$check_users = $obj->getTableRecords($GLOBALS['user_table'], 'lower_case_login_id', $encrypted_username);
 				if(!empty($check_users)) {
 					foreach($check_users as $data) {
 						$login_id = $data['id'];
@@ -162,7 +162,7 @@
 					$password_match = 1;
 				}
 				if(!empty($password_match) && $password_match == 1) {
-					$check_users = $obj->getTableRecords($GLOBALS['user_table'], 'id', $login_id, '');
+					$check_users = $obj->getTableRecords($GLOBALS['user_table'], 'id', $login_id);
 					if(!empty($check_users)) {
 						foreach($check_users as $data) {
 							$_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'] = $data['user_id'];
@@ -171,8 +171,6 @@
 							$_SESSION[$GLOBALS['site_name_user_prefix'].'_user_name_mobile'] =  $obj->encode_decode('decrypt', $data['name_mobile']);
 							$_SESSION[$GLOBALS['site_name_user_prefix'].'_login_id'] = $obj->encode_decode('decrypt', $data['login_id']);
                             $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type'] = $data['type'];
-                            
-                         
                         }
 					}
 					
@@ -194,7 +192,7 @@
                         $company_id = $obj->getTableColumnValue($GLOBALS['factory_table'], 'primary_factory', '1', 'factory_id');
 						
 						$columns = array('loginer_name', 'login_date_time', 'logout_date_time', 'ip_address', 'browser', 'os_detail', 'type', 'user_id', 'deleted');
-						$values = array("'".$loginer_name."'", "'".$create_date_time."'", "'".$GLOBALS['null_value']."'", "'".$ip_address."'", "'".$browser."'", "'".$os_detail."'", "'".$_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type']."'", "'".$_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']."'", "'0'");			
+						$values = array("'".$loginer_name."'", "'".$create_date_time."'", "'".$create_date_time."'", "'".$ip_address."'", "'".$browser."'", "'".$os_detail."'", "'".$_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type']."'", "'".$_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']."'", "'0'");			
                                             
 						$user_login_record_id = $obj->InsertSQL($GLOBALS['login_table'], $columns, $values, '', '', $action);						
 						if(preg_match("/^\d+$/", $user_login_record_id)) {	

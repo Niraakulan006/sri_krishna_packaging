@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="css/nav.css">
     <link rel="stylesheet" href="css/form.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/datatables/datatables.min.css">
 </head>
 <body>
       <?php

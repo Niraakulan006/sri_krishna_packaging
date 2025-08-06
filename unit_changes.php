@@ -395,7 +395,7 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                                         ?>
                                     <li><a class="dropdown-item" href="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '<?php if(!empty($list['unit_id'])) { echo $list['unit_id']; } ?>');"><i class="fa fa-pencil"></i> &ensp; Edit</a></li>
                                     <?php } 
-                                    
+                                    /*
                                     if(empty($delete_access_error)) {
                                         $linked_count = 0;
                                         // $linked_count = $obj->GetLinkedCount($list['unit_id'], $GLOBALS['inward_material_table'], 'unit_id');
@@ -407,7 +407,9 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                                         <?php } 
                                             } ?>
                                         </ul>
+                                        <?php */ ?>
                                     </div>
+
                                     <?php } ?>
                                     </td>
                                 </tr>

@@ -183,5 +183,67 @@
 			}
 			return $count;
 		}
+		public function getInwardMaterialList($row, $rowperpage, $searchValue, $from_date, $to_date, $supplier_id, $cancelled, $order_column, $order_direction) {
+			$select_query = ""; $list = array(); $where = ""; $order_by_query = "";
+			if(!empty($from_date)) {
+				$from_date = date("Y-m-d", strtotime($from_date));
+				if(!empty($where)) {
+					$where = $where." bill_date >= '".$from_date."' AND ";
+				}
+				else {
+					$where = " bill_date >= '".$from_date."' AND ";
+				}
+			}
+			if(!empty($to_date)) {
+				$to_date = date("Y-m-d", strtotime($to_date));
+				if(!empty($where)) {
+					$where = $where." bill_date <= '".$to_date."' AND ";
+				}
+				else {
+					$where = " bill_date <= '".$to_date."' AND ";
+				}
+			}
+			if(!empty($supplier_id)) {
+				if(!empty($where)) {
+					$where = $where." supplier_id = '".$supplier_id."' AND ";
+				}
+				else {
+					$where = " supplier_id = '".$supplier_id."' AND ";
+				}
+			}
+			if(!empty($searchValue)){
+				if(!empty($where)) {
+					$where = $where." (CAST(FROM_BASE64(UNHEX(bill_number)) AS CHAR) LIKE '%".$searchValue."%') AND ";
+				}
+				else {
+					$where = " (CAST(FROM_BASE64(UNHEX(bill_number)) AS CHAR) LIKE '%".$searchValue."%') AND ";
+				}
+			}
+			if(!empty($order_column) && !empty($order_direction)) {
+				if ($order_column == 'bill_number' || $order_column == 'supplier_name') {
+					$order_by_query = "ORDER BY CAST(FROM_BASE64(UNHEX(".$order_column.")) AS CHAR) ".$order_direction;
+				} 
+				else {
+					$order_by_query = "ORDER BY ".$order_column." ".$order_direction;
+				}
+			}
+			else {
+				$order_by_query = "ORDER BY id DESC";
+			}
+
+			if(!empty($rowperpage)) {
+				$select_query = "SELECT * FROM ".$GLOBALS['inward_material_table']."
+							WHERE ".$where." cancelled = '".$cancelled."' AND deleted = '0'
+							".$order_by_query."
+							LIMIT $row, $rowperpage";
+			}
+			else {
+				$select_query = "SELECT * FROM ".$GLOBALS['inward_material_table']."
+							WHERE ".$where." cancelled = '".$cancelled."' AND deleted = '0'
+							".$order_by_query;
+			}
+			$list = $this->getQueryRecords($GLOBALS['inward_material_table'], $select_query);
+			return $list;
+		}
     }
-    ?>
+?>

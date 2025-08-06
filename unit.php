@@ -15,6 +15,9 @@
             include("permission_check.php");
         }
     }
+    $unit_count = 0; $unit_array = array();
+    $unit_array = $obj->getTableRecords($GLOBALS['unit_table'],'','','');
+    $unit_count = count($unit_array);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,10 +42,10 @@
                                     <form name="table_listing_form" method="post">
                                         <div class="row justify-content-end p-2">
                                             <div class="col-lg-3 col-md-4 col-6">
-                                                <div class="input-group">
+                                                <!-- <div class="input-group">
                                                     <input type="text" class="form-control" style="height:34px;" name="search_text" placeholder="Search By Unit Name" aria-label="Search" aria-describedby="basic-addon2"  onkeyup="Javascript:table_listing_records_filter();">
                                                     <span class="input-group-text" style="height:34px;" id="basic-addon2" onclick="Javascript:table_listing_records_filter();"><i class="bi bi-search"></i></span>
-                                                </div>
+                                                </div> -->
                                             </div>
                                             <div class="col-lg-2 col-md-2 col-4">
                                                 <?php
@@ -52,11 +55,17 @@
                                                         include('permission_action.php');
                                                     }
                                                     if(empty($add_access_error)) { 
+                                                        if($GLOBALS['max_unit_count'] > $unit_count){
                                                         ?>
-                                                        <button class="btn btn-danger float-end" style="font-size:11px;" type="button" onclick="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '');"> <i class="fa fa-plus-circle"></i> Add </button>
-                                                    <?php 
+                                                            <button class="btn btn-danger float-end" style="font-size:11px;" type="button" onclick="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '');"> <i class="fa fa-plus-circle"></i> Add </button>
+                                                    <?php }
                                                     }
                                                 ?>  
+                                            </div>
+                                            <div class="col-lg-12 text-end pt-2">
+                                                <?php if(!empty($GLOBALS['max_unit_count'])) { ?>
+                                                    <div class="new_smallfnt">Max <?php echo $GLOBALS['max_unit_count']; ?> Unit Allowed</div>
+                                                <?php } ?>
                                             </div>
                                             <div class="col-sm-6 col-xl-8">
                                                 <input type="hidden" name="page_number" value="<?php if(!empty($page_number)) { echo $page_number; } ?>">

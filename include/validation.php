@@ -48,6 +48,25 @@
 			return $result;
 		}
 
+		public function valid_date($field_value, $field_name, $required) {
+			$result = "";
+			$field_value = trim($field_value);
+			if(!empty($field_value)) {
+				$result = $this->common_validation($field_value, $field_name, '');
+				if(empty($result)) {
+					if(date('Y-m-d', strtotime($field_value)) != $field_value) {
+						$result = "Invalid ".$field_name;
+					}
+				}
+			}
+			else {
+				if($required == 1) {
+					$result = "Select the ".$field_name;
+				}
+			}
+			return $result;
+		}
+
 		public function valid_mobile_number($field_value, $field_name, $required) {
 			$result = "";
 			$field_value = trim($field_value);

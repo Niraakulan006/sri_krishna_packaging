@@ -360,27 +360,32 @@ function ShowModalContent(page_title, add_edit_id_value) {
 }
 
 function SaveModalContent(form_name, post_send_file, redirection_file) {
+	if (jQuery('span.infos').length > 0) {
+		jQuery('span.infos').remove();
+	}
+	if (jQuery('.valid_error').length > 0) {
+		jQuery('.valid_error').remove();
+	}
 	if (jQuery('div.alert').length > 0) {
 		jQuery('div.alert').remove();
 	}
-	jQuery('form[name="' + form_name + '"]').find('.row:first').before('<div class="alert alert-danger mb-3"> <button type="button" class="close" data-dismiss="alert">&times;</button> Processing </div>');
-	if (jQuery('.submit_button').length > 0) {
-		jQuery('.submit_button').attr('disabled', true);
-	}
-	if (form_name != "login_form") {
-		if (form_name != "bill_company_form") {
-			jQuery('html, body').animate({
-				scrollTop: (jQuery('.add_update_form_content').parent().parent().offset().top)
-			}, 500);
+	jQuery(window).off('beforeunload');
+	jQuery('form[name="' + form_name + '"]').find('.row:first').before('<div class="alert alert-danger mb-3"> Processing </div>');
+	if(form_name != "bill_product_form") {
+		if (jQuery('.submit_button').length > 0) {
+			jQuery('.submit_button').attr('disabled', true);
 		}
-
+	}
+	if (form_name != "register_form" && form_name != "login_form") {
+		jQuery('html, body').animate({
+			scrollTop: (jQuery('body').offset().top)
+		}, 500);
 		var check_login_session = 1;
 		var post_url = "dashboard_changes.php?check_login_session=1";
 		jQuery.ajax({
 			url: post_url, success: function (check_login_session) {
 				if (check_login_session == 1) {
 					SendModalContent(form_name, post_send_file, redirection_file);
-					// window.location.reload();
 				}
 				else {
 					window.location.reload();
@@ -393,7 +398,6 @@ function SaveModalContent(form_name, post_send_file, redirection_file) {
 			scrollTop: (jQuery('form[name="' + form_name + '"]').offset().top)
 		}, 500);
 		SendModalContent(form_name, post_send_file, redirection_file);
-		// window.location.reload();
 	}
 }
 
@@ -495,12 +499,17 @@ function DeleteModalContent(page_title, delete_content_id) {
 			if (check_login_session == 1) {
 				if (typeof page_title != "undefined" && page_title != "") {
 					jQuery('#DeleteModal .modal-header').find('h4').html("");
-					jQuery('#DeleteModal .modal-header').find('h4').html("Delete " + page_title);
+					if (page_title == "Inward Material" || page_title == "estimate" || page_title == "invoice") {
+						jQuery('#DeleteModal .modal-header').find('h4').html("Cancel " + page_title);
+					}
+					else {
+						jQuery('#DeleteModal .modal-header').find('h4').html("Delete " + page_title);
+					}
 					page_title = page_title.toLowerCase();
 				}
 				jQuery('.delete_modal_button').trigger("click");
 				jQuery('#DeleteModal .modal-body').html('');
-				if (page_title == "quotation" || page_title == "estimate" || page_title == "invoice") {
+				if (page_title == "inward material" || page_title == "estimate" || page_title == "invoice") {
 					jQuery('#DeleteModal .modal-body').html('Are you surely want to cancel this ' + page_title + '?');
 				}
 				else {
@@ -579,7 +588,7 @@ function confirm_delete_modal(obj) {
 
 							var intRegex = /^\d+$/;
 							if (intRegex.test(result) == true) {
-								if (page_title == "quotation" || page_title == "estimate" || page_title == "invoice") {
+								if (page_title == "inward_material" || page_title == "estimate" || page_title == "invoice") {
 									jQuery('#DeleteModal .modal-body').append('<div class="alert alert-success"> <button type="button" class="close" data-dismiss="alert">&times;</button> Successfully Cancel the ' + page_title.replaceAll("_", " ") + ' </div>');
 								}
 								else {
@@ -621,4 +630,15 @@ function cancel_delete_modal(obj) {
 			}
 		}
 	});
+}
+function AlertMessage(message, redirection_file) {
+	if(jQuery('#alertModal').find('.modal-body').length > 0) {
+		jQuery('#alertModal').find('.modal-body').html(message);
+	}
+	if(jQuery('#alertModal').find('.btn-close').length > 0 && redirection_file != "" && typeof redirection_file != "undefined" && redirection_file != null) {
+		jQuery('#alertModal').find('.btn-close').attr('onclick', 'window.open("'+redirection_file+'", "_self")');
+	}
+	if(jQuery('.alert_modal_button').length > 0) {
+		jQuery('.alert_modal_button').trigger('click');
+	}
 }

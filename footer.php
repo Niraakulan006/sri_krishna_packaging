@@ -20,10 +20,17 @@
 <script src="js/fonticons.js"></script>
 <script src="include/select2/js/select2.min.js"></script>
 <script src="include/select2/js/select.js"></script>
+<script src="js/datatables/datatables.min.js"></script>
 <script src="include/js/common.js"></script>
 <script src="include/js/keyboard_control.js"></script>
+
 <script>
     $(document).on('select2:open', function() {
+        var select_box = $('.select2-container--open .select2-selection--single');
+        if (select_box.length) {
+            select_box.css('border', '1px solid #aaa');
+            select_box.closest('.form-group').find('.infos').remove();
+        }
         setTimeout(() => {
             let searchField = document.querySelector('.select2-container--open .select2-search__field');
             if (searchField) {

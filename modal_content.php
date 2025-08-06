@@ -4,7 +4,7 @@
     <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title h5">Delete</h1>
+                <h4 class="modal-title h5">Delete</h4>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -12,9 +12,9 @@
             <div class="modal-body">
                 Are you sure want to delete?
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success no" onClick="Javascript:cancel_delete_modal(this);" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger yes"onClick="Javascript:confirm_delete_modal(this);" >Delete</button>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-success yes"onClick="Javascript:confirm_delete_modal(this);">Yes</button>
+                <button type="button" class="btn btn-danger no" onClick="Javascript:cancel_delete_modal(this);" data-bs-dismiss="modal">No</button>
             </div>
         </div>
     </div>
@@ -109,6 +109,19 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-success yes" onClick="Javascript:confirm_delete_receipt_modal(this);">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+<button type="button" data-bs-toggle="modal" data-bs-target="#alertModal" class="d-none alert_modal_button"></button>
+<div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5 text-danger" id="exampleModalLabel">Alert!!!</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+             </div>
+            <div class="modal-body">
             </div>
         </div>
     </div>
