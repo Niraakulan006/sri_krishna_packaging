@@ -162,7 +162,7 @@
 			$check_user_id_ip_address = 0;
 			$check_user_id_ip_address = $obj->check_user_id_ip_address();	
 			if(preg_match("/^\d+$/", $check_user_id_ip_address)) {
-             $name_mobile_location = ""; $supplier_details = "";
+                $name_mobile_location = ""; $supplier_details = "";
                 if(!empty($supplier_name)) {
 					
                     $supplier_name = htmlentities($supplier_name, ENT_QUOTES);
@@ -184,11 +184,7 @@
                         $supplier_details = $supplier_details."$$$".$location;
                     }
                     if(!empty($name_mobile_location)) {
-                        $name_mobile_location = $name_mobile_location." (".$location.")";
-                        if(!empty($location)) {
-                            $name_mobile_location = $name_mobile_location." - ".$location;
-                        }
-                       
+                        $name_mobile_location = $name_mobile_location." - ".$location;
                     }
                     $location = $obj->encode_decode('encrypt', $location);
                 }
@@ -202,10 +198,6 @@
                     }
                     if(!empty($name_mobile_location)) {
                         $name_mobile_location = $name_mobile_location." (".$mobile_number.")";
-                        if(!empty($location)) {
-                            $name_mobile_location = $name_mobile_location." - ".$location;
-                        }
-                       
                     }
                     $mobile_number = $obj->encode_decode('encrypt', $mobile_number);
                 }

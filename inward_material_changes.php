@@ -1443,4 +1443,31 @@
         </tr>
         <?php
     }
+    if(isset($_REQUEST['change_supplier_list'])) {
+        $selected_supplier_id = "";
+        if(isset($_REQUEST['selected_supplier_id'])) {
+            $selected_supplier_id = $_REQUEST['selected_supplier_id'];
+            $selected_supplier_id = trim($selected_supplier_id);
+        }
+        $supplier_list = array();
+        $supplier_list = $obj->getTableRecords($GLOBALS['supplier_table'], '', ''); 
+        ?>
+        <option value="">Select</option>
+        <?php
+        if(!empty($supplier_list)) {
+            foreach($supplier_list as $data) {
+                if(!empty($data['supplier_id']) && $data['supplier_id'] != $GLOBALS['null_value']) {
+                    ?>
+                    <option value="<?php echo $data['supplier_id']; ?>" <?php if(!empty($selected_supplier_id) && $selected_supplier_id == $data['supplier_id']) { ?>selected<?php } ?>>
+                        <?php
+                            if(!empty($data['name_mobile_location']) && $data['name_mobile_location'] != $GLOBALS['null_value']) {
+                                echo $obj->encode_decode('decrypt', $data['name_mobile_location']);
+                            }
+                        ?>
+                    </option>
+                    <?php
+                }
+            }
+        }
+    }
 ?>
