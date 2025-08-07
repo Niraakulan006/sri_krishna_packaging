@@ -51,7 +51,7 @@
                     <div class="form-group">
                         <div class="form-label-group in-border">
                             <input type="text" id="factory_name" name="factory_name" class="form-control shadow-none" onkeydown="Javascript:KeyboardControls(this,'text');" placeholder="" value="<?php if(!empty($factory_name)){echo $factory_name;} ?>">
-                            <label>Factory Name</label>
+                            <label>Factory Name<span class="text-danger">*</span></label>
                         </div>
                         <div class="new_smallfnt">Contains Text, Symbols &amp;, -,',.</div>
                     </div>
@@ -60,7 +60,7 @@
                     <div class="form-group">
                         <div class="form-label-group in-border">
                             <textarea class="form-control" name="location" placeholder="Enter location" rows="3" ><?php if(!empty($location)){echo $location;} ?></textarea>
-                            <label>Location</label>
+                            <label>Location<span class="text-danger">*</span></label>
                         </div>
                     </div>
                 </div>

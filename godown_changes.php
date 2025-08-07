@@ -380,7 +380,6 @@
         }
 
         $result = ""; $lower_case_name = "";
-        
         if(empty($valid_godown) && empty($count_error)) {
             $check_user_id_ip_address = 0;
             $check_user_id_ip_address = $obj->check_user_id_ip_address();	
@@ -605,20 +604,21 @@
 
                                          if(preg_match("/^\d+$/", $godown_update_id)) {
                                                     // $result = array('number' => '1', 'msg' => 'Updated Successfully');	
+                                                $user_unique_id = "";
+                                                $user_unique_id = $obj->getTableColumnValue($GLOBALS['user_table'], 'godown_id', $edit_id, 'id'); 
 
-                                                    
                                                 $columns = array(); $values = array();
                                                 $columns = array('creator_name', 'name','role_id','login_id' ,'mobile_number', 'name_mobile', 'lower_case_login_id', 'password', 'admin', 'type', 'deleted');
                     
                                                 $values = array("'".$creator_name."'", "'".$incharge_name."'", "'".$role_id."'", "'".$user_id."'","'".$mobile_number."'", "'".$incharge_name_mobile."'", "'".$lower_case_user_id."'", "'".$password."'", "'".$admin."'", "'".$type."'", "'0'");
                                                 // User Creation
-                                                $user_insert_id = $obj->InsertSQL($GLOBALS['user_table'], $columns, $values,'user_id', '', $action);
+                                               $user_update_id = $obj->UpdateSQL($GLOBALS['user_table'], $user_unique_id, $columns, $values, $action);
 
-                                                if(preg_match("/^\d+$/", $user_insert_id)) {
+                                                if(preg_match("/^\d+$/", $user_update_id)) {
                                                     $result = array('number' => '1', 'msg' => 'Godown Successfully Updated');
                                                 }
                                                 else {
-                                                    $result = array('number' => '2', 'msg' => $user_insert_id);
+                                                    $result = array('number' => '2', 'msg' => $user_update_id);
                                                 }
                                                     // $result = array('number' => '1', 'msg' => 'Godown Successfully Created');
                                             
@@ -859,7 +859,6 @@ if(isset($_REQUEST['delete_godown_id'])) {
     if(!empty($delete_godown_id)) {	
         $godown_unique_id = "";
         $godown_unique_id = $obj->getTableColumnValue($GLOBALS['godown_table'], 'godown_id', $delete_godown_id, 'id');
-
 
         if(preg_match("/^\d+$/", $godown_unique_id)) {
             $name = "";

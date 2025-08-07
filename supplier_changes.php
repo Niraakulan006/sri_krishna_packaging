@@ -60,7 +60,7 @@
                     <div class="form-group">
                         <div class="form-label-group in-border">
                             <input type="text" id="supplier_name" name="supplier_name" class="form-control shadow-none" onkeydown="Javascript:KeyboardControls(this,'text');" placeholder="" value="<?php if(!empty($supplier_name)){echo $supplier_name;} ?>">
-                            <label>Supplier Name</label>
+                            <label>Supplier Name<span class="text-danger">*</span></label>
                         </div>
                         <div class="new_smallfnt">Contains Text, Symbols &amp;, -,',.</div>
                     </div>
@@ -69,7 +69,7 @@
                     <div class="form-group">
                         <div class="form-label-group in-border">
                             <input type="text" id="location" name="location" class="form-control shadow-none" onkeydown="Javascript:KeyboardControls(this,'text');" placeholder="" value="<?php if(!empty($location)){echo $location;} ?>">
-                            <label>Location</label>
+                            <label>Location<span class="text-danger">*</span></label>
                         </div>
                     </div>
                 </div>
@@ -77,7 +77,7 @@
                     <div class="form-group">
                         <div class="form-label-group in-border">
                             <input type="text" id="mobile_number" name="mobile_number" class="form-control shadow-none" onfocus="Javascript:KeyboardControls(this,'mobile_number',10,'1');"  placeholder="" value="<?php if(!empty($mobile_number)){echo $mobile_number;} ?>">
-                            <label>Contact Number</label>
+                            <label>Contact Number<span class="text-danger">*</span></label>
                         </div>
                         <div class="new_smallfnt">Numbers Only (only 10 digits)</div>
                     </div>

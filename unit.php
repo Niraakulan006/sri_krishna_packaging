@@ -62,11 +62,13 @@
                                                     }
                                                 ?>  
                                             </div>
+                                            <?php /*
                                             <div class="col-lg-12 text-end pt-2">
                                                 <?php if(!empty($GLOBALS['max_unit_count'])) { ?>
                                                     <div class="new_smallfnt">Max <?php echo $GLOBALS['max_unit_count']; ?> Unit Allowed</div>
                                                 <?php } ?>
                                             </div>
+                                            */ ?>
                                             <div class="col-sm-6 col-xl-8">
                                                 <input type="hidden" name="page_number" value="<?php if(!empty($page_number)) { echo $page_number; } ?>">
                                                 <input type="hidden" name="page_limit" value="<?php if(!empty($page_limit)) { echo $page_limit; } ?>">

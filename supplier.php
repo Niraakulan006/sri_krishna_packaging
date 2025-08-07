@@ -15,6 +15,12 @@
             include("permission_check.php");
         }
     }
+
+    $supplier_list = array(); $supplier_count = 0;
+    $supplier_list = $obj->getTableRecords($GLOBALS['supplier_table'], '', '', '');
+    if(!empty($supplier_list)){
+        $supplier_count = count($supplier_list);
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,7 +48,7 @@
                                                         <span class="input-group-text" style="height:34px;" id="basic-addon2" onclick="Javascript:table_listing_records_filter();"><i class="bi bi-search"></i></span>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-2 col-md-2 col-4">
+                                                <div class="col-lg-4 col-md-2 col-4">
                                                          <?php
                                                     $add_access_error = "";
                                                     if(!empty($login_staff_id)) {
@@ -54,7 +60,13 @@
                                                          <button class="btn btn-danger float-end" style="font-size:11px;" type="button" onclick="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '');"> <i class="fa fa-plus-circle"></i> Add </button>
                                                           <?php 
                                                         }
-                                                    ?> 
+
+                                                        if($supplier_count > 0) { ?>
+                                                            <button class="btn btn-primary float-right" style="font-size:11px;" type="button" onclick="Javascript:PrintSupplier();"> <i class="fa fa-print"></i> PDF </button>
+                                                            <button class="btn btn-success float-right mx-lg-1" style="font-size:11px;" type="button" id="download_supplier" onClick="ExcelDownload();"> <i class="fa fa-download"></i> Download </button>
+                                                            <?php 
+                                                        } ?>
+                                                   
                                                 </div>
                                                 <div class="col-sm-6 col-xl-8">
                                                     <input type="hidden" name="page_number" value="<?php if(!empty($page_number)) { echo $page_number; } ?>">
@@ -77,5 +89,21 @@
     $(document).ready(function(){
         $("#supplier").addClass("active");
         table_listing_records_filter();
+
     });
+
+    function PrintSupplier() {
+        var url = "";
+        var search_text = ""; 
+        search_text = jQuery('input[name="search_text"]').val();
+        url = "reports/rpt_supplier_a5.php?search_text="+search_text;
+        window.open(url,'_blank');
+    }
+
+    function ExcelDownload() {
+        var search_text = ""; var url = ""; 
+        search_text = jQuery('input[name="search_text"]').val();
+        url = "supplier_download.php?search_text="+search_text;
+        window.open(url,'_self');
+    }
 </script>

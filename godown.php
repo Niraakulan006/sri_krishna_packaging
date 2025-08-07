@@ -15,6 +15,12 @@
             include("permission_check.php");
         }
     }
+
+    $godown_list = array(); $godown_count = 0;
+    $godown_list = $obj->getTableRecords($GLOBALS['godown_table'], '', '');
+    if(!empty($godown_list)) {
+        $godown_count = count($godown_list);
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -51,10 +57,17 @@
                                                     }
                                                     if(empty($add_access_error)) { 
                                                         ?>
-                                                         <button class="btn btn-danger float-end" style="font-size:11px;" type="button" onclick="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '');"> <i class="fa fa-plus-circle"></i> Add </button>
+                                                        <?php if($godown_count < $GLOBALS['max_godown_count'])  { ?>
+                                                        <button class="btn btn-danger float-end" style="font-size:11px;" type="button" onclick="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '');"> <i class="fa fa-plus-circle"></i> Add </button>
                                                           <?php 
                                                         }
+                                                    }
                                                     ?> 
+                                                </div>
+                                                <div class="col-lg-12 text-end pt-2">
+                                                    <?php if(!empty($GLOBALS['max_godown_count'])) { ?>
+                                                        <div class="new_smallfnt">Max <?php echo $GLOBALS['max_godown_count']; ?> Godown Allowed</div>
+                                                    <?php } ?>
                                                 </div>
                                                 <div class="col-sm-6 col-xl-8">
                                                     <input type="hidden" name="page_number" value="<?php if(!empty($page_number)) { echo $page_number; } ?>">

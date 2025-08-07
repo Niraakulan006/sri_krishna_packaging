@@ -126,3 +126,21 @@
         </div>
     </div>
 </div>
+
+<button type="button" data-bs-toggle="modal" data-bs-target="#CustomPartyModal" class="d-none custom_party_modal_button"></button>
+<!-- The Modal -->
+<div class="modal modal-xl fade" id="CustomPartyModal" data-bs-keyboard="false" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title text-center">Create Supplier</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body px-0">
+            </div>
+        </div>
+    </div>
+</div>
+

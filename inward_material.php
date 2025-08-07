@@ -86,6 +86,7 @@
                                 </div>
                             </div>
                             <div id="table_listing_records">
+                                <input type="hidden" name="page_title" value="<?php if(!empty($page_title)) { echo $page_title; } ?>">
                                 <div class="new">
                                     <ul class="new nav nav-pills my-3 justify-content-center" id="pills-tab" role="tablist">
                                         <li class="nav-item" role="presentation">

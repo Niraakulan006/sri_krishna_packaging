@@ -585,7 +585,7 @@ function confirm_delete_modal(obj) {
 					jQuery.ajax({
 						url: post_url, success: function (result) {
 							jQuery('#DeleteModal .modal-content').animate({ scrollTop: 0 }, 500);
-
+							result = result.trim();
 							var intRegex = /^\d+$/;
 							if (intRegex.test(result) == true) {
 								if (page_title == "inward_material" || page_title == "estimate" || page_title == "invoice") {
@@ -609,7 +609,6 @@ function confirm_delete_modal(obj) {
 				else {
 					RemarksModalContent(delete_content_id, '')
 				}
-
 			}
 			else {
 				window.location.reload();
@@ -641,4 +640,21 @@ function AlertMessage(message, redirection_file) {
 	if(jQuery('.alert_modal_button').length > 0) {
 		jQuery('.alert_modal_button').trigger('click');
 	}
+}
+function CustomParty() {
+	if (jQuery('#CustomPartyModal').length > 0) {
+		jQuery('#CustomPartyModal').find('.modal-body').html('');
+	}
+	var post_url = "supplier_changes.php?show_supplier_id=&add_custom_supplier=1";
+	jQuery.ajax({
+		url: post_url, success: function (result) {
+			result = jQuery.trim(result);
+			if (jQuery('#CustomPartyModal').length > 0) {
+				jQuery('#CustomPartyModal').find('.modal-body').html(result);
+			}
+			if (jQuery('.custom_party_modal_button').length > 0) {
+				jQuery('.custom_party_modal_button').trigger('click');
+			}
+		}
+	});
 }

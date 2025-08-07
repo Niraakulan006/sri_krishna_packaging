@@ -109,7 +109,7 @@
                 <div class="col-lg-3 col-md-4 col-12 py-2">
                     <div class="form-group">
                         <div class="form-label-group in-border">
-                        <input type="text" class="form-control shadow-none" name="username" value="<?php if(!empty($username)) { echo $username; } ?>" onkeydown="Javascript:KeyboardControls(this,'text',5,1);">
+                        <input type="text" class="form-control shadow-none" name="username" value="<?php if(!empty($username)) { echo $username; } ?>" onkeydown="Javascript:KeyboardControls(this,'text',25,1);">
                             <label>User Id<span class="text-danger">*</span></label>
                         </div>
                         <div class="new_smallfnt">Contains Text, Symbols &amp;, -,',.</div>
@@ -553,7 +553,7 @@
             $list = array();
             if(!empty($total_records_list)) {
                 foreach($total_records_list as $val) {
-                    if((strpos(strtolower($obj->encode_decode('decrypt', $val['name'])), $search_text) !== false) || (strpos(strtolower($obj->encode_decode('decrypt', $val['mobile_number'])), $search_text) !== false)) {
+                    if((strpos(strtolower($obj->encode_decode('decrypt', $val['name_mobile'])), $search_text) !== false)) {
                         $list[] = $val;
                     }
                 }

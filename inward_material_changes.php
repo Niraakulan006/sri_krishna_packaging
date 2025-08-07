@@ -157,7 +157,7 @@
                                 </select>
                                 <label>Supplier <span class="text-danger">*</span></label>
                                 <div class="input-group-append">
-                                    <span class="input-group-text bg-primary" style="cursor:pointer; height:100%;"><i class="fa fa-plus text-white"></i></span>
+                                    <span class="input-group-text bg-primary" style="cursor:pointer; height:100%;" onclick="Javascript:CustomParty();"><i class="fa fa-plus text-white"></i></span>
                                 </div>
                             </div>
                         </div>
@@ -764,10 +764,10 @@
                     $quantity_error = $valid->valid_number($quantity[$i], 'Qty', 1);
                     if(!empty($quantity_error)) {
                         if(!empty($valid_inward_material)) {
-                            $valid_inward_material = $valid_inward_material." ".$valid->row_error_display($form_name, 'quantity[]', $quantity_error, 'input', 'product_row', ($i+1));
+                            $valid_inward_material = $valid_inward_material." ".$valid->row_error_display($form_name, 'quantity[]', $quantity_error, 'text', 'product_row', ($i+1));
                         }
                         else {
-                            $valid_inward_material = $valid->row_error_display($form_name, 'quantity[]', $quantity_error, 'input', 'product_row', ($i+1));
+                            $valid_inward_material = $valid->row_error_display($form_name, 'quantity[]', $quantity_error, 'text', 'product_row', ($i+1));
                         }
                     }
                 }
