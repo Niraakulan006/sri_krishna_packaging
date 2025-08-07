@@ -69,4 +69,5 @@
 	if(!empty($_SESSION['bill_company_id']) && isset($_SESSION['bill_company_id'])) {
 		$GLOBALS['bill_company_id'] = $_SESSION['bill_company_id'];
 	}
+	$stock_action_plus = "Plus"; $stock_action_minus = "Minus";
 ?>

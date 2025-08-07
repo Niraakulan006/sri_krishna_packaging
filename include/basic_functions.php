@@ -633,9 +633,9 @@
 		public function automate_number($table, $column) {
             $last_number = 0; $next_number = ""; $last_id_number = "";
             $prefix = "";
-           	// if(!empty($table) && $table == $GLOBALS['delivery_slip_table']) {
-            //     $prefix = 'DS';
-            // }
+           	if(!empty($table) && $table == $GLOBALS['inward_material_table']) {
+                $prefix = 'INW';
+            }
             $current_year = date("y"); $next_year = date("y")+1;
             
             if(date("m") == date("01") || date("m") == date("02") || date("m") == date("03")) {
@@ -661,10 +661,10 @@
                 $last_number = $last_number_array[0];
 				$last_number = trim($last_number);
                 if(!empty($prefix)){
-					// if(!empty($table) && $table == $GLOBALS['delivery_slip_table']) {
-                    //     $last_number = str_replace("DS","",$last_number);
-                    //     $last_number = trim($last_number);
-                    // }
+					if(!empty($table) && $table == $GLOBALS['inward_material_table']) {
+                        $last_number = str_replace("INW","",$last_number);
+                        $last_number = trim($last_number);
+                    }
                 }
                 $next_number = $last_number + 1;
             }

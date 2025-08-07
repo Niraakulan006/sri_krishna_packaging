@@ -577,7 +577,27 @@
                                                         </div> 
                                                     </th>
                                                     <th class="delete_element text-center px-2 py-2">
-                                                        <a class="pe-2" onclick="Javascript:DeleteProductRow('product_row', '<?php echo $i+1; ?>');" style="cursor:pointer;"><i class="fa fa-trash text-danger"></i></a>
+                                                        <?php
+                                                            $inward_quantity = 0; $outward_quantity = 0;
+                                                            if($location_type == '1') {
+                                                                $inward_quantity = $obj->getInwardUnitQty('', '', $show_inward_material_id, '', '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                                                                $outward_quantity = $obj->getOutwardUnitQty('', '', $show_inward_material_id, '', '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                                                            }
+                                                            else if($location_type == '2') {
+                                                                $inward_quantity = $obj->getInwardUnitQty('', '', $show_inward_material_id, '', $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                                                                $outward_quantity = $obj->getOutwardUnitQty('', '', $show_inward_material_id, '', $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                                                            }
+                                                            if($inward_quantity >= $outward_quantity) {
+                                                                ?>
+                                                                <a class="pe-2" onclick="Javascript:DeleteProductRow('product_row', '<?php echo $i+1; ?>');" style="cursor:pointer;"><i class="fa fa-trash text-danger"></i></a>
+                                                                <?php
+                                                            }
+                                                            else {
+                                                                ?>
+                                                                <a class="fw-bold text-danger" style="pointer-events:none;"><i class="fa fa-exclamation-circle text-danger"></i> Can't Delete</a>
+                                                                <?php
+                                                            }
+                                                        ?>
                                                     </th>
                                                 </tr>
                                                 <?php
@@ -603,7 +623,7 @@
         $location_type = ""; $location_type_error = ""; $godown_type = ""; $godown_type_error = "";
         $godown_ids = array(); $godown_names = array(); $factory_ids = array(); $factory_names = array(); $size_ids = array();
         $size_names = array(); $gsm_ids = array(); $gsm_names = array(); $bf_ids = array(); $bf_names = array();
-        $quantity = array(); $total_quantity = 0;
+        $quantity = array(); $total_quantity = 0; $stock_unique_ids = array();
 
         $edit_id = ""; $form_name = "inward_material_form"; $valid_inward_material = ""; $inward_material_error = "";
         if(isset($_POST['edit_id'])) {
@@ -762,6 +782,26 @@
                 if(isset($quantity[$i])) {
                     $quantity_error = "";
                     $quantity_error = $valid->valid_number($quantity[$i], 'Qty', 1);
+                    if(empty($quantity_error) && !empty($edit_id)) {
+                        $inward_quantity = 0; $outward_quantity = 0;
+                        if($location_type == '1') {
+                            $inward_quantity = $obj->getInwardUnitQty('', '', $edit_id, '', '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                            $outward_quantity = $obj->getOutwardUnitQty('', '', $edit_id, '', '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                        }
+                        else if($location_type == '2') {
+                            $inward_quantity = $obj->getInwardUnitQty('', '', $edit_id, '', $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                            $outward_quantity = $obj->getOutwardUnitQty('', '', $edit_id, '', $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                        }
+
+                        $comparable_qty = 0;
+                        $comparable_qty = $inward_quantity + $quantity[$i];
+
+                        if($comparable_qty < $outward_quantity) {
+                            $accurate_qty = 0;
+                            $accurate_qty = $outward_quantity - $inward_quantity;
+                            $quantity_error = "Min Value : " . $accurate_qty;
+                        }
+                    }
                     if(!empty($quantity_error)) {
                         if(!empty($valid_inward_material)) {
                             $valid_inward_material = $valid_inward_material." ".$valid->row_error_display($form_name, 'quantity[]', $quantity_error, 'text', 'product_row', ($i+1));
@@ -801,6 +841,7 @@
                             else {
                                 $valid_inward_material = $valid->row_error_display($form_name, 'size_id[]', $combination_error_2, 'select', 'product_row', ($j+1));
                             }
+                            break;
                         }
                     }
                     if(empty($valid_inward_material)) {
@@ -827,6 +868,14 @@
                         $bf_names[$i] = $bf_name;
 
                         $total_quantity += $quantity[$i];
+                        if(!empty($edit_id)) {
+                            if($location_type == '1') {
+                                $stock_unique_ids[] = $obj->getStockUniqueID($edit_id, '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                            }
+                            else if($location_type == '2') {
+                                $stock_unique_ids[] = $obj->getStockUniqueID($edit_id, $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                            }
+                        }
                     }
                 }
             }
@@ -839,6 +888,9 @@
             $check_user_id_ip_address = 0;
             $check_user_id_ip_address = $obj->check_user_id_ip_address();	
             if(preg_match("/^\d+$/", $check_user_id_ip_address)) { 
+                if(!empty($edit_id)) {
+                    $stock_delete_update = $obj->DeletePrevList($edit_id, $stock_unique_ids);
+                }
                 if(!empty($bill_date)) {
                     $bill_date = date('Y-m-d', strtotime($bill_date));
                 }
@@ -944,7 +996,7 @@
                     $bill_company_name = $GLOBALS['null_value'];
                     $bill_company_details = $GLOBALS['null_value'];
                 }
-
+                $update_stock = 0; $inward_material_id = ""; $inward_material_number = "";
                 if(empty($edit_id)) {
                     $action = "";
                     if(!empty($supplier_name) && $supplier_name != $GLOBALS['null_value']) {
@@ -958,6 +1010,9 @@
                     $inward_material_insert_id = $obj->InsertSQL($GLOBALS['inward_material_table'], $columns, $values,'inward_material_id', 'inward_material_number', $action);
 
                     if(preg_match("/^\d+$/", $inward_material_insert_id)) {
+                        $update_stock = 1;
+                        $inward_material_id = $obj->getTableColumnValue($GLOBALS['inward_material_table'], 'id', $inward_material_insert_id, 'inward_material_id');
+                        $inward_material_number = $obj->getTableColumnValue($GLOBALS['inward_material_table'], 'id', $inward_material_insert_id, 'inward_material_number');
                         $result = array('number' => '1', 'msg' => 'Inward Successfully Created');
                     }
                     else {
@@ -975,16 +1030,67 @@
 
                         $columns = array(); $values = array();		
                         $columns = array('updated_date_time', 'creator_name', 'bill_company_name', 'bill_company_details', 'bill_date', 'bill_number', 'supplier_id', 'supplier_name', 'supplier_details', 'location_type', 'godown_type', 'godown_id', 'godown_name', 'factory_id', 'factory_name', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity');
-                        $values = array("'".$updated_date_time."'", "'".$creator_name."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$bill_date."'", "'".$bill_number."'", "'".$supplier_id."'", "'".$supplier_name."'", "'".$supplier_details."'", "'".$location_type."'", "'".$godown_type."'", "'".$godown_ids."'", "'".$godown_names."'", "'".$factory_ids."'", "'".$factory_names."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'");
+                        $values = array("'".$updated_date_time."'", "'".$creator_name."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$bill_date."'", "'".$bill_number."'", "'".$supplier_id."'", "'".$supplier_name."'", "'".$supplier_details."'", "'".$location_type."'", "'".$godown_type."'", "'".$godown_ids."'", "'".$godown_names."'", "'".$factory_ids."'", "'".$factory_names."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'");
 
                         $inward_material_update_id = $obj->UpdateSQL($GLOBALS['inward_material_table'], $getUniqueID, $columns, $values, $action);
 
                         if(preg_match("/^\d+$/", $inward_material_update_id)) {
+                            $update_stock = 1;
+                            $inward_material_id = $edit_id;
+                            $inward_material_number = $obj->getTableColumnValue($GLOBALS['inward_material_table'], 'inward_material_id', $inward_material_id, 'inward_material_number');
                             $result = array('number' => '1', 'msg' => 'Updated Successfully');
                         }
                         else {
                             $result = array('number' => '2', 'msg' => $inward_material_update_id);
                         }							
+                    }
+                }
+                if($update_stock == '1' && !empty($inward_material_id) && !empty($inward_material_number)) {
+                    if(!empty($factory_ids) && $factory_ids != $GLOBALS['null_value']) {
+                        $factory_ids = explode(",", $factory_ids);
+                    }
+                    else {
+                        $factory_ids = array();
+                    }
+                    if(!empty($godown_ids) && $godown_ids != $GLOBALS['null_value']) {
+                        $godown_ids = explode(",", $godown_ids);
+                    }
+                    else {
+                        $godown_ids = array();
+                    }
+                    if(!empty($size_ids) && $size_ids != $GLOBALS['null_value']) {
+                        $size_ids = explode(",", $size_ids);
+                    }
+                    else {
+                        $size_ids = array();
+                    }
+                    if(!empty($gsm_ids) && $gsm_ids != $GLOBALS['null_value']) {
+                        $gsm_ids = explode(",", $gsm_ids);
+                    }
+                    else {
+                        $gsm_ids = array();
+                    }
+                    if(!empty($bf_ids) && $bf_ids != $GLOBALS['null_value']) {
+                        $bf_ids = explode(",", $bf_ids);
+                    }
+                    else {
+                        $bf_ids = array();
+                    }
+                    if(!empty($quantity) && $quantity != $GLOBALS['null_value']) {
+                        $quantity = explode(",", $quantity);
+                    }
+                    else {
+                        $quantity = array();
+                    }
+                    if(!empty($size_ids)) {
+                        for($i=0; $i < count($size_ids); $i++) {
+                            if($location_type == '1') {
+                                $stock_update = $obj->StockUpdate($GLOBALS['inward_material_table'], 'In', $supplier_id, $inward_material_id, $inward_material_number, $bill_number, $bill_date, '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
+                            }
+                            else if($location_type == '2') {
+                                $stock_update = $obj->StockUpdate($GLOBALS['inward_material_table'], 'In', $supplier_id, $inward_material_id, $inward_material_number, $bill_number, $bill_date, $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
+                            }
+                        }
                     }
                 }
             }
@@ -1143,10 +1249,17 @@
                 if(!empty($bill_number)) {
                     $action = "Inward Cancelled. Bill No. - ".$obj->encode_decode('decrypt', $bill_number);
                 }
-                $columns = array(); $values = array();
-                $columns = array('cancelled');
-                $values = array("'1'");
-                $msg = $obj->UpdateSQL($GLOBALS['inward_material_table'], $inward_material_unique_id, $columns, $values, $action);
+                $stock_delete = 0;
+                $stock_delete = $obj->DeleteBillStock($GLOBALS['inward_material_table'], $delete_inward_material_id);
+                if($stock_delete == '1') {
+                    $columns = array(); $values = array();
+                    $columns = array('cancelled');
+                    $values = array("'1'");
+                    $msg = $obj->UpdateSQL($GLOBALS['inward_material_table'], $inward_material_unique_id, $columns, $values, $action);
+                }
+                else {
+                    $msg = "Can't Cancel. Stock goes to negative!";
+                }
             }
             else {
                 $msg = "Invalid Inward";

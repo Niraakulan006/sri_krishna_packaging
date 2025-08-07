@@ -1,5 +1,5 @@
 <input type="hidden" name="show_cancel_<?php echo $id; ?>" value="<?php echo $cancelled; ?>">
-<div class="table-responsive">
+<div class="table-responsive" style="height:800px; overflow-y:scroll!important;">
     <table id="<?php echo $id; ?>" class="datatable table nowrap border cursor text-center smallfnt table-bordered">
         <thead class="bg-light">
             <tr>

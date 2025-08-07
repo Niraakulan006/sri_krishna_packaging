@@ -284,6 +284,30 @@
                 $godown_id = $GLOBALS['null_value'];
                 $godown_name = $GLOBALS['null_value'];
             }
+            $size_name = "";
+            if(!empty($size_id) && $size_id != $GLOBALS['null_value']) {
+                $size_name = $this->getTableColumnValue($GLOBALS['size_table'], 'size_id', $size_id, 'size_name');
+            }
+            else {
+                $size_id = $GLOBALS['null_value'];
+                $size_name = $GLOBALS['null_value'];
+            }
+            $gsm_name = "";
+            if(!empty($gsm_id) && $gsm_id != $GLOBALS['null_value']) {
+                $gsm_name = $this->getTableColumnValue($GLOBALS['gsm_table'], 'gsm_id', $gsm_id, 'gsm_name');
+            }
+            else {
+                $gsm_id = $GLOBALS['null_value'];
+                $gsm_name = $GLOBALS['null_value'];
+            }
+            $bf_name = "";
+            if(!empty($bf_id) && $bf_id != $GLOBALS['null_value']) {
+                $bf_name = $this->getTableColumnValue($GLOBALS['bf_table'], 'bf_id', $bf_id, 'bf_name');
+            }
+            else {
+                $bf_id = $GLOBALS['null_value'];
+                $bf_name = $GLOBALS['null_value'];
+            }
             
             $created_date_time = $GLOBALS['create_date_time_label']; $updated_date_time = $GLOBALS['create_date_time_label']; 
             $creator = $GLOBALS['creator'];
@@ -337,9 +361,13 @@
                 $bill_list = array(); 
                 $bill_list = $this->getTableRecords($table, $bill_id_field, $bill_id, '');
 
+                $location_type = "";
                 $factory_ids = array(); $godown_ids = array(); $size_ids = array(); $gsm_ids = array(); $bf_ids = array();
                 if(!empty($bill_list)) {
                     foreach($bill_list as $data) {
+                        if(!empty($data['location_type']) && $data['location_type'] != $GLOBALS['null_value']) {
+                            $location_type = $data['location_type'];
+                        }
                         if(!empty($data['factory_id']) && $data['factory_id'] != $GLOBALS['null_value']) {
                             $factory_ids = $data['factory_id'];
                             $factory_ids = explode(",", $factory_ids);
@@ -366,8 +394,14 @@
                     for($i=0; $i < count($size_ids); $i++) {
                         if(!empty($size_ids[$i])) {
                             $inward_quantity = 0; $outward_quantity = 0;
-                            $inward_quantity = $this->getInwardUnitQty('', '', $bill_id, '', $factory_ids[$i], $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
-                            $outward_quantity = $this->getOutwardUnitQty('', '', $bill_id, '', $factory_ids[$i], $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                            if($location_type == '1') {
+                                $inward_quantity = $this->getInwardUnitQty('', '', $bill_id, '', '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                                $outward_quantity = $this->getOutwardUnitQty('', '', $bill_id, '', '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                            }
+                            else if($location_type == '2') {
+                                $inward_quantity = $this->getInwardUnitQty('', '', $bill_id, '', $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                                $outward_quantity = $this->getOutwardUnitQty('', '', $bill_id, '', $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                            }
 
                             if($inward_quantity < $outward_quantity) {
                                 $can_delete = 0;
