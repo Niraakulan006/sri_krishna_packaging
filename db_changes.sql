@@ -1,6 +1,7 @@
 CREATE TABLE `sri_krishna_stock` (
  `id` int(100) NOT NULL AUTO_INCREMENT,
- `created_date_time` mediumtext NOT NULL,
+ `created_date_time` datetime NOT NULL,
+ `updated_date_time` datetime NOT NULL,
  `creator` mediumtext NOT NULL,
  `creator_name` mediumtext NOT NULL,
  `bill_company_id` mediumtext NOT NULL,

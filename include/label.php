@@ -21,7 +21,6 @@
 	$GLOBALS['max_unit_count'] = 1;
 		
 	// Tables
-
 	$GLOBALS['table_prefix'] = "sri_krishna_";
 	$GLOBALS['user_table'] = $GLOBALS['table_prefix'].'user';
 	$GLOBALS['login_table'] = $GLOBALS['table_prefix'].'login';
@@ -33,10 +32,10 @@
 	$GLOBALS['factory_table'] = $GLOBALS['table_prefix']."factory";
 	$GLOBALS['supplier_table'] = $GLOBALS['table_prefix']."supplier";
 	$GLOBALS['bf_table'] = $GLOBALS['table_prefix']."bf";
+	$GLOBALS['stock_table'] = $GLOBALS['table_prefix']."stock";
 	$GLOBALS['inward_material_table'] = $GLOBALS['table_prefix']."inward_material";
-
-
 	
+	// Modules
 	$GLOBALS['size_module'] = "Size";
 	$GLOBALS['bf_module'] = "BF";
 	$GLOBALS['gsm_module'] = "GSM";
@@ -45,8 +44,6 @@
 	$GLOBALS['godown_module'] = "Godown";
 	$GLOBALS['supplier_module'] = "Supplier";
 	$GLOBALS['inward_material_module'] = "Inward Material";
-
-
 
 	$access_pages_list = array();
 	$access_pages_list[] = $GLOBALS['size_module'];
@@ -57,7 +54,7 @@
 	$access_pages_list[] = $GLOBALS['supplier_module'];
 	$access_pages_list[] = $GLOBALS['inward_material_module'];
 
-
+	$GLOBALS['user_access_pages'] = $access_pages_list;
 
 	$GLOBALS['Reset_to_one'] = "Reset To 1"; $GLOBALS['continue_last_number'] = "Continue from last number"; $GLOBALS['custom_number'] = "Custom Number";
 	
@@ -66,11 +63,9 @@
 	if(!empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'])) {
 		$GLOBALS['creator'] = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'];
 	}
-
 	if(!empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_name']) && isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_name'])) {
 		$GLOBALS['creator_name'] = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_name'];
 	}
-
 	if(!empty($_SESSION['bill_company_id']) && isset($_SESSION['bill_company_id'])) {
 		$GLOBALS['bill_company_id'] = $_SESSION['bill_company_id'];
 	}

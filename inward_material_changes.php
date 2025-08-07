@@ -1079,7 +1079,7 @@
                 $total_quantity = $val['total_quantity'];
             }
             $material_view = "";
-            $action = ""; $edit_option = ""; $delete_option = ""; $print_option = "";
+            $action = ""; $edit_option = ""; $delete_option = ""; $print_option = ""; $a5_print_option = "";
             $access_error = "";
             if(!empty($login_staff_id)) {
                 $permission_action = $edit_action;
@@ -1096,12 +1096,16 @@
             if(empty($access_error) && empty($val['cancelled'])) {
                 $delete_option = '<li><a class="dropdown-item" href="Javascript:DeleteModalContent('.'\''.$page_title.'\''.', '.'\''.$val['inward_material_id'].'\''.');"><i class="fa fa-ban"></i>&nbsp; Cancel</a></li>';
             }
+            $print_option = '<li><a class="dropdown-item" target="_blank" href="reports/rpt_inward_material_a4.php?view_inward_material_id=' . $val['inward_material_id'] . '"><i class="fa fa-print"></i>&nbsp; A4 Print</a></li>';
+
+            $a5_print_option = '<li><a class="dropdown-item" target="_blank" href="reports/rpt_inward_material_a5.php?view_inward_material_id=' . $val['inward_material_id'] . '"><i class="fa fa-print"></i>&nbsp; A5 Print</a></li>';
+            
             $action = '<div class="dropdown">
                             <a href="#" role="button" class="btn btn-dark py-1 px-1" id="dropdownMenuLink'.$val['inward_material_id'].'" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink'.$val['inward_material_id'].'">
-                                '.$print_option.$edit_option.$delete_option.'
+                                '.$print_option.$a5_print_option.$edit_option.$delete_option.'
                             </ul>
                         </div>';
             $data[] = [
