@@ -430,8 +430,22 @@ function SendModalContent(form_name, post_send_file, redirection_file) {
 			if (x.number == '1') {
 				jQuery('form[name="' + form_name + '"]').find('.row:first').before('<div class="alert alert-success"> <button type="button" class="close" data-dismiss="alert">&times;</button> ' + x.msg + ' </div>');
 				setTimeout(function () {
+					var page_title = "";
+					if(jQuery('input[name="page_title"]').length > 0) {
+						page_title = jQuery('input[name="page_title"]').val();
+						page_title = page_title.trim();
+					}
 					if(form_name == 'factory_form'){
 						ShowModalContent('factory','4d4451774f4449774d6a55774d5449774d6a5a664d44453d');
+					}
+					else if(x.supplier_id != "" && x.supplier_id != null && typeof x.supplier_id != "undefined" && (page_title == 'Inward Material')) {	
+						if(jQuery('#CustomPartyModal .btn-close').length > 0) {
+							jQuery('#CustomPartyModal .btn-close').trigger('click');	
+						}
+						if (jQuery('form[name="' + form_name + '"]').find('.submit_button').length > 0) {
+							jQuery('form[name="' + form_name + '"]').find('.submit_button').attr('disabled', false);
+						}
+						ChangeSupplierIDs(x.supplier_id);
 					}
 					else if (jQuery('.redirection_form').length > 0) {
 						if (typeof x.redirection_page != "undefined" && x.redirection_page != "") {
@@ -657,4 +671,20 @@ function CustomParty() {
 			}
 		}
 	});
+}
+function ChangeSupplierIDs(supplier_id) {
+    var post_url = "inward_material_changes.php?change_supplier_list=1"+"selected_supplier_id="+supplier_id;
+    jQuery.ajax({
+        url: post_url, success: function (result) {
+            result = result.trim();
+            if (jQuery('select[name="supplier_id"]').length > 0) {
+                jQuery('select[name="supplier_id"]').html(result);
+            }
+            if (supplier_id != "" && supplier_id != null && typeof supplier_id != "undefined") {
+                if (jQuery('select[name="supplier_id"]').length > 0) {
+                    jQuery('select[name="supplier_id"]').val(supplier_id).trigger('change');
+                }
+            }
+        }
+    });
 }

@@ -38,22 +38,24 @@
    
         ?>
         <form class="poppins pd-20" name="supplier_form" method="POST">
-			<div class="card-header ">
-				<div class="row p-2">
-					<div class="col-lg-8 col-md-8 col-8 align-self-center">
-                        <?php if(!empty($show_unit_id)){ ?>
-                            <div class="h5">Edit Supplier</div>
-                        <?php 
-                        } else{ ?>
-                            <div class="h5">Add Supplier</div>
-                        <?php
-                        } ?>
-					</div>
-					<div class="col-lg-4 col-md-4 col-4">
-						<button class="btn btn-dark float-end" style="font-size:11px;" type="button" onclick="window.open('supplier.php','_self')"> <i class="fa fa-arrow-circle-o-left"></i> &ensp; Back </button>
-					</div>
-				</div>
-			</div>
+            <?php if(empty($add_custom_supplier)) { ?>
+                <div class="card-header ">
+                    <div class="row p-2">
+                        <div class="col-lg-8 col-md-8 col-8 align-self-center">
+                            <?php if(!empty($show_supplier_id)){ ?>
+                                <div class="h5">Edit Supplier</div>
+                            <?php 
+                            } else{ ?>
+                                <div class="h5">Add Supplier</div>
+                            <?php
+                            } ?>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-4">
+                            <button class="btn btn-dark float-end" style="font-size:11px;" type="button" onclick="window.open('supplier.php','_self')"> <i class="fa fa-arrow-circle-o-left"></i> &ensp; Back </button>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
             <div class="row p-3">
                 <input type="hidden" name="edit_id" value="<?php if(!empty($show_supplier_id)) { echo $show_supplier_id; } ?>">
                 <div class="col-lg-3 col-md-4 col-12 py-2 px-lg-1">
@@ -160,7 +162,7 @@
 			$check_user_id_ip_address = 0;
 			$check_user_id_ip_address = $obj->check_user_id_ip_address();	
 			if(preg_match("/^\d+$/", $check_user_id_ip_address)) {
-             $name_mobile_location = ""; $supplier_details = "";
+                $name_mobile_location = ""; $supplier_details = "";
                 if(!empty($supplier_name)) {
 					
                     $supplier_name = htmlentities($supplier_name, ENT_QUOTES);
@@ -182,11 +184,7 @@
                         $supplier_details = $supplier_details."$$$".$location;
                     }
                     if(!empty($name_mobile_location)) {
-                        $name_mobile_location = $name_mobile_location." (".$location.")";
-                        if(!empty($location)) {
-                            $name_mobile_location = $name_mobile_location." - ".$location;
-                        }
-                       
+                        $name_mobile_location = $name_mobile_location." - ".$location;
                     }
                     $location = $obj->encode_decode('encrypt', $location);
                 }
@@ -200,10 +198,6 @@
                     }
                     if(!empty($name_mobile_location)) {
                         $name_mobile_location = $name_mobile_location." (".$mobile_number.")";
-                        if(!empty($location)) {
-                            $name_mobile_location = $name_mobile_location." - ".$location;
-                        }
-                       
                     }
                     $mobile_number = $obj->encode_decode('encrypt', $mobile_number);
                 }

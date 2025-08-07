@@ -1,6 +1,7 @@
 <?php
 	include("basic_functions.php");
 	include("creation_functions.php");
+	include("stock_functions.php");
 	
 	class billing extends Basic_Functions {
 		// Basic Functions
@@ -173,6 +174,62 @@
 			$result = "";
 			$result = $create_obj->getInwardMaterialList($row, $rowperpage, $searchValue, $from_date, $to_date, $supplier_id, $cancelled, $order_column, $order_direction);
 			return $result;
+		}
+
+		// Stock Functions
+		public function stock_function_object() {
+			$stock_obj = "";		
+			$stock_obj = new Stock_functions();
+			return $stock_obj;
+		}
+		public function getStockUniqueID($bill_unique_id, $factory_id, $godown_id, $size_id, $gsm_id, $bf_id){
+			$stock_obj = "";
+			$stock_obj = $this->stock_function_object();
+			$stock_update = 0;
+			$stock_update = $stock_obj->getStockUniqueID($bill_unique_id, $factory_id, $godown_id, $size_id, $gsm_id, $bf_id);
+			return $stock_update;
+		}
+		public function getInwardUnitQty($from_date, $to_date, $bill_unique_id, $supplier_id, $factory_id, $godown_id, $size_id, $gsm_id, $bf_id){
+			$stock_obj = "";
+			$stock_obj = $this->stock_function_object();
+			$stock_update = 0;
+			$stock_update = $stock_obj->getInwardUnitQty($from_date, $to_date, $bill_unique_id, $supplier_id, $factory_id, $godown_id, $size_id, $gsm_id, $bf_id);
+			return $stock_update;
+		}
+		public function getOutwardUnitQty($from_date, $to_date, $bill_unique_id, $supplier_id, $factory_id, $godown_id, $size_id, $gsm_id, $bf_id){
+			$stock_obj = "";
+			$stock_obj = $this->stock_function_object();
+			$stock_update = 0;
+			$stock_update = $stock_obj->getOutwardUnitQty($from_date, $to_date, $bill_unique_id, $supplier_id, $factory_id, $godown_id, $size_id, $gsm_id, $bf_id);
+			return $stock_update;
+		}
+		public function PrevStockList($bill_unique_id){
+			$stock_obj = "";
+			$stock_obj = $this->stock_function_object();
+			$stock_update = 0;
+			$stock_update = $stock_obj->PrevStockList($bill_unique_id);
+			return $stock_update;
+		}
+		public function StockUpdate($page_table, $in_out_type, $supplier_id, $bill_unique_id, $bill_unique_number, $remarks, $stock_date, $factory_id, $godown_id, $size_id, $gsm_id, $bf_id, $quantity){
+			$stock_obj = "";
+			$stock_obj = $this->stock_function_object();
+			$stock_update = 0;
+			$stock_update = $stock_obj->StockUpdate($page_table, $in_out_type, $supplier_id, $bill_unique_id, $bill_unique_number, $remarks, $stock_date, $factory_id, $godown_id, $size_id, $gsm_id, $bf_id, $quantity);
+			return $stock_update;
+		}
+		public function DeleteBillStock($table, $bill_id){
+			$stock_obj = "";
+			$stock_obj = $this->stock_function_object();
+			$stock_update = 0;
+			$stock_update = $stock_obj->DeleteBillStock($table, $bill_id);
+			return $stock_update;
+		}
+		public function DeletePrevList($bill_id, $stock_unique_ids){
+			$stock_obj = "";
+			$stock_obj = $this->stock_function_object();
+			$stock_update = 0;
+			$stock_update = $stock_obj->DeletePrevList($bill_id, $stock_unique_ids);
+			return $stock_update;
 		}
 	}
 ?>
