@@ -7,7 +7,7 @@
                 <th style="min-width:100px;">Bill Date</th>
                 <th style="min-width:100px;">Bill No</th>
                 <th style="min-width:200px;">Supplier</th>
-                <th style="min-width:75px;">Total QTY</th>
+                <th style="min-width:75px;">Reel Count</th>
                 <th style="min-width:75px;">View</th>
                 <th style="min-width:75px;">Action</th>
             </tr>
