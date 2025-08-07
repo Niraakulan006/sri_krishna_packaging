@@ -317,13 +317,16 @@ function AddProductRow(empty_row) {
                                 }
                                 if(jQuery('select[name="location_type"]').length > 0) {
                                     jQuery('select[name="location_type"]').parent().css('pointer-events', 'none');
+                                    jQuery('select[name="location_type"]').attr('tabindex', '1');
                                 }
                                 if(jQuery('select[name="godown_type"]').length > 0) {
                                     jQuery('select[name="godown_type"]').parent().css('pointer-events', 'none');
+                                    jQuery('select[name="godown_type"]').attr('tabindex', '1');
                                 }
                                 if(parseInt(godown_type) == 1) {
                                     if(jQuery('select[name="selected_godown_id"]').length > 0) {
                                         jQuery('select[name="selected_godown_id"]').parent().css('pointer-events', 'none');
+                                        jQuery('select[name="selected_godown_id"]').attr('tabindex', '1');
                                     }
                                 }
                                 SnoCalcPlus();
@@ -358,12 +361,15 @@ function DeleteProductRow(id_name, row_index) {
                     }
                     if(jQuery('select[name="location_type"]').length > 0) {
                         jQuery('select[name="location_type"]').parent().css('pointer-events', 'auto');
+                        jQuery('select[name="location_type"]').removeAttr('tabindex');
                     }
                     if(jQuery('select[name="godown_type"]').length > 0) {
                         jQuery('select[name="godown_type"]').parent().css('pointer-events', 'auto');
+                        jQuery('select[name="godown_type"]').removeAttr('tabindex');
                     }
                     if(jQuery('select[name="selected_godown_id"]').length > 0) {
                         jQuery('select[name="selected_godown_id"]').parent().css('pointer-events', 'auto');
+                        jQuery('select[name="selected_godown_id"]').removeAttr('tabindex');
                     }
                 }
                 SnoCalcPlus();

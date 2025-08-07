@@ -166,7 +166,7 @@
                 <div class="col-lg-2 col-md-3 col-6 px-lg-1 py-2">
                     <div class="form-group">
                         <div class="form-label-group in-border" <?php if(!empty($show_inward_material_id)) { ?>style="pointer-events:none;"<?php } ?>>
-                            <select name="location_type" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:GetLocation();">
+                            <select name="location_type" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:GetLocation();" <?php if(!empty($show_inward_material_id)) { ?>tabindex="1"<?php } ?>>
                                 <option value="">Select Location</option>
                                 <option value="1" <?php if($location_type == '1') { ?>selected<?php } ?>>Godown</option>
                                 <option value="2" <?php if($location_type == '2') { ?>selected<?php } ?>>Factory</option>
@@ -178,7 +178,7 @@
                 <div class="col-lg-2 col-md-3 col-6 px-lg-1 py-2 <?php if($location_type != '1') { ?>d-none<?php } ?>" id="godown_type_div">
                     <div class="form-group">
                         <div class="form-label-group in-border" <?php if(!empty($show_inward_material_id)) { ?>style="pointer-events:none;"<?php } ?>>
-                            <select name="godown_type" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                            <select name="godown_type" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if(!empty($show_inward_material_id)) { ?>tabindex="1"<?php } ?>>
                                 <option value="">Select Type</option>
                                 <option value="1" <?php if($godown_type == '1') { ?>selected<?php } ?>>Single Godown</option>
                                 <option value="2" <?php if($godown_type == '2') { ?>selected<?php } ?>>Multiple Godown</option>
@@ -192,7 +192,7 @@
                 <div class="col-lg-3 col-md-4 col-12 px-lg-1 py-2">
                     <div class="form-group <?php if($location_type == '2') { ?>d-none<?php } ?>" id="selected_godown_id_div">
                         <div class="form-label-group in-border" <?php if($godown_type == '1') { ?>style="pointer-events:none;"<?php } ?>>
-                            <select name="selected_godown_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                            <select name="selected_godown_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if($godown_type == '1') { ?>tabindex="1"<?php } ?>>
                                 <option value="">Select Godown</option>
                                 <?php
                                     if(!empty($godown_list)) {
@@ -217,7 +217,7 @@
                     </div>
                     <div class="form-group <?php if($location_type != '2') { ?>d-none<?php } ?>" id="selected_factory_id_div">
                         <div class="form-label-group in-border" <?php if($location_type == '2') { ?>style="pointer-events:none;"<?php } ?>>
-                            <select name="selected_factory_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                            <select name="selected_factory_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if($location_type == '2') { ?>tabindex="1"<?php } ?>>
                                 <option value="">Select Factory</option>
                                 <?php
                                     if(!empty($factory_list)) {
@@ -417,7 +417,7 @@
                                                                 ?>
                                                                 <div class="form-group">
                                                                     <div class="form-label-group in-border" <?php if($godown_type == '1') { ?>style="pointer-events:none;"<?php } ?>>
-                                                                        <select name="godown_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                                                                        <select name="godown_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if($godown_type == '1') { ?>tabindex="1"<?php } ?>>
                                                                             <?php
                                                                                 if(empty($godown_ids[$i])) {
                                                                                     ?>
@@ -450,7 +450,7 @@
                                                                 ?>
                                                                 <div class="form-group">
                                                                     <div class="form-label-group in-border" style="pointer-events:none;">
-                                                                        <select name="factory_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                                                                        <select name="factory_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" tabindex="1">
                                                                             <?php
                                                                                 if(!empty($factory_list)) {
                                                                                     foreach($factory_list as $data) {
@@ -1363,7 +1363,7 @@
                         ?>
                         <div class="form-group">
                             <div class="form-label-group in-border" <?php if($godown_type == '1') { ?>style="pointer-events:none;"<?php } ?>>
-                                <select name="godown_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                                <select name="godown_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if($godown_type == '1') { ?>tabindex="1"<?php } ?>>
                                     <?php
                                         if(empty($godown_id)) {
                                             ?>
@@ -1396,7 +1396,7 @@
                         ?>
                         <div class="form-group">
                             <div class="form-label-group in-border" style="pointer-events:none;">
-                                <select name="factory_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                                <select name="factory_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" tabindex="1">
                                     <?php
                                         if(!empty($factory_list)) {
                                             foreach($factory_list as $data) {

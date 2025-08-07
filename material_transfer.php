@@ -54,7 +54,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-md-6 col-12">
+                                    <div class="col-lg-2 col-md-4 col-12">
                                         <div class="form-group mb-0">
                                             <div class="form-label-group in-border pb-2">
                                                 <select name="filter_factory_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
@@ -81,7 +81,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-md-6 col-12">
+                                    <div class="col-lg-2 col-md-4 col-12">
                                         <div class="form-group mb-0">
                                             <div class="form-label-group in-border pb-2">
                                                 <select name="filter_godown_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
@@ -108,7 +108,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-md-4 col-8 ms-auto">
+                                    <div class="col-lg-2 col-md-4 col-8 ms-auto">
                                         <div class="input-group">
                                             <input type="text" class="form-control" name="search_text" id="search_text" style="height:34px;" placeholder="Search By Bill No." aria-label="Search" aria-describedby="basic-addon2">
                                             <span class="input-group-text" style="height:34px;" id="basic-addon2"><i class="bi bi-search"></i></span>
