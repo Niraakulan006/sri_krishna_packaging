@@ -1,3 +1,4 @@
+var number_regex = /^\d+$/;
 // JavaScript Document
 function CheckPassword(field_name) {
 	var password = "";
@@ -695,6 +696,23 @@ function SnoCalcPlus() {
             snoElements[i].innerHTML = i + 1;
         }
     }
+}
+function TotalReelsCount() {
+	var total_quantity = 0;
+	if(jQuery('tr.product_row').length > 0) {
+		jQuery('tr.product_row').each(function() {
+			var quantity = 0;
+			if(jQuery(this).find('input[name="quantity[]"]').length > 0) {
+				quantity = jQuery(this).find('input[name="quantity[]"]').val().trim();
+				if(number_regex.test(quantity) !== false) {
+					total_quantity = parseInt(total_quantity) + parseInt(quantity);
+				}
+			}
+		});
+	}
+	if(jQuery('.total_reels_span').length > 0) {
+		jQuery('.total_reels_span').html(total_quantity);
+	}
 }
 function ViewBillContent(table, bill_id) {
 	if (jQuery('#ViewBillModal').length > 0) {

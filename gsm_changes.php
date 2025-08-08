@@ -14,7 +14,7 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
         $gsm_name = "";
         if(!empty($show_gsm_id)) {
             $gsm_list = array();
-            $gsm_list = $obj->getTableRecords($GLOBALS['gsm_table'], 'gsm_id', $show_gsm_id, '');
+            $gsm_list = $obj->getTableRecords($GLOBALS['gsm_table'], 'gsm_id', $show_gsm_id);
             if(!empty($gsm_list)) {
                 foreach ($gsm_list as $data) {
                     if(!empty($data['gsm_name'])) {
@@ -51,7 +51,7 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                                 <label>GSM<span class="text-danger">*</span></label>
                                 <?php if(empty($show_gsm_id)) { ?>                                
                                 <div class="input-group-append">
-                                    <button class="btn btn-danger" type="button" onclick="Javascript:addCreationDetails('gsm', 15);"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                    <button class="btn btn-danger" type="button" onclick="Javascript:addCreationDetails('gsm', 3);"><i class="fa fa-plus" aria-hidden="true"></i></button>
                                 </div>
                                 <?php } ?>
                             </div>
@@ -89,7 +89,7 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                 $(document).ready(function() {
                     jQuery('#gsm_name').on("keypress", function(e) {
                         if(e.keyCode == 13) {
-                            addCreationDetails('gsm', 15);
+                            addCreationDetails('gsm', 3);
                             return false;
                         }
                     });
@@ -279,7 +279,7 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
         }
     
         $total_records_list = array();
-        $total_records_list = $obj->getTableRecords($GLOBALS['gsm_table'], '', '','');
+        $total_records_list = $obj->getTableRecords($GLOBALS['gsm_table'], '', '');
     
         if(!empty($search_text)) {
             $search_text = strtolower($search_text);

@@ -12,7 +12,7 @@
         $factory_id = "";
         $factory_id = $obj->getTableColumnValue($GLOBALS['factory_table'], 'primary_factory', '1', 'factory_id');
         $bill_date = date('Y-m-d'); $godown_id = ""; $product_count = 0; $size_ids = array(); $gsm_ids = array(); $bf_ids = array();
-        $quantity = array();
+        $quantity = array(); $total_quantity = 0;
 
         if(!empty($show_material_transfer_id)) {
             $material_transfer_list = array();
@@ -40,6 +40,9 @@
                     }
                     if(!empty($data['quantity']) && $data['quantity'] != $GLOBALS['null_value']) {
                         $quantity = explode(",", $data['quantity']);
+                    }
+                    if(!empty($data['total_quantity']) && $data['total_quantity'] != $GLOBALS['null_value']) {
+                        $total_quantity = $data['total_quantity'];
                     }
                 }
             }
@@ -249,6 +252,18 @@
                 <div class="col-lg-2 col-md-4 col-6 px-lg-1 py-2">
                     <div class="form-group">
                         <button class="btn btn-success py-2 add_product_button" style="font-size:11px; width:120px;" type="button" onclick="Javascript:AddTransferRow();">Add To Table</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row px-3 py-1">
+                <div class="col-lg-6 col-md-6 col-12 px-lg-1 text-center align-content-center" id="current_stock_div">
+                    <div class="form-group mb-0">
+                        <span class="h4 d-none text-center fw-bold mb-0">Current Stock : <span class="current_stock_span text-danger">0</span></span>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-12 px-lg-1 text-center align-content-center" id="total_reels_div">
+                    <div class="form-group mb-0">
+                        <span class="h4 text-center fw-bold mb-0">Total Reels : <span class="total_reels_span text-success"><?php echo $total_quantity; ?></span></span>
                     </div>
                 </div>
             </div>
@@ -593,7 +608,7 @@
 
                         $gsm_name = "";
                         $gsm_name = $obj->getTableColumnValue($GLOBALS['gsm_table'], 'gsm_id', $gsm_ids[$i], 'gsm_name');
-                        $gsm_names[$i] = $size_name;
+                        $gsm_names[$i] = $gsm_name;
                         
                         $bf_name = "";
                         $bf_name = $obj->getTableColumnValue($GLOBALS['bf_table'], 'bf_id', $bf_ids[$i], 'bf_name');

@@ -171,6 +171,7 @@ function AddTransferRow() {
                                     jQuery('.add_product_button').attr('disabled', false);
                                 }
                                 SnoCalcPlus();
+                                TotalReelsCount();
                             }
                         });
                     }
@@ -214,6 +215,7 @@ function DeleteTransferRow(id_name, row_index) {
                     }
                 }
                 SnoCalcPlus();
+                TotalReelsCount();
 			}
 			else {
 				window.location.reload();
@@ -233,4 +235,5 @@ function TransferRowCheck(obj) {
             }
         }
     }
+    TotalReelsCount();
 }

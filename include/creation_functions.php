@@ -315,6 +315,7 @@
 			$list = $this->getQueryRecords($GLOBALS['material_transfer_table'], $select_query);
 			return $list;
 		}
+<<<<<<< Updated upstream
 		public function getConsumptionEntryList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $order_column, $order_direction) {
 			$select_query = ""; $list = array(); $where = ""; $order_by_query = "";
 			if(!empty($from_date)) {
@@ -366,6 +367,8 @@
 			$list = $this->getQueryRecords($GLOBALS['consumption_entry_table'], $select_query);
 			return $list;
 		}
+=======
+>>>>>>> Stashed changes
 		public function CreateCustomMaterial($material) {
 			$table = "";
 			if($material == "size") {
@@ -374,9 +377,13 @@
 			else if($material == "gsm") {
 				$table = $GLOBALS['gsm_table'];
 			}
+<<<<<<< Updated upstream
 			else if($material == "bf") {
 				// $table = $GLOBALS['']
 			}
+=======
+			else if($material == "bf")
+>>>>>>> Stashed changes
 		}
     }
 ?>

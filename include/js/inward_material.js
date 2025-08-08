@@ -342,6 +342,7 @@ function AddProductRow(empty_row) {
                                     jQuery('.add_product_button').attr('disabled', false);
                                 }
                                 SnoCalcPlus();
+                                TotalReelsCount();
                             }
                         });
                     }
@@ -393,6 +394,7 @@ function DeleteProductRow(id_name, row_index) {
                     }
                 }
                 SnoCalcPlus();
+                TotalReelsCount();
 			}
 			else {
 				window.location.reload();
@@ -412,6 +414,7 @@ function InwardRowCheck(obj) {
             }
         }
     }
+    TotalReelsCount();
 }
 function CustomButton(value) {
     if(jQuery('#selected_'+value+'_id_div').length > 0) {

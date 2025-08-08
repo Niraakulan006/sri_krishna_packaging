@@ -14,7 +14,7 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
         $bf_name = "";
         if(!empty($show_bf_id)) {
             $bf_list = array();
-            $bf_list = $obj->getTableRecords($GLOBALS['bf_table'], 'bf_id', $show_bf_id, '');
+            $bf_list = $obj->getTableRecords($GLOBALS['bf_table'], 'bf_id', $show_bf_id);
             if(!empty($bf_list)) {
                 foreach ($bf_list as $data) {
                     if(!empty($data['bf_name'])) {
@@ -279,7 +279,7 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
         }
     
         $total_records_list = array();
-        $total_records_list = $obj->getTableRecords($GLOBALS['bf_table'], '', '','');
+        $total_records_list = $obj->getTableRecords($GLOBALS['bf_table'], '', '');
     
         if(!empty($search_text)) {
             $search_text = strtolower($search_text);

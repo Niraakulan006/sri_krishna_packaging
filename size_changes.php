@@ -14,7 +14,7 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
         $size_name = "";
         if(!empty($show_size_id)) {
             $size_list = array();
-            $size_list = $obj->getTableRecords($GLOBALS['size_table'], 'size_id', $show_size_id, '');
+            $size_list = $obj->getTableRecords($GLOBALS['size_table'], 'size_id', $show_size_id);
             if(!empty($size_list)) {
                 foreach ($size_list as $data) {
                     if(!empty($data['size_name'])) {
@@ -42,7 +42,7 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
 				</div>
 			</div>
             <div class="row justify-content-center p-3">
-                <input type="hidden" name="edit_id"value="<?php if(!empty($show_size_id)) {  echo $show_size_id; } ?>">
+                <input type="hidden" name="edit_id" value="<?php if(!empty($show_size_id)) {  echo $show_size_id; } ?>">
                 <div class="col-lg-3 col-md-6 col-12 py-2">
                     <div class="form-group">
                         <div class="form-label-group in-border">
@@ -122,7 +122,7 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
             else {
                 $single_size_name = $obj->encode_decode("encrypt", $single_size_name);
                 if(!empty($single_size_name)) {
-                    $prev_size_id = $obj->CheckSIZEAlreadyExists($GLOBALS['bill_company_id'], $single_size_name);
+                    $prev_size_id = $obj->CheckSizeAlreadyExists($GLOBALS['bill_company_id'], $single_size_name);
                     if(!empty($prev_size_id)) {
                         if($prev_size_id != $edit_id) {
                             $size_error = "This Size - " . $obj->encode_decode("decrypt", $single_size_name) . " is already exist";
@@ -279,7 +279,7 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
         }
     
         $total_records_list = array();
-        $total_records_list = $obj->getTableRecords($GLOBALS['size_table'], '', '','');
+        $total_records_list = $obj->getTableRecords($GLOBALS['size_table'], '', '');
     
         if(!empty($search_text)) {
             $search_text = strtolower($search_text);
