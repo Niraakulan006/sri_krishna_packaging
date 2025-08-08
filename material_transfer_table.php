@@ -6,7 +6,7 @@
                 <th style="min-width:75px;">S.No</th>
                 <th style="min-width:100px;">Bill Date</th>
                 <th style="min-width:100px;">Bill No</th>
-                <th style="min-width:200px;">Godown</th>
+                <th style="min-width:200px;">To Godown</th>
                 <th style="min-width:75px;">Reel Count</th>
                 <th style="min-width:75px;">View</th>
                 <th style="min-width:75px;">Action</th>

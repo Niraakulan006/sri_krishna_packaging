@@ -11,7 +11,39 @@
         $show_material_transfer_id = trim($_REQUEST['show_material_transfer_id']); 
         $factory_id = "";
         $factory_id = $obj->getTableColumnValue($GLOBALS['factory_table'], 'primary_factory', '1', 'factory_id');
-        $product_count = 0;
+        $bill_date = date('Y-m-d'); $godown_id = ""; $product_count = 0; $size_ids = array(); $gsm_ids = array(); $bf_ids = array();
+        $quantity = array();
+
+        if(!empty($show_material_transfer_id)) {
+            $material_transfer_list = array();
+            $material_transfer_list = $obj->getTableRecords($GLOBALS['material_transfer_table'], 'material_transfer_id', $show_material_transfer_id);
+            if(!empty($material_transfer_list)) {
+                foreach($material_transfer_list as $data) {
+                    if(!empty($data['bill_date']) && $data['bill_date'] != "0000-00-00") {
+                        $bill_date = date('Y-m-d', strtotime($data['bill_date']));
+                    }
+                    if(!empty($data['factory_id']) && $data['factory_id'] != $GLOBALS['null_value']) {
+                        $factory_id = $data['factory_id'];
+                    }
+                    if(!empty($data['godown_id']) && $data['godown_id'] != $GLOBALS['null_value']) {
+                        $godown_id = $data['godown_id'];
+                    }
+                    if(!empty($data['size_id']) && $data['size_id'] != $GLOBALS['null_value']) {
+                        $size_ids = explode(",", $data['size_id']);
+                        $product_count = count($size_ids);
+                    }
+                    if(!empty($data['gsm_id']) && $data['gsm_id'] != $GLOBALS['null_value']) {
+                        $gsm_ids = explode(",", $data['gsm_id']);
+                    }
+                    if(!empty($data['bf_id']) && $data['bf_id'] != $GLOBALS['null_value']) {
+                        $bf_ids = explode(",", $data['bf_id']);
+                    }
+                    if(!empty($data['quantity']) && $data['quantity'] != $GLOBALS['null_value']) {
+                        $quantity = explode(",", $data['quantity']);
+                    }
+                }
+            }
+        }
 
         $godown_list = array();
         $godown_list = $obj->getTableRecords($GLOBALS['godown_table'], '', '');
@@ -266,45 +298,538 @@
             <script src="include/select2/js/select2.min.js"></script>
             <script src="include/select2/js/select.js"></script>
         </form>
-	<?php
+        <?php
     } 
-    if(isset($_POST['page_number'])) {
-        $page_number = $_POST['page_number'];
-        $page_limit = $_POST['page_limit'];
-        $page_title = $_POST['page_title']; ?>
-    
-        <table class="table nowrap cursor text-center smallfnt">
-            <thead class="bg-light">
-                <tr>
-                    <th>#</th>
-                    <th>From Godown</th>
-                    <th>To Godown</th>
-                    <th>QTY</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>01</td>
-                    <td>Godown 1</td>
-                    <td>Godown 2</td>
-                    <td>50</td>
-                    <td>
-                        <div class="dropdown">
-                            <a href="#" role="button" class="btn btn-dark py-1 px-1" id="dropdownMenuLink1" data-bs-toggle="dropdown" aria-expanded="false">
+    if(isset($_POST['edit_id'])) {
+        $bill_date = ""; $bill_date_error = ""; $factory_id = ""; $factory_id_error = ""; $godown_id = ""; $godown_id_error = "";
+        $size_ids = array(); $size_names = array(); $gsm_ids = array(); $gsm_names = array(); $bf_ids = array(); $bf_names = array();
+        $quantity = array(); $total_quantity = 0; $stock_unique_ids = array();
+
+        $edit_id = ""; $form_name = "material_transfer_form"; $valid_material_transfer = ""; $material_transfer_error = "";
+        if(isset($_POST['edit_id'])) {
+            $edit_id = trim($_POST['edit_id']);
+        }
+        if(isset($_POST['bill_date'])) {
+            $bill_date = trim($_POST['bill_date']);
+            $bill_date_error = $valid->valid_date($bill_date, 'Bill Date', 1);
+            if(!empty($bill_date_error)) {
+                if(!empty($valid_material_transfer)) {
+                    $valid_material_transfer = $valid_material_transfer." ".$valid->error_display($form_name, 'bill_date', $bill_date_error, 'text');
+                }
+                else {
+                    $valid_material_transfer = $valid->error_display($form_name, 'bill_date', $bill_date_error, 'text');
+                }
+            }
+        }
+        if(isset($_POST['factory_id'])) {
+            $factory_id = trim($_POST['factory_id']);
+            $factory_id_error = $valid->common_validation($factory_id, 'Factory', 'select');
+            if(!empty($factory_id_error)) {
+                if(!empty($valid_material_transfer)) {
+                    $valid_material_transfer = $valid_material_transfer." ".$valid->error_display($form_name, 'factory_id', $factory_id_error, 'select');
+                }
+                else {
+                    $valid_material_transfer = $valid->error_display($form_name, 'factory_id', $factory_id_error, 'select');
+                }
+            }
+        }
+        if(isset($_POST['godown_id'])) {
+            $godown_id = trim($_POST['godown_id']);
+            $godown_id_error = $valid->common_validation($godown_id, 'Godown', 'select');
+            if(!empty($godown_id_error)) {
+                if(!empty($valid_material_transfer)) {
+                    $valid_material_transfer = $valid_material_transfer." ".$valid->error_display($form_name, 'godown_id', $godown_id_error, 'select');
+                }
+                else {
+                    $valid_material_transfer = $valid->error_display($form_name, 'godown_id', $godown_id_error, 'select');
+                }
+            }
+        }
+        if(isset($_POST['size_id'])) {
+            $size_ids = $_POST['size_id'];
+        }
+        if(isset($_POST['gsm_id'])) {
+            $gsm_ids = $_POST['gsm_id'];
+        }
+        if(isset($_POST['bf_id'])) {
+            $bf_ids = $_POST['bf_id'];
+        }
+        if(isset($_POST['quantity'])) {
+            $quantity = $_POST['quantity'];
+        }
+        if(!empty($size_ids)) {
+            for($i=0; $i < count($size_ids); $i++) {
+                if(isset($size_ids[$i])) {
+                    $size_id_error = "";
+                    $size_id_error = $valid->common_validation($size_ids[$i], 'Size', 'select');
+                    if(!empty($size_id_error)) {
+                        if(!empty($valid_material_transfer)) {
+                            $valid_material_transfer = $valid_material_transfer." ".$valid->row_error_display($form_name, 'size_id[]', $size_id_error, 'select', 'product_row', ($i+1));
+                        }
+                        else {
+                            $valid_material_transfer = $valid->row_error_display($form_name, 'size_id[]', $size_id_error, 'select', 'product_row', ($i+1));
+                        }
+                    }
+                }
+                if(isset($gsm_ids[$i])) {
+                    $gsm_id_error = "";
+                    $gsm_id_error = $valid->common_validation($gsm_ids[$i], 'GSM', 'select');
+                    if(!empty($gsm_id_error)) {
+                        if(!empty($valid_material_transfer)) {
+                            $valid_material_transfer = $valid_material_transfer." ".$valid->row_error_display($form_name, 'gsm_id[]', $gsm_id_error, 'select', 'product_row', ($i+1));
+                        }
+                        else {
+                            $valid_material_transfer = $valid->row_error_display($form_name, 'gsm_id[]', $gsm_id_error, 'select', 'product_row', ($i+1));
+                        }
+                    }
+                }
+                if(isset($bf_ids[$i])) {
+                    $bf_id_error = "";
+                    $bf_id_error = $valid->common_validation($bf_ids[$i], 'BF', 'select');
+                    if(!empty($bf_id_error)) {
+                        if(!empty($valid_material_transfer)) {
+                            $valid_material_transfer = $valid_material_transfer." ".$valid->row_error_display($form_name, 'bf_id[]', $bf_id_error, 'select', 'product_row', ($i+1));
+                        }
+                        else {
+                            $valid_material_transfer = $valid->row_error_display($form_name, 'bf_id[]', $bf_id_error, 'select', 'product_row', ($i+1));
+                        }
+                    }
+                }
+                if(isset($quantity[$i])) {
+                    $quantity_error = "";
+                    $quantity_error = $valid->valid_number($quantity[$i], 'Qty', 1);
+                    // if(empty($quantity_error) && !empty($edit_id)) {
+                    //     $inward_quantity = 0; $outward_quantity = 0;
+                    //     if($location_type == '1') {
+                    //         $inward_quantity = $obj->getInwardUnitQty('', '', $edit_id, '', '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                    //         $outward_quantity = $obj->getOutwardUnitQty('', '', $edit_id, '', '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                    //     }
+                    //     else if($location_type == '2') {
+                    //         $inward_quantity = $obj->getInwardUnitQty('', '', $edit_id, '', $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                    //         $outward_quantity = $obj->getOutwardUnitQty('', '', $edit_id, '', $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                    //     }
+
+                    //     $comparable_qty = 0;
+                    //     $comparable_qty = $inward_quantity + $quantity[$i];
+
+                    //     if($comparable_qty < $outward_quantity) {
+                    //         $accurate_qty = 0;
+                    //         $accurate_qty = $outward_quantity - $inward_quantity;
+                    //         $quantity_error = "Min Value : " . $accurate_qty;
+                    //     }
+                    // }
+                    if(!empty($quantity_error)) {
+                        if(!empty($valid_material_transfer)) {
+                            $valid_material_transfer = $valid_material_transfer." ".$valid->row_error_display($form_name, 'quantity[]', $quantity_error, 'text', 'product_row', ($i+1));
+                        }
+                        else {
+                            $valid_material_transfer = $valid->row_error_display($form_name, 'quantity[]', $quantity_error, 'text', 'product_row', ($i+1));
+                        }
+                    }
+                }
+                if(empty($valid_material_transfer)) {
+                    for($j=$i+1; $j < count($size_ids); $j++) {
+                        $combination_error_1 = ""; $combination_error_2 = "";
+                        if($size_ids[$i] == $size_ids[$j] && $gsm_ids[$i] == $gsm_ids[$j] && $bf_ids[$i] == $bf_ids[$j]) {
+                            $combination_error_1 = "Same Combination in ".($j + 1);
+                            $combination_error_2 = "Same Combination in ".($i + 1);
+                        }
+                        if(!empty($combination_error_1)) {
+                            if(!empty($valid_material_transfer)) {
+                                $valid_material_transfer = $valid_material_transfer." ".$valid->row_error_display($form_name, 'size_id[]', $combination_error_1, 'select', 'product_row', ($i+1));
+                            }
+                            else {
+                                $valid_material_transfer = $valid->row_error_display($form_name, 'size_id[]', $combination_error_1, 'select', 'product_row', ($i+1));
+                            }
+                        }
+                        if(!empty($combination_error_2)) {
+                            if(!empty($valid_material_transfer)) {
+                                $valid_material_transfer = $valid_material_transfer." ".$valid->row_error_display($form_name, 'size_id[]', $combination_error_2, 'select', 'product_row', ($j+1));
+                            }
+                            else {
+                                $valid_material_transfer = $valid->row_error_display($form_name, 'size_id[]', $combination_error_2, 'select', 'product_row', ($j+1));
+                            }
+                            break;
+                        }
+                    }
+                    if(empty($valid_material_transfer)) {
+                        $size_name = "";
+                        $size_name = $obj->getTableColumnValue($GLOBALS['size_table'], 'size_id', $size_ids[$i], 'size_name');
+                        $size_names[$i] = $size_name;
+
+                        $gsm_name = "";
+                        $gsm_name = $obj->getTableColumnValue($GLOBALS['gsm_table'], 'gsm_id', $gsm_ids[$i], 'gsm_name');
+                        $gsm_names[$i] = $size_name;
+                        
+                        $bf_name = "";
+                        $bf_name = $obj->getTableColumnValue($GLOBALS['bf_table'], 'bf_id', $bf_ids[$i], 'bf_name');
+                        $bf_names[$i] = $bf_name;
+
+                        $total_quantity += $quantity[$i];
+                        // if(!empty($edit_id)) {
+                        //     if($location_type == '1') {
+                        //         $stock_unique_ids[] = $obj->getStockUniqueID($edit_id, '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                        //     }
+                        //     else if($location_type == '2') {
+                        //         $stock_unique_ids[] = $obj->getStockUniqueID($edit_id, $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                        //     }
+                        // }
+                    }
+                }
+            }
+        }
+        else {
+            $material_transfer_error = "Add Materials";
+        }
+        $result = "";
+        if(empty($valid_material_transfer) && empty($material_transfer_error)) {
+            $check_user_id_ip_address = 0;
+            $check_user_id_ip_address = $obj->check_user_id_ip_address();	
+            if(preg_match("/^\d+$/", $check_user_id_ip_address)) { 
+                // if(!empty($edit_id)) {
+                //     $stock_delete_update = $obj->DeletePrevList($edit_id, $stock_unique_ids);
+                // }
+                if(!empty($bill_date)) {
+                    $bill_date = date('Y-m-d', strtotime($bill_date));
+                }
+                $factory_name = ""; $factory_name_location = "";
+                if(!empty($factory_id)) {
+                    $factory_name = $obj->getTableColumnValue($GLOBALS['factory_table'], 'factory_id', $factory_id, 'factory_name');
+                    $factory_name_location = $obj->getTableColumnValue($GLOBALS['factory_table'], 'factory_id', $factory_id, 'name_location');
+                }
+                else {
+                    $factory_id = $GLOBALS['null_value'];
+                    $factory_name = $GLOBALS['null_value'];
+                    $factory_name_location = $GLOBALS['null_value'];
+                }
+                $godown_name = ""; $godown_name_location = "";
+                if(!empty($godown_id)) {
+                    $godown_name = $obj->getTableColumnValue($GLOBALS['godown_table'], 'godown_id', $godown_id, 'godown_name');
+                    $godown_name_location = $obj->getTableColumnValue($GLOBALS['godown_table'], 'godown_id', $godown_id, 'name_location');
+                }
+                else {
+                    $godown_id = $GLOBALS['null_value'];
+                    $godown_name = $GLOBALS['null_value'];
+                    $godown_name_location = $GLOBALS['null_value'];
+                }
+                if(!empty(array_filter($size_ids, fn($value) => $value !== ""))) {
+                    $size_ids = implode(",", $size_ids);
+                }
+                else {
+                    $size_ids = $GLOBALS['null_value'];
+                }
+                if(!empty(array_filter($size_names, fn($value) => $value !== ""))) {
+                    $size_names = implode(",", $size_names);
+                }
+                else {
+                    $size_names = $GLOBALS['null_value'];
+                }
+                if(!empty(array_filter($gsm_ids, fn($value) => $value !== ""))) {
+                    $gsm_ids = implode(",", $gsm_ids);
+                }
+                else {
+                    $gsm_ids = $GLOBALS['null_value'];
+                }
+                if(!empty(array_filter($gsm_names, fn($value) => $value !== ""))) {
+                    $gsm_names = implode(",", $gsm_names);
+                }
+                else {
+                    $gsm_names = $GLOBALS['null_value'];
+                }
+                if(!empty(array_filter($bf_ids, fn($value) => $value !== ""))) {
+                    $bf_ids = implode(",", $bf_ids);
+                }
+                else {
+                    $bf_ids = $GLOBALS['null_value'];
+                }
+                if(!empty(array_filter($bf_names, fn($value) => $value !== ""))) {
+                    $bf_names = implode(",", $bf_names);
+                }
+                else {
+                    $bf_names = $GLOBALS['null_value'];
+                }
+                if(!empty(array_filter($quantity, fn($value) => $value !== ""))) {
+                    $quantity = implode(",", $quantity);
+                }
+                else {
+                    $quantity = $GLOBALS['null_value'];
+                }
+                $created_date_time = $GLOBALS['create_date_time_label']; $creator = $GLOBALS['creator'];
+                $creator_name = $obj->encode_decode('encrypt', $GLOBALS['creator_name']);
+                $updated_date_time = $GLOBALS['create_date_time_label'];
+                $bill_company_id = $GLOBALS['bill_company_id'];
+                $bill_company_name = ""; $bill_company_details = "";
+                if(!empty($bill_company_id)) {
+                    $bill_company_name = $obj->getTableColumnValue($GLOBALS['factory_table'], 'factory_id', $bill_company_id, 'factory_name');
+                    $bill_company_details = $obj->getTableColumnValue($GLOBALS['factory_table'], 'factory_id', $bill_company_id, 'factory_details');
+                }
+                else {
+                    $bill_company_id = $GLOBALS['null_value'];
+                    $bill_company_name = $GLOBALS['null_value'];
+                    $bill_company_details = $GLOBALS['null_value'];
+                }
+                $update_stock = 0; $material_transfer_id = ""; $material_transfer_number = "";
+                if(empty($edit_id)) {
+                    $action = "";
+                    $action = "New Material Transfer Created.";
+
+                    $null_value = $GLOBALS['null_value'];
+                    $columns = array(); $values = array();
+                    $columns = array('created_date_time', 'updated_date_time', 'creator', 'creator_name', 'bill_company_id', 'bill_company_name', 'bill_company_details', 'material_transfer_id', 'material_transfer_number', 'bill_date', 'factory_id', 'factory_name', 'factory_name_location', 'godown_id', 'godown_name', 'godown_name_location', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity', 'cancelled', 'deleted');
+                    $values = array("'".$created_date_time."'", "'".$updated_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$null_value."'", "'".$null_value."'", "'".$bill_date."'", "'".$factory_id."'", "'".$factory_name."'", "'".$factory_name_location."'", "'".$godown_id."'", "'".$godown_name."'", "'".$godown_name_location."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'", "'0'", "'0'");
+
+                    $material_transfer_insert_id = $obj->InsertSQL($GLOBALS['material_transfer_table'], $columns, $values,'material_transfer_id', 'material_transfer_number', $action);
+
+                    if(preg_match("/^\d+$/", $material_transfer_insert_id)) {
+                        $update_stock = 1;
+                        $material_transfer_id = $obj->getTableColumnValue($GLOBALS['material_transfer_table'], 'id', $material_transfer_insert_id, 'material_transfer_id');
+                        $material_transfer_number = $obj->getTableColumnValue($GLOBALS['material_transfer_table'], 'id', $material_transfer_insert_id, 'material_transfer_number');
+                        $result = array('number' => '1', 'msg' => 'Materials Successfully Transfered');
+                    }
+                    else {
+                        $result = array('number' => '2', 'msg' => $material_transfer_insert_id);
+                    }
+                }
+                else {
+                    $getUniqueID = "";
+                    $getUniqueID = $obj->getTableColumnValue($GLOBALS['material_transfer_table'], 'material_transfer_id', $edit_id, 'id');
+                    if(preg_match("/^\d+$/", $getUniqueID)) {
+                        $action = "";
+                        $action = "Material Transfer Updated.";
+
+                        $columns = array(); $values = array();		
+                        $columns = array('updated_date_time', 'creator_name', 'bill_company_name', 'bill_company_details', 'bill_date', 'factory_id', 'factory_name', 'factory_name_location', 'godown_id', 'godown_name', 'godown_name_location', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity');
+                        $values = array("'".$updated_date_time."'", "'".$creator_name."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$bill_date."'", "'".$factory_id."'", "'".$factory_name."'", "'".$factory_name_location."'", "'".$godown_id."'", "'".$godown_name."'", "'".$godown_name_location."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'");
+
+                        $material_transfer_update_id = $obj->UpdateSQL($GLOBALS['material_transfer_table'], $getUniqueID, $columns, $values, $action);
+
+                        if(preg_match("/^\d+$/", $material_transfer_update_id)) {
+                            $update_stock = 1;
+                            $material_transfer_id = $edit_id;
+                            $material_transfer_number = $obj->getTableColumnValue($GLOBALS['material_transfer_table'], 'material_transfer_id', $material_transfer_id, 'material_transfer_number');
+                            $result = array('number' => '1', 'msg' => 'Updated Successfully');
+                        }
+                        else {
+                            $result = array('number' => '2', 'msg' => $material_transfer_update_id);
+                        }							
+                    }
+                }
+                // if($update_stock == '1' && !empty($material_transfer_id) && !empty($material_transfer_number)) {
+                //     if(!empty($size_ids) && $size_ids != $GLOBALS['null_value']) {
+                //         $size_ids = explode(",", $size_ids);
+                //     }
+                //     else {
+                //         $size_ids = array();
+                //     }
+                //     if(!empty($gsm_ids) && $gsm_ids != $GLOBALS['null_value']) {
+                //         $gsm_ids = explode(",", $gsm_ids);
+                //     }
+                //     else {
+                //         $gsm_ids = array();
+                //     }
+                //     if(!empty($bf_ids) && $bf_ids != $GLOBALS['null_value']) {
+                //         $bf_ids = explode(",", $bf_ids);
+                //     }
+                //     else {
+                //         $bf_ids = array();
+                //     }
+                //     if(!empty($quantity) && $quantity != $GLOBALS['null_value']) {
+                //         $quantity = explode(",", $quantity);
+                //     }
+                //     else {
+                //         $quantity = array();
+                //     }
+                //     if(!empty($size_ids)) {
+                //         for($i=0; $i < count($size_ids); $i++) {
+                //             if($location_type == '1') {
+                //                 $stock_update = $obj->StockUpdate($GLOBALS['material_transfer_table'], 'In', $supplier_id, $material_transfer_id, $material_transfer_number, $bill_number, $bill_date, '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
+                //             }
+                //             else if($location_type == '2') {
+                //                 $stock_update = $obj->StockUpdate($GLOBALS['material_transfer_table'], 'In', $supplier_id, $material_transfer_id, $material_transfer_number, $bill_number, $bill_date, $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
+                //             }
+                //         }
+                //     }
+                // }
+            }
+            else {
+                $result = array('number' => '2', 'msg' => 'Invalid IP');
+            }
+        }
+        else {
+            if(!empty($valid_material_transfer)) {
+                $result = array('number' => '3', 'msg' => $valid_material_transfer);
+            }
+            else if(!empty($material_transfer_error)) {
+                $result = array('number' => '2', 'msg' => $material_transfer_error);
+            }
+        }
+        
+        if(!empty($result)) {
+            $result = json_encode($result);
+        }
+        echo $result; exit;
+    }
+    if(isset($_POST['draw'])){
+        $draw = trim($_POST['draw']);
+
+        $searchValue = ""; $filter_from_date = ""; $filter_to_date = ""; $filter_factory_id = ""; $filter_godown_id = 0; $cancelled = 0;
+        if(isset($_POST['start'])) {
+            $row = trim($_POST['start']);
+        }
+        if(isset($_POST['length'])) {
+            $rowperpage = trim($_POST['length']);
+        }
+        if(isset($_POST['search_text'])) {
+            $searchValue = trim($_POST['search_text']);
+        }
+        if(isset($_POST['filter_from_date'])) {
+            $filter_from_date = trim($_POST['filter_from_date']);
+        }
+        if(isset($_POST['filter_to_date'])) {
+            $filter_to_date = trim($_POST['filter_to_date']);
+        }
+        if(isset($_POST['filter_factory_id'])) {
+            $filter_factory_id = trim($_POST['filter_factory_id']);
+        }
+        if(isset($_POST['filter_godown_id'])) {
+            $filter_godown_id = trim($_POST['filter_godown_id']);
+        }
+        if(isset($_POST['cancel'])) {
+            $cancelled = trim($_POST['cancel']);
+        }
+        $page_title = "Material Transfer";
+        $order_column = "";
+        $order_column_index = "";
+        $order_direction = "";
+
+        if(isset($_POST['order'][0]['column'])) {
+            $order_column_index = intval($_POST['order'][0]['column']);
+        }
+        if(isset($_POST['order'][0]['dir'])) {
+            $order_direction = $_POST['order'][0]['dir'] === 'desc' ? 'DESC' : 'ASC';
+        }
+        $columns = [
+            0 => '',
+            1 => 'bill_date',
+            2 => 'material_transfer_number',
+            3 => 'godown_name',
+            4 => 'total_quantity',
+            5 => '',
+            6 => '',
+        ];
+        if(!empty($order_column_index) && isset($columns[$order_column_index])) {
+            $order_column = $columns[$order_column_index];
+        }
+
+        $totalRecords = 0;
+        $totalRecords = count($obj->getMaterialTransferList($row, $rowperpage, $searchValue, $filter_from_date, $filter_to_date, $filter_factory_id, $filter_godown_id, $cancelled, $order_column, $order_direction));
+        $filteredRecords = count($obj->getMaterialTransferList('', '', $searchValue, $filter_from_date, $filter_to_date, $filter_factory_id, $filter_godown_id, $cancelled, $order_column, $order_direction));
+
+        $data = [];
+
+        $MaterialTransferList = $obj->getMaterialTransferList($row, $rowperpage, $searchValue, $filter_from_date, $filter_to_date, $filter_factory_id, $filter_godown_id, $cancelled, $order_column, $order_direction);
+        
+        $sno = $row + 1;
+        foreach ($MaterialTransferList as $val) {
+            $bill_date = ""; $material_transfer_number = ""; $godown_name = ""; $total_quantity = 0;
+            if(!empty($val['bill_date']) && $val['bill_date'] != "0000-00-00") {
+                $bill_date = date('d-m-Y', strtotime($val['bill_date']));
+            }
+            if(!empty($val['material_transfer_number']) && $val['material_transfer_number'] != $GLOBALS['null_value']) {
+                $material_transfer_number = $val['material_transfer_number'];
+            }
+            if(!empty($val['godown_name']) && $val['godown_name'] != $GLOBALS['null_value']){
+                $godown_name = $obj->encode_decode('decrypt', $val['godown_name']);
+            }
+            if(!empty($val['total_quantity']) && $val['total_quantity'] != $GLOBALS['null_value']){
+                $total_quantity = $val['total_quantity'];
+            }
+            $material_view = "";
+            $action = ""; $edit_option = ""; $delete_option = ""; $print_option = ""; $a5_print_option = "";
+            $access_error = "";
+            if(!empty($login_staff_id)) {
+                $permission_action = $edit_action;
+                include('permission_action.php');
+            }
+            if(empty($access_error) && empty($val['cancelled'])) {
+                $edit_option = '<li><a class="dropdown-item" href="Javascript:ShowModalContent('.'\''.$page_title.'\''.', '.'\''.$val['material_transfer_id'].'\''.');"><i class="fa fa-pencil"></i>&nbsp; Edit</a></li>';
+            }
+            $access_error = "";
+            if(!empty($login_staff_id)) {
+                $permission_action = $delete_action;
+                include('permission_action.php');
+            }
+            if(empty($access_error) && empty($val['cancelled'])) {
+                $delete_option = '<li><a class="dropdown-item" href="Javascript:DeleteModalContent('.'\''.$page_title.'\''.', '.'\''.$val['material_transfer_id'].'\''.');"><i class="fa fa-ban"></i>&nbsp; Cancel</a></li>';
+            }
+            $print_option = '<li><a class="dropdown-item" target="_blank" href="reports/rpt_material_transfer_a4.php?view_material_transfer_id=' . $val['material_transfer_id'] . '"><i class="fa fa-print"></i>&nbsp; A4 Print</a></li>';
+
+            $a5_print_option = '<li><a class="dropdown-item" target="_blank" href="reports/rpt_material_transfer_a5.php?view_material_transfer_id=' . $val['material_transfer_id'] . '"><i class="fa fa-print"></i>&nbsp; A5 Print</a></li>';
+            
+            $action = '<div class="dropdown">
+                            <a href="#" role="button" class="btn btn-dark py-1 px-1" id="dropdownMenuLink'.$val['material_transfer_id'].'" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink1">
-                                <li><a class="dropdown-item" href="#">View</a></li>
-                                <li><a class="dropdown-item" href="#">Edit</a></li>
-                                <li><a class="dropdown-item" href="#">Delete</a></li>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink'.$val['material_transfer_id'].'">
+                                '.$print_option.$a5_print_option.$edit_option.$delete_option.'
                             </ul>
-                        </div> 
-                    </td>
-                </tr>
-            </tbody>
-        </table>                
-        <?php 
+                        </div>';
+            $data[] = [
+                "sno" => $sno++,
+                "bill_date" => $bill_date,
+                "material_transfer_number" => $bill_number,
+                "godown_name" => $supplier_name,
+                "total_quantity" => $total_quantity,
+                "view" => $material_view,
+                "action" => $action
+            ];
+        }
+
+        $response = [
+            "draw" => intval($draw),
+            "recordsTotal" => $totalRecords,
+            "recordsFiltered" => $filteredRecords,
+            "data" => $data
+        ];
+
+        echo json_encode($response);
+    }
+    if(isset($_REQUEST['delete_material_transfer_id'])) {
+        $delete_material_transfer_id = trim($_REQUEST['delete_material_transfer_id']);
+        $msg = "";
+        if(!empty($delete_material_transfer_id)) {	
+            $material_transfer_unique_id = "";
+            $material_transfer_unique_id = $obj->getTableColumnValue($GLOBALS['material_transfer_table'], 'material_transfer_id', $delete_material_transfer_id, 'id');
+        
+            if(preg_match("/^\d+$/", $material_transfer_unique_id)) {
+                $material_transfer_number = "";
+                $material_transfer_number = $obj->getTableColumnValue($GLOBALS['material_transfer_table'], 'material_transfer_id', $delete_material_transfer_id, 'material_transfer_number');
+            
+                $action = "";
+                if(!empty($material_transfer_number)) {
+                    $action = "Material Transfer Cancelled. Bill No. - ".$material_transfer_number;
+                }
+                // $stock_delete = 0;
+                // $stock_delete = $obj->DeleteBillStock($GLOBALS['material_transfer_table'], $delete_material_transfer_id);
+                // if($stock_delete == '1') {
+                    $columns = array(); $values = array();
+                    $columns = array('cancelled');
+                    $values = array("'1'");
+                    $msg = $obj->UpdateSQL($GLOBALS['material_transfer_table'], $material_transfer_unique_id, $columns, $values, $action);
+                // }
+                // else {
+                //     $msg = "Can't Cancel. Stock goes to negative!";
+                // }
+            }
+            else {
+                $msg = "Invalid Transfer";
+            }
+        }
+        else {
+            $msg = "Empty Transfer";
+        }
+        echo $msg;
+        exit;	
     }
     if(isset($_REQUEST['product_row_index'])) {
         $product_row_index = trim($_REQUEST['product_row_index']);

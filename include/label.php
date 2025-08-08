@@ -34,6 +34,7 @@
 	$GLOBALS['bf_table'] = $GLOBALS['table_prefix']."bf";
 	$GLOBALS['stock_table'] = $GLOBALS['table_prefix']."stock";
 	$GLOBALS['inward_material_table'] = $GLOBALS['table_prefix']."inward_material";
+	$GLOBALS['material_transfer_table'] = $GLOBALS['table_prefix']."material_transfer";
 	
 	// Modules
 	$GLOBALS['size_module'] = "Size";
@@ -44,6 +45,7 @@
 	$GLOBALS['godown_module'] = "Godown";
 	$GLOBALS['supplier_module'] = "Supplier";
 	$GLOBALS['inward_material_module'] = "Inward Material";
+	$GLOBALS['material_transfer_table'] = "Material Transfer";
 
 	$access_pages_list = array();
 	$access_pages_list[] = $GLOBALS['size_module'];
