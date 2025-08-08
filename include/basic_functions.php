@@ -642,6 +642,9 @@
 			else if(!empty($table) && $table == $GLOBALS['consumption_entry_table']) {
                 $prefix = 'CE';
             }
+			else if(!empty($table) && $table == $GLOBALS['stock_request_table']) {
+                $prefix = 'STR';
+            }
             $current_year = date("y"); $next_year = date("y")+1;
             
             if(date("m") == date("01") || date("m") == date("02") || date("m") == date("03")) {
@@ -677,6 +680,10 @@
                     }
 					else if(!empty($table) && $table == $GLOBALS['consumption_entry_table']) {
                         $last_number = str_replace("CE","",$last_number);
+                        $last_number = trim($last_number);
+                    }
+					else if(!empty($table) && $table == $GLOBALS['stock_request_table']) {
+                        $last_number = str_replace("STR","",$last_number);
                         $last_number = trim($last_number);
                     }
                 }

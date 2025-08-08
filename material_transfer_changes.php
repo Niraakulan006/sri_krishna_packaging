@@ -410,7 +410,7 @@
                                                         <?php
                                                             if(empty($disable)) {
                                                                 ?>
-                                                                <a class="pe-2" onclick="Javascript:DeleteProductRow('product_row', '<?php echo $i+1; ?>');" style="cursor:pointer;"><i class="fa fa-trash text-danger"></i></a>
+                                                                <a class="pe-2" onclick="Javascript:DeleteTransferRow('product_row', '<?php echo $i+1; ?>');" style="cursor:pointer;"><i class="fa fa-trash text-danger"></i></a>
                                                                 <?php
                                                             }
                                                             else {
@@ -918,7 +918,7 @@
             $a5_print_option = '<li><a class="dropdown-item" target="_blank" href="reports/rpt_material_transfer_a5.php?view_material_transfer_id=' . $val['material_transfer_id'] . '"><i class="fa fa-print"></i>&nbsp; A5 Print</a></li>';
             
             $action = '<div class="dropdown">
-                            <a href="#" role="button" class="btn btn-dark py-1 px-1" id="dropdownMenuLink'.$val['material_transfer_id'].'" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a href="#" role="button" class="btn btn-dark py-1 px-2" id="dropdownMenuLink'.$val['material_transfer_id'].'" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink'.$val['material_transfer_id'].'">

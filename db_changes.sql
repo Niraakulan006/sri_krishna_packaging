@@ -59,3 +59,35 @@ CREATE TABLE `sri_krishna_material_transfer` (
  `deleted` int(100) NOT NULL,
  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+CREATE TABLE `sri_krishna_stock_request` (
+ `id` int(100) NOT NULL AUTO_INCREMENT,
+ `created_date_time` datetime NOT NULL,
+ `updated_date_time` datetime NOT NULL,
+ `creator` mediumtext NOT NULL,
+ `creator_name` mediumtext NOT NULL,
+ `bill_company_id` mediumtext NOT NULL,
+ `bill_company_name` mediumtext NOT NULL,
+ `bill_company_details` mediumtext NOT NULL,
+ `stock_request_id` mediumtext NOT NULL,
+ `stock_request_number` mediumtext NOT NULL,
+ `bill_date` date NOT NULL,
+ `godown_id` mediumtext NOT NULL,
+ `godown_name` mediumtext NOT NULL,
+ `godown_name_location` mediumtext NOT NULL,
+ `factory_id` mediumtext NOT NULL,
+ `factory_name` mediumtext NOT NULL,
+ `factory_name_location` mediumtext NOT NULL,
+ `remarks` mediumtext NOT NULL,
+ `size_id` mediumtext NOT NULL,
+ `size_name` mediumtext NOT NULL,
+ `gsm_id` mediumtext NOT NULL,
+ `gsm_name` mediumtext NOT NULL,
+ `bf_id` mediumtext NOT NULL,
+ `bf_name` mediumtext NOT NULL,
+ `quantity` mediumtext NOT NULL,
+ `total_quantity` mediumtext NOT NULL,
+ `cancelled` int(100) NOT NULL,
+ `deleted` int(100) NOT NULL,
+ PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;

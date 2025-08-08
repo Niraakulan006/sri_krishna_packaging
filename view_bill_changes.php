@@ -15,6 +15,9 @@
         else if($table == $GLOBALS['material_transfer_table']) {
             $field_id = "material_transfer_id";
         }
+        else if($table == $GLOBALS['stock_request_table']) {
+            $field_id = "stock_request_id";
+        }
         $bill_details = array();
         $bill_details = $obj->getTableRecords($table, $field_id, $bill_id);
 
@@ -43,6 +46,11 @@
                 if($table == $GLOBALS['material_transfer_table']) {
                     if(!empty($data['material_transfer_number']) && $data['material_transfer_number'] != $GLOBALS['null_value']) {
                         $bill_number = $data['material_transfer_number'];
+                    }
+                }
+                if($table == $GLOBALS['stock_request_table']) {
+                    if(!empty($data['stock_request_number']) && $data['stock_request_number'] != $GLOBALS['null_value']) {
+                        $bill_number = $data['stock_request_number'];
                     }
                 }
                 if(!empty($data['size_name']) && $data['size_name'] != $GLOBALS['null_value']) {

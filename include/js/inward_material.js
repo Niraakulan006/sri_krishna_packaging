@@ -448,3 +448,26 @@ function ClearCustomButton(value) {
         }
     }
 }
+function ChangeCustomMaterial(material) {
+    var field_id = "";
+    if(material != "") {
+        field_id = material+'_id';
+    }
+    if(jQuery('tr.product_row').length > 0) {
+        jQuery('tr.product_row').each(function() {
+            var this_field_value = ""; var this_row = jQuery(this);
+            if(jQuery(this).find('select[name="'+field_id+'[]"]').length > 0) {
+                this_field_value = jQuery(this).find('select[name="'+field_id+'[]"]').val().trim();
+            }
+            var post_url = "inward_material_changes.php?change_custom_material="+material+"&change_material_id="+this_field_value;
+            jQuery.ajax({
+                url: post_url, success: function (result) {
+                    result = jQuery.trim(result);
+                    if(this_row.find('select[name="'+field_id+'[]"]').length > 0) {
+                        this_row.find('select[name="'+field_id+'[]"]').html(result);
+                    }
+                }
+            });
+        });
+    }
+}

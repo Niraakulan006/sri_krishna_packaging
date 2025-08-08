@@ -315,7 +315,76 @@
 			$list = $this->getQueryRecords($GLOBALS['material_transfer_table'], $select_query);
 			return $list;
 		}
-<<<<<<< Updated upstream
+		public function getStockRequestList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $order_column, $order_direction) {
+			$select_query = ""; $list = array(); $where = ""; $order_by_query = "";
+			if(!empty($from_date)) {
+				$from_date = date("Y-m-d", strtotime($from_date));
+				if(!empty($where)) {
+					$where = $where." bill_date >= '".$from_date."' AND ";
+				}
+				else {
+					$where = " bill_date >= '".$from_date."' AND ";
+				}
+			}
+			if(!empty($to_date)) {
+				$to_date = date("Y-m-d", strtotime($to_date));
+				if(!empty($where)) {
+					$where = $where." bill_date <= '".$to_date."' AND ";
+				}
+				else {
+					$where = " bill_date <= '".$to_date."' AND ";
+				}
+			}
+			if(!empty($factory_id)) {
+				if(!empty($where)) {
+					$where = $where." factory_id = '".$factory_id."' AND ";
+				}
+				else {
+					$where = " factory_id = '".$factory_id."' AND ";
+				}
+			}
+			if(!empty($godown_id)) {
+				if(!empty($where)) {
+					$where = $where." godown_id = '".$godown_id."' AND ";
+				}
+				else {
+					$where = " godown_id = '".$godown_id."' AND ";
+				}
+			}
+			if(!empty($searchValue)){
+				if(!empty($where)) {
+					$where = $where." (CAST(stock_request_number AS CHAR) LIKE '%".$searchValue."%') AND ";
+				}
+				else {
+					$where = " (CAST(stock_request_number AS CHAR) LIKE '%".$searchValue."%') AND ";
+				}
+			}
+			if(!empty($order_column) && !empty($order_direction)) {
+				if ($order_column == 'godown_name') {
+					$order_by_query = "ORDER BY CAST(FROM_BASE64(UNHEX(".$order_column.")) AS CHAR) ".$order_direction;
+				} 
+				else {
+					$order_by_query = "ORDER BY ".$order_column." ".$order_direction;
+				}
+			}
+			else {
+				$order_by_query = "ORDER BY id DESC";
+			}
+
+			if(!empty($rowperpage)) {
+				$select_query = "SELECT * FROM ".$GLOBALS['stock_request_table']."
+							WHERE ".$where." cancelled = '".$cancelled."' AND deleted = '0'
+							".$order_by_query."
+							LIMIT $row, $rowperpage";
+			}
+			else {
+				$select_query = "SELECT * FROM ".$GLOBALS['stock_request_table']."
+							WHERE ".$where." cancelled = '".$cancelled."' AND deleted = '0'
+							".$order_by_query;
+			}
+			$list = $this->getQueryRecords($GLOBALS['stock_request_table'], $select_query);
+			return $list;
+		}
 		public function getConsumptionEntryList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $order_column, $order_direction) {
 			$select_query = ""; $list = array(); $where = ""; $order_by_query = "";
 			if(!empty($from_date)) {
@@ -367,23 +436,41 @@
 			$list = $this->getQueryRecords($GLOBALS['consumption_entry_table'], $select_query);
 			return $list;
 		}
-=======
->>>>>>> Stashed changes
-		public function CreateCustomMaterial($material) {
-			$table = "";
+		public function CreateCustomMaterial($material, $material_id) {
+			$new_created_id = "";
+			$created_date_time = $GLOBALS['create_date_time_label'];
+			$creator = $GLOBALS['creator'];
+			$creator_name = $this->encode_decode('encrypt', $GLOBALS['creator_name']);
+			$bill_company_id = $GLOBALS['bill_company_id'];
+			$null_value = $GLOBALS['null_value'];
+			$table = ""; $field_id = ""; $field_name = ""; $action = "";
 			if($material == "size") {
 				$table = $GLOBALS['size_table'];
+				$field_id = "size_id";
+				$field_name = "size_name";
+				$action = "New Custom Size Created. Size - ".$this->encode_decode('decrypt', $material_id);
 			}
 			else if($material == "gsm") {
 				$table = $GLOBALS['gsm_table'];
+				$field_id = "gsm_id";
+				$field_name = "gsm_name";
+				$action = "New Custom GSM Created. GSM - ".$this->encode_decode('decrypt', $material_id);
 			}
-<<<<<<< Updated upstream
 			else if($material == "bf") {
-				// $table = $GLOBALS['']
+				$table = $GLOBALS['bf_table'];
+				$field_id = "bf_id";
+				$field_name = "bf_name";
+				$action = "New Custom BF Created. BF - ".$this->encode_decode('decrypt', $material_id);
 			}
-=======
-			else if($material == "bf")
->>>>>>> Stashed changes
+			$columns = array(); $values = array();
+			$columns = array('created_date_time', 'creator', 'creator_name', 'bill_company_id', $field_id, $field_name, 'deleted');
+			$values = array("'".$created_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$null_value."'", "'".$material_id."'",  "'0'");
+
+			$material_insert_id = $this->InsertSQL($table, $columns, $values, $field_id, '', $action);		
+			if(preg_match("/^\d+$/", $material_insert_id)) {								
+				$new_created_id = $this->getTableColumnValue($table, 'id', $material_insert_id, $field_id);
+			}
+			return $new_created_id;
 		}
     }
 ?>

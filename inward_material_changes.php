@@ -1223,7 +1223,7 @@
             $a5_print_option = '<li><a class="dropdown-item" target="_blank" href="reports/rpt_inward_material_a5.php?view_inward_material_id=' . $val['inward_material_id'] . '"><i class="fa fa-print"></i>&nbsp; A5 Print</a></li>';
             
             $action = '<div class="dropdown">
-                            <a href="#" role="button" class="btn btn-dark py-1 px-1" id="dropdownMenuLink'.$val['inward_material_id'].'" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a href="#" role="button" class="btn btn-dark py-1 px-2" id="dropdownMenuLink'.$val['inward_material_id'].'" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink'.$val['inward_material_id'].'">
@@ -1322,19 +1322,8 @@
         if(isset($_REQUEST['selected_quantity'])) {
             $quantity = trim($_REQUEST['selected_quantity']);
         }
-        $godown_list = array();
-        $godown_list = $obj->getTableRecords($GLOBALS['godown_table'], '', '');
-        $factory_list = array();
-        $factory_list = $obj->getTableRecords($GLOBALS['factory_table'], '', '');
-        $size_list = array();
-        $size_list = $obj->getTableRecords($GLOBALS['size_table'], '', '');
-        $gsm_list = array();
-        $gsm_list = $obj->getTableRecords($GLOBALS['gsm_table'], '', '');
-        $bf_list = array();
-        $bf_list = $obj->getTableRecords($GLOBALS['bf_table'], '', '');
-
-        $size_unique_id = ""; $gsm_unique_id = ""; $bf_unique_id = ""; 
-        $size_not_available = 0; $gsm_not_available = 0; $bf_not_available = 0;
+       
+        $size_unique_id = ""; $gsm_unique_id = ""; $bf_unique_id = ""; $new_size = 0; $new_gsm = 0; $new_bf = 0;
         if(!empty($size_id)) {
             $size_unique_id = $obj->getTableColumnValue($GLOBALS['size_table'], 'size_id', $size_id, 'id');
             if(empty($size_unique_id)) {
@@ -1344,8 +1333,9 @@
                 $size_id = $obj->getTableColumnValue($GLOBALS['size_table'], 'id', $size_unique_id, 'size_id');
             }
             else {
-                $size_not_available = 1;
                 $size_id = $obj->encode_decode('encrypt', $size_id);
+                $size_id = $obj->CreateCustomMaterial('size', $size_id);
+                $new_size = 1;
             }
         }
         if(!empty($gsm_id)) {
@@ -1357,8 +1347,9 @@
                 $gsm_id = $obj->getTableColumnValue($GLOBALS['gsm_table'], 'id', $gsm_unique_id, 'gsm_id');
             }
             else {
-                $gsm_not_available = 1;
                 $gsm_id = $obj->encode_decode('encrypt', $gsm_id);
+                $gsm_id = $obj->CreateCustomMaterial('gsm', $gsm_id);
+                $new_gsm = 1;
             }
         }
         if(!empty($bf_id)) {
@@ -1370,10 +1361,22 @@
                 $bf_id = $obj->getTableColumnValue($GLOBALS['bf_table'], 'id', $bf_unique_id, 'bf_id');
             }
             else {
-                $bf_not_available = 1;
                 $bf_id = $obj->encode_decode('encrypt', $bf_id);
+                $bf_id = $obj->CreateCustomMaterial('bf', $bf_id);
+                $new_bf = 1;
             }
         }
+        $godown_list = array();
+        $godown_list = $obj->getTableRecords($GLOBALS['godown_table'], '', '');
+        $factory_list = array();
+        $factory_list = $obj->getTableRecords($GLOBALS['factory_table'], '', '');
+        $size_list = array();
+        $size_list = $obj->getTableRecords($GLOBALS['size_table'], '', '');
+        $gsm_list = array();
+        $gsm_list = $obj->getTableRecords($GLOBALS['gsm_table'], '', '');
+        $bf_list = array();
+        $bf_list = $obj->getTableRecords($GLOBALS['bf_table'], '', '');
+
         ?>
         <tr class="product_row py-2" id="product_row<?php if(!empty($product_row_index)) { echo $product_row_index; } ?>">
             <th class="sno text-center px-2 py-2"><?php if(!empty($product_row_index)) { echo $product_row_index; } ?></th>
@@ -1452,15 +1455,6 @@
                                     <option value="">Select Size</option>
                                     <?php
                                 }
-                                if($size_not_available == '1' && !empty($size_id)) {
-                                    ?>
-                                    <option value="<?php echo $size_id; ?>" selected>
-                                        <?php
-                                            echo $obj->encode_decode('decrypt', $size_id)." (C)";
-                                        ?>
-                                    </option>
-                                    <?php
-                                }
                                 if(!empty($size_list)) {
                                     foreach($size_list as $data) {
                                         if(!empty($data['size_id']) && $data['size_id'] != $GLOBALS['null_value']) {
@@ -1492,15 +1486,6 @@
                                     <option value="">Select GSM</option>
                                     <?php
                                 }
-                                if($gsm_not_available == '1' && !empty($gsm_id)) {
-                                    ?>
-                                    <option value="<?php echo $gsm_id; ?>" selected>
-                                        <?php
-                                            echo $obj->encode_decode('decrypt', $gsm_id)." (C)";
-                                        ?>
-                                    </option>
-                                    <?php
-                                }
                                 if(!empty($gsm_list)) {
                                     foreach($gsm_list as $data) {
                                         if(!empty($data['gsm_id']) && $data['gsm_id'] != $GLOBALS['null_value']) {
@@ -1530,15 +1515,6 @@
                                 if(empty($bf_id)) {
                                     ?>
                                     <option value="">Select BF</option>
-                                    <?php
-                                }
-                                if($bf_not_available == '1' && !empty($bf_id)) {
-                                    ?>
-                                    <option value="<?php echo $bf_id; ?>" selected>
-                                        <?php
-                                            echo $obj->encode_decode('decrypt', $bf_id)." (C)";
-                                        ?>
-                                    </option>
                                     <?php
                                 }
                                 if(!empty($bf_list)) {
@@ -1578,6 +1554,19 @@
                 }
             </script>
         </tr>
+        <script type="text/javascript">
+            jQuery(document).ready(function() {
+                <?php if($new_size == '1') { ?>
+                    ChangeCustomMaterial('size');
+                <?php } ?>
+                <?php if($new_gsm == '1') { ?>
+                    ChangeCustomMaterial('gsm');
+                <?php } ?>
+                <?php if($new_bf == '1') { ?>
+                    ChangeCustomMaterial('bf');
+                <?php } ?>
+            });
+        </script>
         <?php
     }
     if(isset($_REQUEST['change_supplier_list'])) {
@@ -1599,6 +1588,52 @@
                         <?php
                             if(!empty($data['name_mobile_location']) && $data['name_mobile_location'] != $GLOBALS['null_value']) {
                                 echo $obj->encode_decode('decrypt', $data['name_mobile_location']);
+                            }
+                        ?>
+                    </option>
+                    <?php
+                }
+            }
+        }
+    }
+    if(isset($_REQUEST['change_custom_material'])) {
+        $material = trim($_REQUEST['change_custom_material']);
+
+        $change_material_id = "";
+        if(isset($_REQUEST['change_material_id'])) {
+            $change_material_id = trim($_REQUEST['change_material_id']);
+        }
+        $table = ""; $material_id = ""; $material_name = "";
+        if($material == 'size') {
+            $table = $GLOBALS['size_table'];
+            $material_id = "size_id";
+            $material_name = "size_name";
+        }
+        else if($material == 'gsm') {
+            $table = $GLOBALS['gsm_table'];
+            $material_id = "gsm_id";
+            $material_name = "gsm_name";
+        }
+        else if($material == 'bf') {
+            $table = $GLOBALS['bf_table'];
+            $material_id = "bf_id";
+            $material_name = "bf_name";
+        }
+        $material_list = array();
+        $material_list = $obj->getTableRecords($table, '', '');
+        if(empty($change_material_id)) {
+            ?>
+            <option value="">Select <?php echo $material; ?></option>
+            <?php
+        }
+        if(!empty($material_list)) {
+            foreach($material_list as $data) {
+                if(!empty($data[$material_id]) && $data[$material_id] != $GLOBALS['null_value']) {
+                    ?>
+                    <option value="<?php echo $data[$material_id]; ?>" <?php if(!empty($change_material_id) && $change_material_id == $data[$material_id]) { ?>selected<?php } ?>>
+                        <?php
+                            if(!empty($data[$material_name]) && $data[$material_name] != $GLOBALS['null_value']) {
+                                echo $obj->encode_decode('decrypt', $data[$material_name]);
                             }
                         ?>
                     </option>

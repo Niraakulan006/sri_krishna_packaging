@@ -36,6 +36,7 @@
 	$GLOBALS['inward_material_table'] = $GLOBALS['table_prefix']."inward_material";
 	$GLOBALS['material_transfer_table'] = $GLOBALS['table_prefix']."material_transfer";
 	$GLOBALS['consumption_entry_table'] = $GLOBALS['table_prefix']."consumption_entry";
+	$GLOBALS['stock_request_table'] = $GLOBALS['table_prefix']."stock_request";
 	
 	// Modules
 	$GLOBALS['size_module'] = "Size";
@@ -48,6 +49,7 @@
 	$GLOBALS['inward_material_module'] = "Inward Material";
 	$GLOBALS['material_transfer_module'] = "Material Transfer";
 	$GLOBALS['consumption_entry_module'] = "Consumption Entry";
+	$GLOBALS['stock_request_module'] = "Stock Request";
 
 	$access_pages_list = array();
 	$access_pages_list[] = $GLOBALS['size_module'];
@@ -59,6 +61,7 @@
 	$access_pages_list[] = $GLOBALS['inward_material_module'];
 	$access_pages_list[] = $GLOBALS['material_transfer_module'];
 	$access_pages_list[] = $GLOBALS['consumption_entry_module'];
+	$access_pages_list[] = $GLOBALS['stock_request_module'];
 
 	$GLOBALS['user_access_pages'] = $access_pages_list;
 
