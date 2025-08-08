@@ -163,6 +163,9 @@
 </script>
 <script>
     function initializeDataTableIfNeeded(tableId) {
+        if (jQuery.fn.DataTable.isDataTable('#' + tableId)) {
+            jQuery('#' + tableId).DataTable().destroy();
+        }
         if (!jQuery.fn.DataTable.isDataTable('#' + tableId)) {
             jQuery('#' + tableId).DataTable({
                 "processing": true,
@@ -176,9 +179,6 @@
                     "url": "material_transfer_changes.php",
                     "type": "POST",
                     "data": function(d) {
-                        if(jQuery('input[name="show_cancel_'+tableId+'"]').length > 0) {
-                            d.cancel = jQuery('input[name="show_cancel_'+tableId+'"]').val();
-                        }
                         if(jQuery('#search_text').length > 0) {
                             d.search_text = jQuery('#search_text').val();
                         }
@@ -193,6 +193,9 @@
                         }
                         if(jQuery('select[name="filter_godown_id"]').length > 0) {
                             d.filter_godown_id = jQuery('select[name="filter_godown_id"]').val();
+                        }
+                        if(jQuery('input[name="show_cancel_'+tableId+'"]').length > 0) {
+                            d.cancel = jQuery('input[name="show_cancel_'+tableId+'"]').val();
                         }
                     }
                 },
@@ -210,7 +213,7 @@
     }
 
     // Initial load for active tab
-    $(document).ready(function() {
+    jQuery(document).ready(function() {
         var initialTableId = jQuery('.tab-pane.active .datatable').attr('id');
         initializeDataTableIfNeeded(initialTableId);
 

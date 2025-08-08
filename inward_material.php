@@ -129,6 +129,9 @@
 </script>
 <script>
     function initializeDataTableIfNeeded(tableId) {
+        if (jQuery.fn.DataTable.isDataTable('#' + tableId)) {
+            jQuery('#' + tableId).DataTable().destroy();
+        }
         if (!jQuery.fn.DataTable.isDataTable('#' + tableId)) {
             jQuery('#' + tableId).DataTable({
                 "processing": true,
