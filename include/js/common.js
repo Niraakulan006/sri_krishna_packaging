@@ -696,3 +696,24 @@ function SnoCalcPlus() {
         }
     }
 }
+function ViewBillContent(table, bill_id) {
+	if (jQuery('#ViewBillModal').length > 0) {
+		jQuery('#ViewBillModal').find('.modal-body').html('');
+	}
+	var post_url = "view_bill_changes.php?view_table="+table+"&view_bill_id="+bill_id;
+	jQuery.ajax({
+		url: post_url, success: function (result) {
+			result = jQuery.trim(result);
+			result = result.split("$$$");
+			if (jQuery('#ViewBillModal').length > 0) {
+				jQuery('#ViewBillModal').find('.modal-body').html(result[0]);
+			}
+			if (jQuery('#ViewBillModal').length > 0) {
+				jQuery('#ViewBillModal').find('.modal-title').html(result[1]);
+			}
+			if (jQuery('.view_bill_modal_button').length > 0) {
+				jQuery('.view_bill_modal_button').trigger('click');
+			}
+		}
+	});
+}

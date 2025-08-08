@@ -227,7 +227,7 @@ function TransferRowCheck(obj) {
     }
     if(jQuery(obj).closest('tr.product_row').find('input[name="quantity[]"]').length > 0) {
         selected_quantity = jQuery(obj).closest('tr.product_row').find('input[name="quantity[]"]').val().trim();
-        if(number_regex.test(selected_quantity) == false) {
+        if(selected_quantity != "" && number_regex.test(selected_quantity) == false) {
             if(jQuery(obj).closest('tr.product_row').find('input[name="quantity[]"]').parent().find('span.infos').length == 0) {
                 jQuery(obj).closest('tr.product_row').find('input[name="quantity[]"]').after('<span class="infos text-danger"><i class="fa fa-exclamation-circle"></i>Enter Valid Qty</span>');
             }

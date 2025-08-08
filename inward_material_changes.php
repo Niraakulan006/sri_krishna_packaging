@@ -1187,7 +1187,7 @@
             if(!empty($val['total_quantity']) && $val['total_quantity'] != $GLOBALS['null_value']){
                 $total_quantity = $val['total_quantity'];
             }
-            $material_view = "";
+            $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['inward_material_table'].'\''.', '.'\''.$val['inward_material_id'].'\''.');"><i class="fa fa-eye"></i></a>';
             $action = ""; $edit_option = ""; $delete_option = ""; $print_option = ""; $a5_print_option = "";
             $access_error = "";
             if(!empty($login_staff_id)) {
