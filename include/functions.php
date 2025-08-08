@@ -4,6 +4,7 @@
 	include("stock_functions.php");
 	
 	class billing extends Basic_Functions {
+		
 		// Basic Functions
 		public function getProjectTitle() {
 			$string = parent::getProjectTitle();
@@ -230,6 +231,13 @@
 			$stock_update = 0;
 			$stock_update = $stock_obj->DeletePrevList($bill_id, $stock_unique_ids);
 			return $stock_update;
+		}
+		public function GetCurrentStockByMaterial($material, $godown_id, $factory_id) {
+			$stock_obj = "";
+			$stock_obj = $this->stock_function_object();
+			$result = "";
+			$result = $stock_obj->GetCurrentStockByMaterial($material, $godown_id, $factory_id);
+			return $result;
 		}
 	}
 ?>

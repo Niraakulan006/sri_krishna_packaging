@@ -1,5 +1,5 @@
 <?php 
-    class Stock_functions extends Creation_functions{
+    class Stock_functions extends Creation_functions {
         public function getStockUniqueID($bill_unique_id, $factory_id, $godown_id, $size_id, $gsm_id, $bf_id) {
             $where = ""; $select_query = ""; $list = array(); $unique_id = "";
             if(!empty($bill_unique_id)) {
@@ -445,5 +445,40 @@
                 }
             }
         }
+
+        public function GetCurrentStockByMaterial($material, $godown_id, $factory_id) {
+			$select_query = ""; $list = array(); $table_name = ""; $material_list = array();
+			if(!empty($material)) {
+				$table_name = $GLOBALS[$material.'_table'];
+			}
+			$select_query = "SELECT * FROM ".$table_name." WHERE deleted = '0'";
+			$list = $this->getQueryRecords('', $select_query);
+			if(!empty($list)) {
+				foreach($list as $data) {
+					if(!empty($data[$material.'_id']) && $data[$material.'_id'] != $GLOBALS['null_value']) {
+						$field_id = "";
+						$field_id = $data[$material.'_id'];
+						$inward_quantity = 0; $outward_quantity = 0; $current_stock = 0;
+						if($material == 'size') {
+							$inward_quantity = $this->getInwardUnitQty('', '', '', '', $factory_id, $godown_id, $field_id, '', '');
+							$outward_quantity = $this->getOutwardUnitQty('', '', '', '', $factory_id, $godown_id, $field_id, '', '');
+						}
+						else if($material == 'gsm') {
+							$inward_quantity = $this->getInwardUnitQty('', '', '', '', $factory_id, $godown_id, '', $field_id, '');
+							$outward_quantity = $this->getOutwardUnitQty('', '', '', '', $factory_id, $godown_id, '', $field_id, '');
+						}
+						else if($material == 'bf') {
+							$inward_quantity = $this->getInwardUnitQty('', '', '', '', $factory_id, $godown_id, '', '', $field_id);
+							$outward_quantity = $this->getOutwardUnitQty('', '', '', '', $factory_id, $godown_id, '', '', $field_id);
+						}
+						$current_stock = $inward_quantity - $outward_quantity;
+						if($current_stock > 0) {
+							$material_list[] = $data;
+						}
+					}
+				}
+			}
+			return $material_list;
+		}
     }
 ?>

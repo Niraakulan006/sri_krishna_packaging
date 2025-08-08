@@ -688,3 +688,11 @@ function ChangeSupplierIDs(supplier_id) {
         }
     });
 }
+function SnoCalcPlus() {
+    var snoElements = document.getElementsByClassName('sno');
+    if (snoElements.length > 0) {
+        for (var i = 0; i < snoElements.length; i++) {
+            snoElements[i].innerHTML = i + 1;
+        }
+    }
+}

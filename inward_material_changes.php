@@ -368,7 +368,7 @@
                 </div>
                 <div class="col-lg-2 col-md-4 col-6 px-lg-1 py-2 text-end ms-auto">
                     <div class="form-group">
-                        <button class="btn btn-success py-2" style="font-size:11px; width:120px;" type="button" onclick="Javascript:AddProductRow('');">Add To Table</button>
+                        <button class="btn btn-success py-2 add_product_button" style="font-size:11px; width:120px;" type="button" onclick="Javascript:AddProductRow('');">Add To Table</button>
                     </div>
                 </div>
             </div>
@@ -417,7 +417,7 @@
                                                                 ?>
                                                                 <div class="form-group">
                                                                     <div class="form-label-group in-border" <?php if($godown_type == '1') { ?>style="pointer-events:none;"<?php } ?>>
-                                                                        <select name="godown_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if($godown_type == '1') { ?>tabindex="1"<?php } ?>>
+                                                                        <select name="godown_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if($godown_type == '1') { ?>tabindex="1"<?php } ?> onchange="Javascript:InwardRowCheck(this);">
                                                                             <?php
                                                                                 if(empty($godown_ids[$i])) {
                                                                                     ?>
@@ -450,7 +450,7 @@
                                                                 ?>
                                                                 <div class="form-group">
                                                                     <div class="form-label-group in-border" style="pointer-events:none;">
-                                                                        <select name="factory_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" tabindex="1">
+                                                                        <select name="factory_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" tabindex="1" onchange="Javascript:InwardRowCheck(this);">
                                                                             <?php
                                                                                 if(!empty($factory_list)) {
                                                                                     foreach($factory_list as $data) {
@@ -479,7 +479,7 @@
                                                     <th class="size_element text-center px-2 py-2">
                                                         <div class="form-group">
                                                             <div class="form-label-group in-border">
-                                                                <select name="size_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                                                                <select name="size_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:InwardRowCheck(this);">
                                                                     <?php
                                                                         if(empty($size_ids[$i])) {
                                                                             ?>
@@ -510,7 +510,7 @@
                                                     <th class="gsm_element text-center px-2 py-2">
                                                         <div class="form-group">
                                                             <div class="form-label-group in-border">
-                                                                <select name="gsm_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                                                                <select name="gsm_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:InwardRowCheck(this);">
                                                                     <?php
                                                                         if(empty($gsm_ids[$i])) {
                                                                             ?>
@@ -541,7 +541,7 @@
                                                     <th class="bf_element text-center px-2 py-2">
                                                         <div class="form-group">
                                                             <div class="form-label-group in-border">
-                                                                <select name="bf_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                                                                <select name="bf_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:InwardRowCheck(this);">
                                                                     <?php   
                                                                         if(empty($bf_ids[$i])) {
                                                                             ?>
@@ -572,7 +572,7 @@
                                                     <th class="quantity_element text-center px-2 py-2">
                                                         <div class="form-group">
                                                             <div class="form-label-group in-border">
-                                                                <input type="text" name="quantity[]" class="form-control shadow-none" style="width:90px;" onfocus="Javascript:KeyboardControls(this,'number',8,'');" value="<?php if(!empty($quantity[$i])) { echo $quantity[$i]; } ?>">
+                                                                <input type="text" name="quantity[]" class="form-control shadow-none" style="width:90px;" onfocus="Javascript:KeyboardControls(this,'number',8,'');" value="<?php if(!empty($quantity[$i])) { echo $quantity[$i]; } ?>" onkeyup="Javascript:InwardRowCheck(this);">
                                                             </div>
                                                         </div> 
                                                     </th>
@@ -1286,6 +1286,10 @@
         if(isset($_REQUEST['selected_godown_id'])) {
             $godown_id = trim($_REQUEST['selected_godown_id']);
         }
+        $factory_id = "";
+        if(isset($_REQUEST['selected_factory_id'])) {
+            $factory_id = trim($_REQUEST['selected_factory_id']);
+        }
         $size_id = "";
         if(isset($_REQUEST['selected_size_id'])) {
             $size_id = trim($_REQUEST['selected_size_id']);
@@ -1363,7 +1367,7 @@
                         ?>
                         <div class="form-group">
                             <div class="form-label-group in-border" <?php if($godown_type == '1') { ?>style="pointer-events:none;"<?php } ?>>
-                                <select name="godown_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if($godown_type == '1') { ?>tabindex="1"<?php } ?>>
+                                <select name="godown_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if($godown_type == '1') { ?>tabindex="1"<?php } ?> onchange="Javascript:InwardRowCheck(this);">
                                     <?php
                                         if(empty($godown_id)) {
                                             ?>
@@ -1396,7 +1400,7 @@
                         ?>
                         <div class="form-group">
                             <div class="form-label-group in-border" style="pointer-events:none;">
-                                <select name="factory_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" tabindex="1">
+                                <select name="factory_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" tabindex="1" onchange="Javascript:InwardRowCheck(this);">
                                     <?php
                                         if(!empty($factory_list)) {
                                             foreach($factory_list as $data) {
@@ -1425,7 +1429,7 @@
             <th class="size_element text-center px-2 py-2">
                 <div class="form-group">
                     <div class="form-label-group in-border">
-                        <select name="size_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                        <select name="size_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:InwardRowCheck(this);">
                             <?php
                                 if(empty($size_id)) {
                                     ?>
@@ -1465,7 +1469,7 @@
             <th class="gsm_element text-center px-2 py-2">
                 <div class="form-group">
                     <div class="form-label-group in-border">
-                        <select name="gsm_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                        <select name="gsm_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:InwardRowCheck(this);">
                             <?php
                                 if(empty($gsm_id)) {
                                     ?>
@@ -1505,7 +1509,7 @@
             <th class="bf_element text-center px-2 py-2">
                 <div class="form-group">
                     <div class="form-label-group in-border">
-                        <select name="bf_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                        <select name="bf_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:InwardRowCheck(this);">
                             <?php   
                                 if(empty($bf_id)) {
                                     ?>
@@ -1545,7 +1549,7 @@
             <th class="quantity_element text-center px-2 py-2">
                 <div class="form-group">
                     <div class="form-label-group in-border">
-                        <input type="text" name="quantity[]" class="form-control shadow-none" style="width:90px;" onfocus="Javascript:KeyboardControls(this,'number',8,'');" value="<?php if(!empty($quantity)) { echo $quantity; } ?>">
+                        <input type="text" name="quantity[]" class="form-control shadow-none" style="width:90px;" onfocus="Javascript:KeyboardControls(this,'number',8,'');" value="<?php if(!empty($quantity)) { echo $quantity; } ?>" onkeyup="Javascript:InwardRowCheck(this);">
                     </div>
                 </div> 
             </th>
