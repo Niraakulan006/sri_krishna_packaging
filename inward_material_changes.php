@@ -408,6 +408,18 @@
                                     else { 
                                         if(!empty($size_ids)) {
                                             for($i=0; $i < count($size_ids); $i++) {
+                                                $inward_quantity = 0; $outward_quantity = 0; $disable = 0;
+                                                if($location_type == '1') {
+                                                    $inward_quantity = $obj->getInwardUnitQty('', '', $show_inward_material_id, '', '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                                                    $outward_quantity = $obj->getOutwardUnitQty('', '', $show_inward_material_id, '', '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                                                }
+                                                else if($location_type == '2') {
+                                                    $inward_quantity = $obj->getInwardUnitQty('', '', $show_inward_material_id, '', $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                                                    $outward_quantity = $obj->getOutwardUnitQty('', '', $show_inward_material_id, '', $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                                                }
+                                                if($inward_quantity < $outward_quantity) {
+                                                    $disable = 1;
+                                                }
                                                 ?>
                                                 <tr class="product_row py-2" id="product_row<?php echo $i+1; ?>">
                                                     <th class="sno text-center px-2 py-2"><?php echo $i+1; ?></th>
@@ -416,8 +428,8 @@
                                                             if($location_type == '1') {
                                                                 ?>
                                                                 <div class="form-group">
-                                                                    <div class="form-label-group in-border" <?php if($godown_type == '1') { ?>style="pointer-events:none;"<?php } ?>>
-                                                                        <select name="godown_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if($godown_type == '1') { ?>tabindex="1"<?php } ?> onchange="Javascript:InwardRowCheck(this);">
+                                                                    <div class="form-label-group in-border" <?php if($godown_type == '1' || $disable == '1') { ?>style="pointer-events:none;"<?php } ?>>
+                                                                        <select name="godown_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if($godown_type == '1' || $disable == '1') { ?>tabindex="1"<?php } ?> onchange="Javascript:InwardRowCheck(this);">
                                                                             <?php
                                                                                 if(empty($godown_ids[$i])) {
                                                                                     ?>
@@ -478,8 +490,8 @@
                                                     </th>
                                                     <th class="size_element text-center px-2 py-2">
                                                         <div class="form-group">
-                                                            <div class="form-label-group in-border">
-                                                                <select name="size_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:InwardRowCheck(this);">
+                                                            <div class="form-label-group in-border" <?php if($disable == '1') { ?>style="pointer-events:none;"<?php } ?>>
+                                                                <select name="size_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:InwardRowCheck(this);" <?php if($disable == '1') { ?>tabindex="1"<?php } ?>>
                                                                     <?php
                                                                         if(empty($size_ids[$i])) {
                                                                             ?>
@@ -509,8 +521,8 @@
                                                     </th>
                                                     <th class="gsm_element text-center px-2 py-2">
                                                         <div class="form-group">
-                                                            <div class="form-label-group in-border">
-                                                                <select name="gsm_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:InwardRowCheck(this);">
+                                                            <div class="form-label-group in-border" <?php if($disable == '1') { ?>style="pointer-events:none;"<?php } ?>>
+                                                                <select name="gsm_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:InwardRowCheck(this);" <?php if($disable == '1') { ?>tabindex="1"<?php } ?>>
                                                                     <?php
                                                                         if(empty($gsm_ids[$i])) {
                                                                             ?>
@@ -540,8 +552,8 @@
                                                     </th>
                                                     <th class="bf_element text-center px-2 py-2">
                                                         <div class="form-group">
-                                                            <div class="form-label-group in-border">
-                                                                <select name="bf_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:InwardRowCheck(this);">
+                                                            <div class="form-label-group in-border" <?php if($disable == '1') { ?>style="pointer-events:none;"<?php } ?>>
+                                                                <select name="bf_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:InwardRowCheck(this);" <?php if($disable == '1') { ?>tabindex="1"<?php } ?>>
                                                                     <?php   
                                                                         if(empty($bf_ids[$i])) {
                                                                             ?>
@@ -578,16 +590,7 @@
                                                     </th>
                                                     <th class="delete_element text-center px-2 py-2">
                                                         <?php
-                                                            $inward_quantity = 0; $outward_quantity = 0;
-                                                            if($location_type == '1') {
-                                                                $inward_quantity = $obj->getInwardUnitQty('', '', $show_inward_material_id, '', '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
-                                                                $outward_quantity = $obj->getOutwardUnitQty('', '', $show_inward_material_id, '', '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
-                                                            }
-                                                            else if($location_type == '2') {
-                                                                $inward_quantity = $obj->getInwardUnitQty('', '', $show_inward_material_id, '', $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
-                                                                $outward_quantity = $obj->getOutwardUnitQty('', '', $show_inward_material_id, '', $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
-                                                            }
-                                                            if($inward_quantity >= $outward_quantity) {
+                                                            if(empty($disable)) {
                                                                 ?>
                                                                 <a class="pe-2" onclick="Javascript:DeleteProductRow('product_row', '<?php echo $i+1; ?>');" style="cursor:pointer;"><i class="fa fa-trash text-danger"></i></a>
                                                                 <?php

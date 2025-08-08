@@ -45,7 +45,7 @@
 	$GLOBALS['godown_module'] = "Godown";
 	$GLOBALS['supplier_module'] = "Supplier";
 	$GLOBALS['inward_material_module'] = "Inward Material";
-	$GLOBALS['material_transfer_table'] = "Material Transfer";
+	$GLOBALS['material_transfer_module'] = "Material Transfer";
 
 	$access_pages_list = array();
 	$access_pages_list[] = $GLOBALS['size_module'];
@@ -55,6 +55,7 @@
 	$access_pages_list[] = $GLOBALS['godown_module'];
 	$access_pages_list[] = $GLOBALS['supplier_module'];
 	$access_pages_list[] = $GLOBALS['inward_material_module'];
+	$access_pages_list[] = $GLOBALS['material_transfer_module'];
 
 	$GLOBALS['user_access_pages'] = $access_pages_list;
 

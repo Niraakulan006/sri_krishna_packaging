@@ -199,7 +199,7 @@
                 "columns": [
                     { "data": "sno", "className": "text-center" },
                     { "data": "bill_date", "className": "text-center" },
-                    { "data": "bill_number", "className": "text-center" },
+                    { "data": "material_transfer_number", "className": "text-center" },
                     { "data": "godown_name", "className": "text-center" },
                     { "data": "total_quantity", "className": "text-center" },
                     { "data": "view", "className": "text-center" },
