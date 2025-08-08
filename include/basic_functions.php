@@ -635,6 +635,8 @@
             $prefix = "";
            	if(!empty($table) && $table == $GLOBALS['inward_material_table']) {
                 $prefix = 'INW';
+            }else if(!empty($table) && $table == $GLOBALS['consumption_entry_table']) {
+                $prefix = 'CE';
             }
             $current_year = date("y"); $next_year = date("y")+1;
             
@@ -663,6 +665,10 @@
                 if(!empty($prefix)){
 					if(!empty($table) && $table == $GLOBALS['inward_material_table']) {
                         $last_number = str_replace("INW","",$last_number);
+                        $last_number = trim($last_number);
+                    }
+					else if(!empty($table) && $table == $GLOBALS['consumption_entry_table']) {
+                        $last_number = str_replace("CE","",$last_number);
                         $last_number = trim($last_number);
                     }
                 }

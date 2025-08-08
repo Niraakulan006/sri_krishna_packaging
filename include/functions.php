@@ -176,6 +176,7 @@
 			return $result;
 		}
 
+
 		// Stock Functions
 		public function stock_function_object() {
 			$stock_obj = "";		
@@ -230,6 +231,22 @@
 			$stock_update = 0;
 			$stock_update = $stock_obj->DeletePrevList($bill_id, $stock_unique_ids);
 			return $stock_update;
+		}
+
+		public function getCurrentStock($table, $factory_id, $size_id, $gsm_id,$bf_id) {
+			$stock_obj = "";
+			$stock_obj = $this->stock_function_object();
+			$stock_update = "";
+			$stock_update = $stock_obj->getCurrentStock($table, $factory_id, $size_id, $gsm_id,$bf_id);
+			return $stock_update;
+		}
+
+		public function getConsumptionEntryList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $order_column, $order_direction) {
+			$create_obj = "";
+			$create_obj = $this->creation_function_object();
+			$result = "";
+			$result = $create_obj->getConsumptionEntryList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $order_column, $order_direction);
+			return $result;
 		}
 	}
 ?>
