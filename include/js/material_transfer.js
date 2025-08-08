@@ -19,6 +19,10 @@ function AddTransferRow() {
                     product_count = jQuery('input[name="product_count"]').val().trim();
                     product_count = parseInt(product_count) + 1;
                 }
+                var edit_id = "";
+                if(jQuery('input[name="edit_id"]').length > 0) {
+                    edit_id = jQuery('input[name="edit_id"]').val().trim();
+                }
                 var factory_id = "";
                 if(jQuery('select[name="factory_id"]').is(":visible")) {
                     if(jQuery('select[name="factory_id"]').length > 0) {
@@ -127,7 +131,7 @@ function AddTransferRow() {
                 }
                 if(parseInt(all_errors_check) == 1) {
                     if(error == "") {
-                        var post_url = "material_transfer_changes.php?product_row_index="+product_count+"&godown_id="+godown_id+"&factory_id="+factory_id+"&selected_size_id="+selected_size_id+"&selected_gsm_id="+selected_gsm_id+"&selected_bf_id="+selected_bf_id+"&selected_quantity="+selected_quantity;
+                        var post_url = "material_transfer_changes.php?product_row_index="+product_count+"&material_edit_id="+edit_id+"&godown_id="+godown_id+"&factory_id="+factory_id+"&selected_size_id="+selected_size_id+"&selected_gsm_id="+selected_gsm_id+"&selected_bf_id="+selected_bf_id+"&selected_quantity="+selected_quantity;
                         jQuery.ajax({
                             url: post_url, success: function (result) {
                                 if (jQuery('.product_table tbody').find('tr.product_row').length > 0) {
@@ -221,12 +225,11 @@ function TransferRowCheck(obj) {
     if(jQuery(obj).closest('tr.product_row').find('span.infos').length > 0) {
         jQuery(obj).closest('tr.product_row').find('span.infos').remove();
     }
-    if(jQuery(obj).find('input[name="quantity[]"]').length > 0) {
-        selected_quantity = jQuery(obj).find('input[name="quantity[]"]').val().trim();
-        if(selected_quantity == "" || selected_quantity == 0 || selected_quantity == null || typeof selected_quantity == "undefined" || number_regex.test(selected_quantity) == false) {
-            all_errors_check = 0;
-            if(jQuery(obj).find('input[name="quantity[]"]').parent().find('span.infos').length == 0) {
-                jQuery(obj).find('input[name="quantity[]"]').append('<span class="infos text-danger"><i class="fa fa-exclamation-circle"></i>Enter Valid Quantity</span>');
+    if(jQuery(obj).closest('tr.product_row').find('input[name="quantity[]"]').length > 0) {
+        selected_quantity = jQuery(obj).closest('tr.product_row').find('input[name="quantity[]"]').val().trim();
+        if(number_regex.test(selected_quantity) == false) {
+            if(jQuery(obj).closest('tr.product_row').find('input[name="quantity[]"]').parent().find('span.infos').length == 0) {
+                jQuery(obj).closest('tr.product_row').find('input[name="quantity[]"]').after('<span class="infos text-danger"><i class="fa fa-exclamation-circle"></i>Enter Valid Qty</span>');
             }
         }
     }

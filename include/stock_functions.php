@@ -446,7 +446,8 @@
             }
         }
 
-        public function GetCurrentStockByMaterial($material, $godown_id, $factory_id) {
+        public function GetCurrentStockByMaterial($material, $bill_id, $godown_id, $factory_id) {
+            /* Use any one factory_id or godown_id */
 			$select_query = ""; $list = array(); $table_name = ""; $material_list = array();
 			if(!empty($material)) {
 				$table_name = $GLOBALS[$material.'_table'];
@@ -460,16 +461,16 @@
 						$field_id = $data[$material.'_id'];
 						$inward_quantity = 0; $outward_quantity = 0; $current_stock = 0;
 						if($material == 'size') {
-							$inward_quantity = $this->getInwardUnitQty('', '', '', '', $factory_id, $godown_id, $field_id, '', '');
-							$outward_quantity = $this->getOutwardUnitQty('', '', '', '', $factory_id, $godown_id, $field_id, '', '');
+							$inward_quantity = $this->getInwardUnitQty('', '', $bill_id, '', $factory_id, $godown_id, $field_id, '', '');
+							$outward_quantity = $this->getOutwardUnitQty('', '', $bill_id, '', $factory_id, $godown_id, $field_id, '', '');
 						}
 						else if($material == 'gsm') {
-							$inward_quantity = $this->getInwardUnitQty('', '', '', '', $factory_id, $godown_id, '', $field_id, '');
-							$outward_quantity = $this->getOutwardUnitQty('', '', '', '', $factory_id, $godown_id, '', $field_id, '');
+							$inward_quantity = $this->getInwardUnitQty('', '', $bill_id, '', $factory_id, $godown_id, '', $field_id, '');
+							$outward_quantity = $this->getOutwardUnitQty('', '', $bill_id, '', $factory_id, $godown_id, '', $field_id, '');
 						}
 						else if($material == 'bf') {
-							$inward_quantity = $this->getInwardUnitQty('', '', '', '', $factory_id, $godown_id, '', '', $field_id);
-							$outward_quantity = $this->getOutwardUnitQty('', '', '', '', $factory_id, $godown_id, '', '', $field_id);
+							$inward_quantity = $this->getInwardUnitQty('', '', $bill_id, '', $factory_id, $godown_id, '', '', $field_id);
+							$outward_quantity = $this->getOutwardUnitQty('', '', $bill_id, '', $factory_id, $godown_id, '', '', $field_id);
 						}
 						$current_stock = $inward_quantity - $outward_quantity;
 						if($current_stock > 0) {

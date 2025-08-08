@@ -309,6 +309,10 @@
     if(isset($_REQUEST['product_row_index'])) {
         $product_row_index = trim($_REQUEST['product_row_index']);
 
+        $material_transfer_id = "";
+        if(isset($_REQUEST['material_edit_id'])) {
+            $material_transfer_id = trim($_REQUEST['material_edit_id']);
+        }
         $godown_id = "";
         if(isset($_REQUEST['godown_id'])) {
             $godown_id = trim($_REQUEST['godown_id']);
@@ -334,11 +338,11 @@
             $quantity = trim($_REQUEST['selected_quantity']);
         }
         $size_list = array();
-        $size_list = $obj->GetCurrentStockByMaterial('size', '', $factory_id);
+        $size_list = $obj->GetCurrentStockByMaterial('size', $material_transfer_id, '', $factory_id);
         $gsm_list = array();
-        $gsm_list = $obj->GetCurrentStockByMaterial('gsm', '', $factory_id);
+        $gsm_list = $obj->GetCurrentStockByMaterial('gsm', $material_transfer_id, '', $factory_id);
         $bf_list = array();
-        $bf_list = $obj->GetCurrentStockByMaterial('bf', '', $factory_id);
+        $bf_list = $obj->GetCurrentStockByMaterial('bf', $material_transfer_id, '', $factory_id);
 
         ?>
         <tr class="product_row py-2" id="product_row<?php if(!empty($product_row_index)) { echo $product_row_index; } ?>">

@@ -404,12 +404,11 @@ function InwardRowCheck(obj) {
     if(jQuery(obj).closest('tr.product_row').find('span.infos').length > 0) {
         jQuery(obj).closest('tr.product_row').find('span.infos').remove();
     }
-    if(jQuery(obj).find('input[name="quantity[]"]').length > 0) {
-        selected_quantity = jQuery(obj).find('input[name="quantity[]"]').val().trim();
-        if(selected_quantity == "" || selected_quantity == 0 || selected_quantity == null || typeof selected_quantity == "undefined" || number_regex.test(selected_quantity) == false) {
-            all_errors_check = 0;
-            if(jQuery(obj).find('input[name="quantity[]"]').parent().find('span.infos').length == 0) {
-                jQuery(obj).find('input[name="quantity[]"]').append('<span class="infos text-danger"><i class="fa fa-exclamation-circle"></i>Enter Valid Quantity</span>');
+    if(jQuery(obj).closest('tr.product_row').find('input[name="quantity[]"]').length > 0) {
+        selected_quantity = jQuery(obj).closest('tr.product_row').find('input[name="quantity[]"]').val().trim();
+        if(number_regex.test(selected_quantity) == false) {
+            if(jQuery(obj).closest('tr.product_row').find('input[name="quantity[]"]').parent().find('span.infos').length == 0) {
+                jQuery(obj).closest('tr.product_row').find('input[name="quantity[]"]').after('<span class="infos text-danger"><i class="fa fa-exclamation-circle"></i>Enter Valid Qty</span>');
             }
         }
     }
