@@ -349,6 +349,14 @@ function AddProductRow(empty_row) {
                         if (jQuery('.table-infos').length > 0) {
                             jQuery('.table-infos').html('<i class="fa fa-exclamation-circle"></i>'+error);
                         }
+                        if(jQuery('.add_product_button').length > 0) {
+                            jQuery('.add_product_button').attr('disabled', false);
+                        }
+                    }
+                }
+                else {
+                    if(jQuery('.add_product_button').length > 0) {
+                        jQuery('.add_product_button').attr('disabled', false);
                     }
                 }
 			}
