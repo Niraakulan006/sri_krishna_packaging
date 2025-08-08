@@ -315,5 +315,68 @@
 			$list = $this->getQueryRecords($GLOBALS['material_transfer_table'], $select_query);
 			return $list;
 		}
+		public function getConsumptionEntryList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $order_column, $order_direction) {
+			$select_query = ""; $list = array(); $where = ""; $order_by_query = "";
+			if(!empty($from_date)) {
+				$from_date = date("Y-m-d", strtotime($from_date));
+				if(!empty($where)) {
+					$where = $where." consumption_entry_date >= '".$from_date."' AND ";
+				}
+				else {
+					$where = " consumption_entry_date >= '".$from_date."' AND ";
+				}
+			}
+			if(!empty($to_date)) {
+				$to_date = date("Y-m-d", strtotime($to_date));
+				if(!empty($where)) {
+					$where = $where." consumption_entry_date <= '".$to_date."' AND ";
+				}
+				else {
+					$where = " consumption_entry_date <= '".$to_date."' AND ";
+				}
+			}
+			if(!empty($searchValue)){
+				if(!empty($where)) {
+					$where = $where." ((consumption_entry_number) LIKE '%".$searchValue."%') AND ";
+				}
+				else {
+					$where = " ((consumption_entry_number) LIKE '%".$searchValue."%') AND ";
+				}
+			}
+			if(!empty($order_column) && !empty($order_direction)) {
+				
+				$order_by_query = "ORDER BY ".$order_column." ".$order_direction;
+				
+			}
+			else {
+				$order_by_query = "ORDER BY id DESC";
+			}
+
+			if(!empty($rowperpage)) {
+				$select_query = "SELECT * FROM ".$GLOBALS['consumption_entry_table']."
+							WHERE ".$where." cancelled = '".$cancelled."' AND deleted = '0'
+							".$order_by_query."
+							LIMIT $row, $rowperpage";
+			}
+			else {
+				$select_query = "SELECT * FROM ".$GLOBALS['consumption_entry_table']."
+							WHERE ".$where." cancelled = '".$cancelled."' AND deleted = '0'
+							".$order_by_query;
+			}
+			$list = $this->getQueryRecords($GLOBALS['consumption_entry_table'], $select_query);
+			return $list;
+		}
+		public function CreateCustomMaterial($material) {
+			$table = "";
+			if($material == "size") {
+				$table = $GLOBALS['size_table'];
+			}
+			else if($material == "gsm") {
+				$table = $GLOBALS['gsm_table'];
+			}
+			else if($material == "bf") {
+				// $table = $GLOBALS['']
+			}
+		}
     }
 ?>

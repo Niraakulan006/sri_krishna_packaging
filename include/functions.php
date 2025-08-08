@@ -183,6 +183,13 @@
 			$result = $create_obj->getMaterialTransferList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $order_column, $order_direction);
 			return $result;
 		}
+		public function getConsumptionEntryList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $order_column, $order_direction) {
+			$create_obj = "";
+			$create_obj = $this->creation_function_object();
+			$result = "";
+			$result = $create_obj->getConsumptionEntryList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $order_column, $order_direction);
+			return $result;
+		}
 
 		// Stock Functions
 		public function stock_function_object() {
@@ -245,6 +252,13 @@
 			$result = "";
 			$result = $stock_obj->GetCurrentStockByMaterial($material, $bill_id, $godown_id, $factory_id);
 			return $result;
+		}
+		public function getCurrentStock($table, $factory_id, $size_id, $gsm_id,$bf_id) {
+			$stock_obj = "";
+			$stock_obj = $this->stock_function_object();
+			$stock_update = "";
+			$stock_update = $stock_obj->getCurrentStock($table, $factory_id, $size_id, $gsm_id,$bf_id);
+			return $stock_update;
 		}
 	}
 ?>
