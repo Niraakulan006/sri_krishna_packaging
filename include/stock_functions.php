@@ -512,7 +512,7 @@
 			}
 			return $material_list;
 		}
-        public function getCurrentStock($table, $factory_id, $size_id, $gsm_id,$bf_id){
+        public function getCurrentStock($table, $factory_id, $godown_id, $size_id, $gsm_id,$bf_id){
             $where = "";$select_query = "";$list = array();
             $current_stock = 0;$inward =0;$outward=0;
 
@@ -521,6 +521,13 @@
                     $where = $where . " factory_id = '" . $factory_id . "' AND ";
                 } else {
                     $where = " factory_id = '" . $factory_id . "' AND ";
+                }
+            }
+            if (!empty($godown_id) && $godown_id != $GLOBALS['null_value']) {
+                if (!empty($where)) {
+                    $where = $where . " godown_id = '" . $godown_id . "' AND ";
+                } else {
+                    $where = " godown_id = '" . $godown_id . "' AND ";
                 }
             }
             if (!empty($size_id) && $size_id != $GLOBALS['null_value']) {

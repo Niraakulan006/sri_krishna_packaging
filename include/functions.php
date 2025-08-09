@@ -190,6 +190,13 @@
 			$result = $create_obj->getConsumptionEntryList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $order_column, $order_direction);
 			return $result;
 		}
+		public function getStockAdjustmentList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $order_column, $order_direction) {
+			$create_obj = "";
+			$create_obj = $this->creation_function_object();
+			$result = "";
+			$result = $create_obj->getStockAdjustmentList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $order_column, $order_direction);
+			return $result;
+		}
 		public function CreateCustomMaterial($material, $material_id) {
 			$create_obj = "";
 			$create_obj = $this->creation_function_object();
@@ -281,12 +288,26 @@
 			$result = $stock_obj->GetCurrentStockByMaterial($material, $bill_id, $godown_id, $factory_id);
 			return $result;
 		}
-		public function getCurrentStock($table, $factory_id, $size_id, $gsm_id,$bf_id) {
+		public function getCurrentStock($table, $factory_id, $godown_id, $size_id, $gsm_id,$bf_id) {
 			$stock_obj = "";
 			$stock_obj = $this->stock_function_object();
 			$stock_update = "";
-			$stock_update = $stock_obj->getCurrentStock($table, $factory_id, $size_id, $gsm_id,$bf_id);
+			$stock_update = $stock_obj->getCurrentStock($table, $factory_id, $godown_id, $size_id, $gsm_id,$bf_id);
 			return $stock_update;
+		}
+
+		// Report Functions
+		public function report_function_object() {
+			$report_obj = "";		
+			$report_obj = new report_functions();
+			return $report_obj;
+		}
+		public function getCurrentStockList($location_type,$factory_id, $godown_id,$size_id,$gsm_id,$bf_id) {
+			$report_obj = "";
+			$report_obj = $this->report_function_object();
+			$report_update = "";
+			$report_update = $report_obj->getCurrentStockList($location_type,$factory_id, $godown_id,$size_id,$gsm_id,$bf_id);
+			return $report_update;
 		}
 	}
 ?>

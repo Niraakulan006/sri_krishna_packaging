@@ -109,7 +109,7 @@
                 "ordering" : true,
                 "searching" : false,
                 "columnDefs": [
-                    { "orderable": false, "targets": [0,3,5] }
+                    { "orderable": false, "targets": [0,3,5,6] }
                 ],
                 "ajax": {
                     "url": "consumption_entry_changes.php",
@@ -135,6 +135,7 @@
                     { "data": "consumption_entry_number", "className": "text-center" },
                     { "data": "factory_name", "className": "text-center" },
                     { "data": "total_quantity", "className": "text-center" },
+                    { "data": "view", "className": "text-center" },
                     { "data": "action", "className": "text-center" }
                 ]
             });

@@ -6,7 +6,6 @@
                 <th style="min-width:75px;">S.No</th>
                 <th style="min-width:100px;">Entry Date</th>
                 <th style="min-width:100px;">Entry Number</th>
-                <th style="min-width:100px;">Location</th>
                 <th style="min-width:75px;">Total QTY</th>
                 <th style="min-width:75px;">View</th>
                 <th style="min-width:75px;">Action</th>

@@ -576,6 +576,56 @@
 			$list = $this->getQueryRecords($GLOBALS['consumption_entry_table'], $select_query);
 			return $list;
 		}
+		public function getStockAdjustmentList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $order_column, $order_direction) {
+			$select_query = ""; $list = array(); $where = ""; $order_by_query = "";
+			if(!empty($from_date)) {
+				$from_date = date("Y-m-d", strtotime($from_date));
+				if(!empty($where)) {
+					$where = $where." stock_adjustment_date >= '".$from_date."' AND ";
+				}
+				else {
+					$where = " stock_adjustment_date >= '".$from_date."' AND ";
+				}
+			}
+			if(!empty($to_date)) {
+				$to_date = date("Y-m-d", strtotime($to_date));
+				if(!empty($where)) {
+					$where = $where." stock_adjustment_date <= '".$to_date."' AND ";
+				}
+				else {
+					$where = " stock_adjustment_date <= '".$to_date."' AND ";
+				}
+			}
+			
+			if(!empty($searchValue)){
+				if(!empty($where)) {
+					$where = $where." ((stock_adjustment_number) LIKE '%".$searchValue."%') AND ";
+				}
+				else {
+					$where = " ((stock_adjustment_number) LIKE '%".$searchValue."%') AND ";
+				}
+			}
+			if(!empty($order_column) && !empty($order_direction)) {
+				$order_by_query = "ORDER BY ".$order_column." ".$order_direction;
+			}
+			else {
+				$order_by_query = "ORDER BY id DESC";
+			}
+
+			if(!empty($rowperpage)) {
+				$select_query = "SELECT * FROM ".$GLOBALS['stock_adjustment_table']."
+							WHERE ".$where." cancelled = '".$cancelled."' AND deleted = '0'
+							".$order_by_query."
+							LIMIT $row, $rowperpage";
+			}
+			else {
+				$select_query = "SELECT * FROM ".$GLOBALS['stock_adjustment_table']."
+							WHERE ".$where." cancelled = '".$cancelled."' AND deleted = '0'
+							".$order_by_query;
+			}
+			$list = $this->getQueryRecords($GLOBALS['stock_adjustment_table'], $select_query);
+			return $list;
+		}
 		public function CreateCustomMaterial($material, $material_id) {
 			$new_created_id = "";
 			$created_date_time = $GLOBALS['create_date_time_label'];

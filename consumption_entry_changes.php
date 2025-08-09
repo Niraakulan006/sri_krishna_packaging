@@ -363,22 +363,7 @@
                                                         </div> 
                                                     </th>
                                                     <th class="delete_element text-center px-2 py-2">
-                                                        <?php
-                                                            $inward_quantity = 0; $outward_quantity = 0;
-                                                            $inward_quantity = $obj->getInwardUnitQty('', '', $show_consumption_entry_id, '', $factory_id, '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
-                                                            $outward_quantity = $obj->getOutwardUnitQty('', '', $show_consumption_entry_id, '', $factory_id, '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
-                                                           
-                                                            if($inward_quantity >= $outward_quantity) {
-                                                                ?>
-                                                                <a class="pe-2" onclick="Javascript:DeleteProductRow('product_row', '<?php echo $i+1; ?>');" style="cursor:pointer;"><i class="fa fa-trash text-white bg-danger p-2 rounded"></i></a>
-                                                                <?php
-                                                            }
-                                                            else {
-                                                                ?>
-                                                                <a class="fw-bold text-danger" style="pointer-events:none;"><i class="fa fa-exclamation-circle text-danger"></i> Can't Delete</a>
-                                                                <?php
-                                                            }
-                                                        ?>
+                                                        <a class="pe-2" onclick="Javascript:DeleteProductRow('product_row', '<?php echo $i+1; ?>');" style="cursor:pointer;"><i class="fa fa-trash text-white bg-danger p-2 rounded"></i></a>  
                                                     </th>
                                                 </tr>
                                                 <?php
@@ -423,7 +408,6 @@
             }
         }
 
-        
         if(isset($_POST['selected_factory_id'])) {
             $selected_factory_id = trim($_POST['selected_factory_id']);
             $selected_factory_id_error = $valid->common_validation($selected_factory_id, 'Factory', 'select');
@@ -517,9 +501,9 @@
                         if($current_stock < 0) {
                             $current_stock = 0;
                         }
-                        // echo "qty :".$quantity[$i]." / ".$current_stock;
+                        
                         if($quantity[$i] > $current_stock) {
-                            $quantity_error = "Max Stock Available : ".$current_stock;
+                            $quantity_error = "Max Stock <br> Available : ".$current_stock;
                         }
                     }
                     if(!empty($quantity_error)) {
@@ -797,7 +781,8 @@
             1 => 'consumption_entry_date',
             2 => 'consumption_entry_number',
             3 => 'factory_name',
-            6 => 'total_quantity',
+            4 => 'total_quantity',
+            5 => '',
             6 => '',
         ];
         if(!empty($order_column_index) && isset($columns[$order_column_index])) {
@@ -825,7 +810,7 @@
             if(!empty($val['total_quantity']) && $val['total_quantity'] != $GLOBALS['null_value']){
                 $total_quantity = $val['total_quantity'];
             }
-            
+            $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['stock_adjustment_table'].'\''.', '.'\''.$val['consumption_entry_id'].'\''.');"><i class="fa fa-eye"></i></a>';
             $action = ""; $edit_option = ""; $delete_option = ""; $print_option = ""; $a5_print_option = "";
             $access_error = "";
             if(!empty($login_staff_id)) {
@@ -861,6 +846,7 @@
                 "consumption_entry_number" => $consumption_entry_number,
                 "factory_name" => $factory_name,
                 "total_quantity" => $total_quantity,
+                "view" => $material_view,
                 "action" => $action
             ];
         }
@@ -1124,19 +1110,18 @@
         $selected_bf_id = $_REQUEST['selected_bf_id'];
 
         $current_stock = 0;
-        $current_stock = $obj->getCurrentStock($GLOBALS['stock_table'], $get_factory_id,$selected_size_id ,$selected_gsm_id, $selected_bf_id);
+        $current_stock = $obj->getCurrentStock($GLOBALS['stock_table'], $get_factory_id,'',$selected_size_id ,$selected_gsm_id, $selected_bf_id);
         $current_stock=trim($current_stock);
-            ?>
-            <span class="w-100 text-center" style="font-weight:bold!important;">
-                <?php if(!empty($selected_size_id) && !empty($selected_gsm_id) && !empty($selected_bf_id)) { ?>
-                Current Stock (<?php echo number_format($current_stock, 2);?>)
-                <?php } ?>
-            </span>
-            $$$
-            
-            <?php
-            echo $current_stock;
+        ?>
+        <span class="w-100 text-center" style="font-weight:bold!important;">
+            <?php if(!empty($selected_size_id) && !empty($selected_gsm_id) && !empty($selected_bf_id)) { ?>
+            Current Stock (<?php echo number_format($current_stock, 2);?>)
+            <?php } ?>
+        </span>
+        $$$
         
+        <?php
+        echo $current_stock;
     }
 
 
