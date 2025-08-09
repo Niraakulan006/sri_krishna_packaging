@@ -24,6 +24,9 @@
         else if($table == $GLOBALS['inward_approval_table']) {
             $field_id = "inward_approval_id";
         }
+        else if($table == $GLOBALS['consumption_entry_table']) {
+            $field_id = "consumption_entry_id";
+        }
         $bill_details = array();
         $bill_details = $obj->getTableRecords($table, $field_id, $bill_id);
 
@@ -31,7 +34,7 @@
         $total_quantity = 0; $bill_number = "";
         if(!empty($bill_details)) {
             foreach($bill_details as $data) {
-                if($table == $GLOBALS['inward_material_table']) {
+                if($table == $GLOBALS['inward_material_table'] || $table == $GLOBALS['stock_adjustment_table']) {
                     if(!empty($data['location_type']) && $data['location_type'] != $GLOBALS['null_value']) {
                         $location_type = $data['location_type'];
                     }
@@ -45,6 +48,8 @@
                             $location_names = explode(",", $data['factory_name']);
                         }
                     }
+                }
+                if($table == $GLOBALS['inward_material_table']) {
                     if(!empty($data['bill_number']) && $data['bill_number'] != $GLOBALS['null_value']) {
                         $bill_number = $obj->encode_decode('decrypt', $data['bill_number']);
                     }
@@ -67,6 +72,16 @@
                 if($table == $GLOBALS['inward_approval_table']) {
                     if(!empty($data['inward_approval_number']) && $data['inward_approval_number'] != $GLOBALS['null_value']) {
                         $bill_number = $data['inward_approval_number'];
+                    }
+                }
+                if($table == $GLOBALS['stock_adjustment_table']) {
+                    if(!empty($data['stock_adjustment_number']) && $data['stock_adjustment_number'] != $GLOBALS['null_value']) {
+                        $bill_number = $data['stock_adjustment_number'];
+                    }
+                }
+                if($table == $GLOBALS['consumption_entry_table']) {
+                    if(!empty($data['consumption_entry_number']) && $data['consumption_entry_number'] != $GLOBALS['null_value']) {
+                        $bill_number = $data['consumption_entry_number'];
                     }
                 }
                 if(!empty($data['size_name']) && $data['size_name'] != $GLOBALS['null_value']) {

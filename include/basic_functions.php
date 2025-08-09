@@ -645,8 +645,14 @@
 			else if(!empty($table) && $table == $GLOBALS['stock_request_table']) {
                 $prefix = 'STR';
             }
+			else if(!empty($table) && $table == $GLOBALS['stock_adjustment_table']) {
+                $prefix = 'SA';
+            }
 			else if(!empty($table) && $table == $GLOBALS['delivery_slip_table']) {
                 $prefix = 'DS';
+            }
+			else if(!empty($table) && $table == $GLOBALS['inward_approval_table']) {
+                $prefix = 'INA';
             }
             $current_year = date("y"); $next_year = date("y")+1;
             
@@ -691,6 +697,14 @@
                     }
 					else if(!empty($table) && $table == $GLOBALS['delivery_slip_table']) {
                         $last_number = str_replace("DS","",$last_number);
+                        $last_number = trim($last_number);
+                    }
+					else if(!empty($table) && $table == $GLOBALS['stock_adjustment_table']) {
+                        $last_number = str_replace("SA","",$last_number);
+                        $last_number = trim($last_number);
+                    }
+					else if(!empty($table) && $table == $GLOBALS['inward_approval_table']) {
+                        $last_number = str_replace("INA","",$last_number);
                         $last_number = trim($last_number);
                     }
                 }

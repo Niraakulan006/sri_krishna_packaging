@@ -333,6 +333,9 @@
             else if($page_table == $GLOBALS['consumption_entry_table']) {
                 $stock_type = "Consumption Entry";
             }
+            else if($page_table == $GLOBALS['stock_adjustment_table']) {
+                $stock_type = "Stock Adjustment";
+            }
             
             $stock_unique_id = ""; 
             $stock_unique_id = $this->getStockUniqueID($bill_unique_id, $factory_id, $godown_id, $size_id, $gsm_id, $bf_id);
@@ -359,7 +362,7 @@
         public function DeleteBillStock($table, $bill_id) {
             /* Use Only if Inward exists in the Screen */
             $can_delete = 1;
-            if($table == $GLOBALS['inward_material_table'] || $table == $GLOBALS['material_transfer_table']) {
+            if($table == $GLOBALS['inward_material_table'] || $table == $GLOBALS['material_transfer_table'] || $table == $GLOBALS['stock_adjustment_table']) {
                 $bill_id_field = ""; 
                 if($table == $GLOBALS['inward_material_table']) {
                     $bill_id_field = "inward_material_id";
@@ -367,14 +370,18 @@
                 else if($table == $GLOBALS['material_transfer_table']) {
                     $bill_id_field = "material_transfer_id";
                 }
+                else if($table == $GLOBALS['stock_adjustment_table']) {
+                    $bill_id_field = "stock_adjustment_id";
+                }
                 $bill_list = array(); 
                 $bill_list = $this->getTableRecords($table, $bill_id_field, $bill_id, '');
 
                 $location_type = "";
                 $factory_ids = array(); $godown_ids = array(); $size_ids = array(); $gsm_ids = array(); $bf_ids = array();
+                $stock_type = array();
                 if(!empty($bill_list)) {
                     foreach($bill_list as $data) {
-                        if($table == $GLOBALS['inward_material_table']) {
+                        if($table == $GLOBALS['inward_material_table'] || $table == $GLOBALS['stock_adjustment_table']) {
                             if(!empty($data['location_type']) && $data['location_type'] != $GLOBALS['null_value']) {
                                 $location_type = $data['location_type'];
                             }
@@ -399,6 +406,12 @@
                             $bf_ids = $data['bf_id'];
                             $bf_ids = explode(",", $bf_ids);
                         }
+                        if($table == $GLOBALS['stock_adjustment_table']) {
+                            if(!empty($data['stock_type']) && $data['stock_type'] != $GLOBALS['null_value']) {
+                                $stock_type = $data['stock_type'];
+                                $stock_type = explode(",", $stock_type);
+                            }
+                        }
                     }
                 }
                 if(!empty($size_ids)) {
@@ -408,6 +421,9 @@
                             if($table == $GLOBALS['material_transfer_table']) {
                                 $location_type = 1;
                                 $godown_ids[$i] = $godown_ids[0];
+                            }
+                            if(isset($stock_type[$i]) && $stock_type[$i] == 'minus') {
+                                continue;
                             }
                             if($location_type == '1') {
                                 $inward_quantity = $this->getInwardUnitQty('', '', $bill_id, '', '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
