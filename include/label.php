@@ -37,6 +37,8 @@
 	$GLOBALS['material_transfer_table'] = $GLOBALS['table_prefix']."material_transfer";
 	$GLOBALS['consumption_entry_table'] = $GLOBALS['table_prefix']."consumption_entry";
 	$GLOBALS['stock_request_table'] = $GLOBALS['table_prefix']."stock_request";
+	$GLOBALS['delivery_slip_table'] = $GLOBALS['table_prefix']."delivery_slip";
+	$GLOBALS['inward_approval_table'] = $GLOBALS['table_prefix']."inward_approval";
 	
 	// Modules
 	$GLOBALS['size_module'] = "Size";
@@ -50,6 +52,8 @@
 	$GLOBALS['material_transfer_module'] = "Material Transfer";
 	$GLOBALS['consumption_entry_module'] = "Consumption Entry";
 	$GLOBALS['stock_request_module'] = "Stock Request";
+	$GLOBALS['delivery_slip_module'] = "Delivery Slip";
+	$GLOBALS['inward_approval_module'] = "Inward Approval";
 
 	$access_pages_list = array();
 	$access_pages_list[] = $GLOBALS['size_module'];
@@ -62,6 +66,8 @@
 	$access_pages_list[] = $GLOBALS['material_transfer_module'];
 	$access_pages_list[] = $GLOBALS['consumption_entry_module'];
 	$access_pages_list[] = $GLOBALS['stock_request_module'];
+	$access_pages_list[] = $GLOBALS['delivery_slip_module'];
+	$access_pages_list[] = $GLOBALS['inward_approval_module'];
 
 	$GLOBALS['user_access_pages'] = $access_pages_list;
 

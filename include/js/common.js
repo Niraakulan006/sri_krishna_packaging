@@ -514,7 +514,7 @@ function DeleteModalContent(page_title, delete_content_id) {
 			if (check_login_session == 1) {
 				if (typeof page_title != "undefined" && page_title != "") {
 					jQuery('#DeleteModal .modal-header').find('h4').html("");
-					if (page_title == "Inward Material" || page_title == "Material Transfer" || page_title == "Stock Request" || page_title == "Consumption Entry" || page_title == "estimate" || page_title == "invoice") {
+					if (page_title == "Inward Material" || page_title == "Material Transfer" || page_title == "Stock Request" || page_title == "Consumption Entry" || page_title == "Delivery Slip" || page_title == "Stock Adjustment" || page_title == "Inward Approval") {
 						jQuery('#DeleteModal .modal-header').find('h4').html("Cancel " + page_title);
 					}
 					else {
@@ -524,7 +524,7 @@ function DeleteModalContent(page_title, delete_content_id) {
 				}
 				jQuery('.delete_modal_button').trigger("click");
 				jQuery('#DeleteModal .modal-body').html('');
-				if (page_title == "inward material" || page_title == "material transfer" || page_title == "stock request" || page_title == "consumption entry" || page_title == "estimate" || page_title == "invoice") {
+				if (page_title == "inward material" || page_title == "material transfer" || page_title == "stock request" || page_title == "consumption entry" || page_title == "delivery slip" || page_title == "stock adjustment" || page_title == "inward_approval") {
 					jQuery('#DeleteModal .modal-body').html('Are you surely want to cancel this ' + page_title + '?');
 				}
 				else {
@@ -603,7 +603,7 @@ function confirm_delete_modal(obj) {
 							result = result.trim();
 							var intRegex = /^\d+$/;
 							if (intRegex.test(result) == true) {
-								if (page_title == "inward_material" || page_title == "material transfer" || page_title == "stock request" || page_title == "consumption entry" || page_title == "estimate" || page_title == "invoice") {
+								if (page_title == "inward_material" || page_title == "material_transfer" || page_title == "stock_request" || page_title == "consumption_entry" || page_title == "stock_request" || page_title == "delivery_slip" || page_title == "inward_approval") {
 									jQuery('#DeleteModal .modal-body').append('<div class="alert alert-success"> <button type="button" class="close" data-dismiss="alert">&times;</button> Successfully Cancel the ' + page_title.replaceAll("_", " ") + ' </div>');
 								}
 								else {
@@ -734,4 +734,36 @@ function ViewBillContent(table, bill_id) {
 			}
 		}
 	});
+}
+
+function ShowStockRequestConversion(stock_request_id) {
+    var post_url = "delivery_slip_changes.php?show_delivery_slip_id=&conversion_request_id="+stock_request_id;
+    jQuery.ajax({url: post_url, success: function (result) {
+		if (jQuery('#table_records_cover').length > 0) {
+			jQuery('#table_records_cover').addClass('d-none');
+		}
+		if (jQuery('#add_update_form_content').length > 0) {
+			jQuery('#add_update_form_content').removeClass('d-none');
+		}
+        if (jQuery('.add_update_form_content').length > 0) {
+            jQuery('.add_update_form_content').html("");
+            jQuery('.add_update_form_content').html(result);
+        }
+    }});
+}
+
+function ShowDeliverySlipConversion(delivery_slip_id) {
+    var post_url = "inward_approval_changes.php?show_inward_approval_id=&conversion_delivery_id="+delivery_slip_id;
+    jQuery.ajax({url: post_url, success: function (result) {
+		if (jQuery('#table_records_cover').length > 0) {
+			jQuery('#table_records_cover').addClass('d-none');
+		}
+		if (jQuery('#add_update_form_content').length > 0) {
+			jQuery('#add_update_form_content').removeClass('d-none');
+		}
+        if (jQuery('.add_update_form_content').length > 0) {
+            jQuery('.add_update_form_content').html("");
+            jQuery('.add_update_form_content').html(result);
+        }
+    }});
 }

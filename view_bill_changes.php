@@ -18,6 +18,12 @@
         else if($table == $GLOBALS['stock_request_table']) {
             $field_id = "stock_request_id";
         }
+        else if($table == $GLOBALS['delivery_slip_table']) {
+            $field_id = "delivery_slip_id";
+        }
+        else if($table == $GLOBALS['inward_approval_table']) {
+            $field_id = "inward_approval_id";
+        }
         $bill_details = array();
         $bill_details = $obj->getTableRecords($table, $field_id, $bill_id);
 
@@ -51,6 +57,16 @@
                 if($table == $GLOBALS['stock_request_table']) {
                     if(!empty($data['stock_request_number']) && $data['stock_request_number'] != $GLOBALS['null_value']) {
                         $bill_number = $data['stock_request_number'];
+                    }
+                }
+                if($table == $GLOBALS['delivery_slip_table']) {
+                    if(!empty($data['delivery_slip_number']) && $data['delivery_slip_number'] != $GLOBALS['null_value']) {
+                        $bill_number = $data['delivery_slip_number'];
+                    }
+                }
+                if($table == $GLOBALS['inward_approval_table']) {
+                    if(!empty($data['inward_approval_number']) && $data['inward_approval_number'] != $GLOBALS['null_value']) {
+                        $bill_number = $data['inward_approval_number'];
                     }
                 }
                 if(!empty($data['size_name']) && $data['size_name'] != $GLOBALS['null_value']) {

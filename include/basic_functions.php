@@ -645,6 +645,9 @@
 			else if(!empty($table) && $table == $GLOBALS['stock_request_table']) {
                 $prefix = 'STR';
             }
+			else if(!empty($table) && $table == $GLOBALS['delivery_slip_table']) {
+                $prefix = 'DS';
+            }
             $current_year = date("y"); $next_year = date("y")+1;
             
             if(date("m") == date("01") || date("m") == date("02") || date("m") == date("03")) {
@@ -684,6 +687,10 @@
                     }
 					else if(!empty($table) && $table == $GLOBALS['stock_request_table']) {
                         $last_number = str_replace("STR","",$last_number);
+                        $last_number = trim($last_number);
+                    }
+					else if(!empty($table) && $table == $GLOBALS['delivery_slip_table']) {
+                        $last_number = str_replace("DS","",$last_number);
                         $last_number = trim($last_number);
                     }
                 }

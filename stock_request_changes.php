@@ -623,9 +623,11 @@
             $check_user_id_ip_address = 0;
             $check_user_id_ip_address = $obj->check_user_id_ip_address();	
             if(preg_match("/^\d+$/", $check_user_id_ip_address)) { 
+                /*
                 if(!empty($edit_id)) {
                     $stock_delete_update = $obj->DeletePrevList($edit_id, $stock_unique_ids);
                 }
+                */
                 if(!empty($bill_date)) {
                     $bill_date = date('Y-m-d', strtotime($bill_date));
                 }
@@ -892,7 +894,7 @@
                 $total_quantity = $val['total_quantity'];
             }
             $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['stock_request_table'].'\''.', '.'\''.$val['stock_request_id'].'\''.');"><i class="fa fa-eye"></i></a>';
-            $action = ""; $edit_option = ""; $delete_option = ""; $print_option = ""; $a5_print_option = "";
+            $action = ""; $edit_option = ""; $delete_option = ""; $print_option = ""; $a5_print_option = ""; $delivery_slip = "";
             $access_error = "";
             if(!empty($login_staff_id)) {
                 $permission_action = $edit_action;
@@ -912,13 +914,17 @@
             $print_option = '<li><a class="dropdown-item" target="_blank" href="reports/rpt_stock_request_a4.php?view_stock_request_id=' . $val['stock_request_id'] . '"><i class="fa fa-print"></i>&nbsp; A4 Print</a></li>';
 
             $a5_print_option = '<li><a class="dropdown-item" target="_blank" href="reports/rpt_stock_request_a5.php?view_stock_request_id=' . $val['stock_request_id'] . '"><i class="fa fa-print"></i>&nbsp; A5 Print</a></li>';
+
+            if(empty($val['cancelled'])) {
+                $delivery_slip = '<li><a class="dropdown-item" href="Javascript:ShowStockRequestConversion('.'\''.$val['stock_request_id'].'\''.');"><i class="fa fa-share"></i>&nbsp; Delivery Slip</a></li>';
+            }
             
             $action = '<div class="dropdown">
                             <a href="#" role="button" class="btn btn-dark py-1 px-2" id="dropdownMenuLink'.$val['stock_request_id'].'" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink'.$val['stock_request_id'].'">
-                                '.$print_option.$a5_print_option.$edit_option.$delete_option.'
+                                '.$print_option.$a5_print_option.$delivery_slip.$edit_option.$delete_option.'
                             </ul>
                         </div>';
             $data[] = [

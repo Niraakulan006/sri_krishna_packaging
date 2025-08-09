@@ -385,6 +385,146 @@
 			$list = $this->getQueryRecords($GLOBALS['stock_request_table'], $select_query);
 			return $list;
 		}
+		public function getDeliverySlipList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $order_column, $order_direction) {
+			$select_query = ""; $list = array(); $where = ""; $order_by_query = "";
+			if(!empty($from_date)) {
+				$from_date = date("Y-m-d", strtotime($from_date));
+				if(!empty($where)) {
+					$where = $where." bill_date >= '".$from_date."' AND ";
+				}
+				else {
+					$where = " bill_date >= '".$from_date."' AND ";
+				}
+			}
+			if(!empty($to_date)) {
+				$to_date = date("Y-m-d", strtotime($to_date));
+				if(!empty($where)) {
+					$where = $where." bill_date <= '".$to_date."' AND ";
+				}
+				else {
+					$where = " bill_date <= '".$to_date."' AND ";
+				}
+			}
+			if(!empty($factory_id)) {
+				if(!empty($where)) {
+					$where = $where." factory_id = '".$factory_id."' AND ";
+				}
+				else {
+					$where = " factory_id = '".$factory_id."' AND ";
+				}
+			}
+			if(!empty($godown_id)) {
+				if(!empty($where)) {
+					$where = $where." godown_id = '".$godown_id."' AND ";
+				}
+				else {
+					$where = " godown_id = '".$godown_id."' AND ";
+				}
+			}
+			if(!empty($searchValue)){
+				if(!empty($where)) {
+					$where = $where." (CAST(delivery_slip_number AS CHAR) LIKE '%".$searchValue."%') AND ";
+				}
+				else {
+					$where = " (CAST(delivery_slip_number AS CHAR) LIKE '%".$searchValue."%') AND ";
+				}
+			}
+			if(!empty($order_column) && !empty($order_direction)) {
+				if ($order_column == 'godown_name') {
+					$order_by_query = "ORDER BY CAST(FROM_BASE64(UNHEX(".$order_column.")) AS CHAR) ".$order_direction;
+				} 
+				else {
+					$order_by_query = "ORDER BY ".$order_column." ".$order_direction;
+				}
+			}
+			else {
+				$order_by_query = "ORDER BY id DESC";
+			}
+
+			if(!empty($rowperpage)) {
+				$select_query = "SELECT * FROM ".$GLOBALS['delivery_slip_table']."
+							WHERE ".$where." cancelled = '".$cancelled."' AND deleted = '0'
+							".$order_by_query."
+							LIMIT $row, $rowperpage";
+			}
+			else {
+				$select_query = "SELECT * FROM ".$GLOBALS['delivery_slip_table']."
+							WHERE ".$where." cancelled = '".$cancelled."' AND deleted = '0'
+							".$order_by_query;
+			}
+			$list = $this->getQueryRecords($GLOBALS['delivery_slip_table'], $select_query);
+			return $list;
+		}
+		public function getInwardApprovalList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $order_column, $order_direction) {
+			$select_query = ""; $list = array(); $where = ""; $order_by_query = "";
+			if(!empty($from_date)) {
+				$from_date = date("Y-m-d", strtotime($from_date));
+				if(!empty($where)) {
+					$where = $where." bill_date >= '".$from_date."' AND ";
+				}
+				else {
+					$where = " bill_date >= '".$from_date."' AND ";
+				}
+			}
+			if(!empty($to_date)) {
+				$to_date = date("Y-m-d", strtotime($to_date));
+				if(!empty($where)) {
+					$where = $where." bill_date <= '".$to_date."' AND ";
+				}
+				else {
+					$where = " bill_date <= '".$to_date."' AND ";
+				}
+			}
+			if(!empty($factory_id)) {
+				if(!empty($where)) {
+					$where = $where." factory_id = '".$factory_id."' AND ";
+				}
+				else {
+					$where = " factory_id = '".$factory_id."' AND ";
+				}
+			}
+			if(!empty($godown_id)) {
+				if(!empty($where)) {
+					$where = $where." godown_id = '".$godown_id."' AND ";
+				}
+				else {
+					$where = " godown_id = '".$godown_id."' AND ";
+				}
+			}
+			if(!empty($searchValue)){
+				if(!empty($where)) {
+					$where = $where." (CAST(inward_approval_number AS CHAR) LIKE '%".$searchValue."%') AND ";
+				}
+				else {
+					$where = " (CAST(inward_approval_number AS CHAR) LIKE '%".$searchValue."%') AND ";
+				}
+			}
+			if(!empty($order_column) && !empty($order_direction)) {
+				if ($order_column == 'godown_name') {
+					$order_by_query = "ORDER BY CAST(FROM_BASE64(UNHEX(".$order_column.")) AS CHAR) ".$order_direction;
+				} 
+				else {
+					$order_by_query = "ORDER BY ".$order_column." ".$order_direction;
+				}
+			}
+			else {
+				$order_by_query = "ORDER BY id DESC";
+			}
+
+			if(!empty($rowperpage)) {
+				$select_query = "SELECT * FROM ".$GLOBALS['inward_approval_table']."
+							WHERE ".$where." cancelled = '".$cancelled."' AND deleted = '0'
+							".$order_by_query."
+							LIMIT $row, $rowperpage";
+			}
+			else {
+				$select_query = "SELECT * FROM ".$GLOBALS['inward_approval_table']."
+							WHERE ".$where." cancelled = '".$cancelled."' AND deleted = '0'
+							".$order_by_query;
+			}
+			$list = $this->getQueryRecords($GLOBALS['inward_approval_table'], $select_query);
+			return $list;
+		}
 		public function getConsumptionEntryList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $order_column, $order_direction) {
 			$select_query = ""; $list = array(); $where = ""; $order_by_query = "";
 			if(!empty($from_date)) {
