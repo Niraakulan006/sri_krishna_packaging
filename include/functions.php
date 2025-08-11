@@ -2,6 +2,8 @@
 	include("basic_functions.php");
 	include("creation_functions.php");
 	include("stock_functions.php");
+	include("conversion_functions.php");
+	// include("report_functions.php");
 	
 	class billing extends Basic_Functions {
 		
@@ -204,18 +206,18 @@
 			$result = $create_obj->CreateCustomMaterial($material, $material_id);
 			return $result;
 		}
-		public function getStockRequestList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $order_column, $order_direction) {
+		public function getStockRequestList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $is_deliveried, $order_column, $order_direction) {
 			$create_obj = "";
 			$create_obj = $this->creation_function_object();
 			$result = "";
-			$result = $create_obj->getStockRequestList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $order_column, $order_direction);
+			$result = $create_obj->getStockRequestList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $is_deliveried, $order_column, $order_direction);
 			return $result;
 		}
-		public function getDeliverySlipList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $order_column, $order_direction) {
+		public function getDeliverySlipList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $is_approved, $order_column, $order_direction) {
 			$create_obj = "";
 			$create_obj = $this->creation_function_object();
 			$result = "";
-			$result = $create_obj->getDeliverySlipList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $order_column, $order_direction);
+			$result = $create_obj->getDeliverySlipList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $is_approved, $order_column, $order_direction);
 			return $result;
 		}
 		public function getInwardApprovalList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $order_column, $order_direction) {
@@ -294,6 +296,41 @@
 			$stock_update = "";
 			$stock_update = $stock_obj->getCurrentStock($table, $factory_id, $godown_id, $size_id, $gsm_id,$bf_id);
 			return $stock_update;
+		}
+
+		// Conversion Functions
+		public function conversion_function_object() {
+			$conversion_obj = "";		
+			$conversion_obj = new Conversion_functions();
+			return $conversion_obj;
+		}
+		public function ConversionUpdate($table, $bill_date, $bill_id, $bill_number, $conversion_id, $conversion_number, $godown_id, $factory_id, $size_id, $gsm_id, $bf_id, $request_qty, $delivery_qty, $inward_qty) {
+			$conversion_obj = "";
+			$conversion_obj = $this->conversion_function_object();
+			$conversion_update = "";
+			$conversion_update = $conversion_obj->ConversionUpdate($table, $bill_date, $bill_id, $bill_number, $conversion_id, $conversion_number, $godown_id, $factory_id, $size_id, $gsm_id, $bf_id, $request_qty, $delivery_qty, $inward_qty);
+			return $conversion_update;
+		}
+		public function getConversionUniqueID($bill_id, $factory_id, $godown_id, $size_id, $gsm_id, $bf_id) {
+			$conversion_obj = "";
+			$conversion_obj = $this->conversion_function_object();
+			$conversion_update = "";
+			$conversion_update = $conversion_obj->getConversionUniqueID($bill_id, $factory_id, $godown_id, $size_id, $gsm_id, $bf_id);
+			return $conversion_update;
+		}
+		public function PrevConversionList($bill_id) {
+			$conversion_obj = "";
+			$conversion_obj = $this->conversion_function_object();
+			$conversion_update = "";
+			$conversion_update = $conversion_obj->PrevConversionList($bill_id);
+			return $conversion_update;
+		}
+		public function DeleteConversionList($bill_id, $conversion_unique_ids) {
+			$conversion_obj = "";
+			$conversion_obj = $this->conversion_function_object();
+			$conversion_update = "";
+			$conversion_update = $conversion_obj->DeleteConversionList($bill_id, $conversion_unique_ids);
+			return $conversion_update;
 		}
 
 		// Report Functions

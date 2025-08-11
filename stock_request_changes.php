@@ -456,7 +456,7 @@
     if(isset($_POST['edit_id'])) {
         $bill_date = ""; $bill_date_error = ""; $godown_id = ""; $godown_id_error = ""; $factory_id = ""; $factory_id_error = "";
         $size_ids = array(); $size_names = array(); $gsm_ids = array(); $gsm_names = array(); $bf_ids = array(); $bf_names = array();
-        $quantity = array(); $total_quantity = 0; $stock_unique_ids = array(); $remarks = ""; $remarks_error = "";
+        $quantity = array(); $total_quantity = 0; $conversion_unique_ids = array(); $remarks = ""; $remarks_error = "";
 
         $edit_id = ""; $form_name = "stock_request_form"; $valid_stock_request = ""; $stock_request_error = "";
         if(isset($_POST['edit_id'])) {
@@ -611,6 +611,9 @@
                         $bf_names[$i] = $bf_name;
 
                         $total_quantity += $quantity[$i];
+                        if(!empty($edit_id)) {
+                            $conversion_unique_ids[] = $obj->getConversionUniqueID($edit_id, $godown_id, $factory_id, $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                        }
                     }
                 }
             }
@@ -623,11 +626,9 @@
             $check_user_id_ip_address = 0;
             $check_user_id_ip_address = $obj->check_user_id_ip_address();	
             if(preg_match("/^\d+$/", $check_user_id_ip_address)) { 
-                /*
                 if(!empty($edit_id)) {
-                    $stock_delete_update = $obj->DeletePrevList($edit_id, $stock_unique_ids);
+                    $conversion_delete_update = $obj->DeleteConversionList($edit_id, $conversion_unique_ids);
                 }
-                */
                 if(!empty($bill_date)) {
                     $bill_date = date('Y-m-d', strtotime($bill_date));
                 }
@@ -720,13 +721,13 @@
 
                     $null_value = $GLOBALS['null_value'];
                     $columns = array(); $values = array();
-                    $columns = array('created_date_time', 'updated_date_time', 'creator', 'creator_name', 'bill_company_id', 'bill_company_name', 'bill_company_details', 'stock_request_id', 'stock_request_number', 'bill_date', 'godown_id', 'godown_name', 'godown_name_location', 'factory_id', 'factory_name', 'factory_name_location', 'remarks', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity', 'cancelled', 'deleted');
-                    $values = array("'".$created_date_time."'", "'".$updated_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$null_value."'", "'".$null_value."'", "'".$bill_date."'", "'".$godown_id."'", "'".$godown_name."'", "'".$godown_name_location."'", "'".$factory_id."'", "'".$factory_name."'", "'".$factory_name_location."'", "'".$remarks."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'", "'0'", "'0'");
+                    $columns = array('created_date_time', 'updated_date_time', 'creator', 'creator_name', 'bill_company_id', 'bill_company_name', 'bill_company_details', 'stock_request_id', 'stock_request_number', 'bill_date', 'godown_id', 'godown_name', 'godown_name_location', 'factory_id', 'factory_name', 'factory_name_location', 'remarks', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity', 'is_deliveried', 'cancelled', 'deleted');
+                    $values = array("'".$created_date_time."'", "'".$updated_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$null_value."'", "'".$null_value."'", "'".$bill_date."'", "'".$godown_id."'", "'".$godown_name."'", "'".$godown_name_location."'", "'".$factory_id."'", "'".$factory_name."'", "'".$factory_name_location."'", "'".$remarks."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'", "'0'", "'0'", "'0'");
 
                     $stock_request_insert_id = $obj->InsertSQL($GLOBALS['stock_request_table'], $columns, $values,'stock_request_id', 'stock_request_number', $action);
 
                     if(preg_match("/^\d+$/", $stock_request_insert_id)) {
-                        $update_stock = 1;
+                        $update_conversion = 1;
                         $stock_request_id = $obj->getTableColumnValue($GLOBALS['stock_request_table'], 'id', $stock_request_insert_id, 'stock_request_id');
                         $stock_request_number = $obj->getTableColumnValue($GLOBALS['stock_request_table'], 'id', $stock_request_insert_id, 'stock_request_number');
                         $result = array('number' => '1', 'msg' => 'Stock Requested Successfully');
@@ -749,7 +750,7 @@
                         $stock_request_update_id = $obj->UpdateSQL($GLOBALS['stock_request_table'], $getUniqueID, $columns, $values, $action);
 
                         if(preg_match("/^\d+$/", $stock_request_update_id)) {
-                            $update_stock = 1;
+                            $update_conversion = 1;
                             $stock_request_id = $edit_id;
                             $stock_request_number = $obj->getTableColumnValue($GLOBALS['stock_request_table'], 'stock_request_id', $stock_request_id, 'stock_request_number');
                             $result = array('number' => '1', 'msg' => 'Updated Successfully');
@@ -759,8 +760,7 @@
                         }							
                     }
                 }
-                /*
-                if($update_stock == '1' && !empty($stock_request_id) && !empty($stock_request_number)) {
+                if($update_conversion == '1' && !empty($stock_request_id) && !empty($stock_request_number)) {
                     if(!empty($size_ids) && $size_ids != $GLOBALS['null_value']) {
                         $size_ids = explode(",", $size_ids);
                     }
@@ -786,19 +786,11 @@
                         $quantity = array();
                     }
                     if(!empty($size_ids)) {
-                        $remarks = "";
-                        $remarks = $obj->encode_decode('encrypt', $stock_request_number);
                         for($i=0; $i < count($size_ids); $i++) {
-                            if(!empty($factory_id)) {
-                                $stock_update = $obj->StockUpdate($GLOBALS['stock_request_table'], 'Out', '', $stock_request_id, $stock_request_number, $remarks, $bill_date, $factory_id, '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
-                            }
-                            if(!empty($godown_id)) {
-                                $stock_update = $obj->StockUpdate($GLOBALS['stock_request_table'], 'In', '', $stock_request_id, $stock_request_number, $remarks, $bill_date, '', $godown_id, $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
-                            }
+                            $conversion_update = $obj->ConversionUpdate($GLOBALS['stock_request_table'], $bill_date, $stock_request_id, $stock_request_number, '', '', $godown_id, $factory_id, $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i], '', '');
                         }
                     }
                 }
-                */
             }
             else {
                 $result = array('number' => '2', 'msg' => 'Invalid IP');
@@ -822,6 +814,7 @@
         $draw = trim($_POST['draw']);
 
         $searchValue = ""; $filter_from_date = ""; $filter_to_date = ""; $filter_factory_id = ""; $filter_godown_id = 0; $cancelled = 0;
+        $is_deliveried = 0;
         if(isset($_POST['start'])) {
             $row = trim($_POST['start']);
         }
@@ -845,6 +838,9 @@
         }
         if(isset($_POST['cancel'])) {
             $cancelled = trim($_POST['cancel']);
+        }
+        if(isset($_POST['is_deliveried'])) {
+            $is_deliveried = trim($_POST['is_deliveried']);
         }
         $page_title = "Stock Request";
         $order_column = "";
@@ -871,12 +867,12 @@
         }
 
         $totalRecords = 0;
-        $totalRecords = count($obj->getStockRequestList($row, $rowperpage, $searchValue, $filter_from_date, $filter_to_date, $filter_factory_id, $filter_godown_id, $cancelled, $order_column, $order_direction));
-        $filteredRecords = count($obj->getStockRequestList('', '', $searchValue, $filter_from_date, $filter_to_date, $filter_factory_id, $filter_godown_id, $cancelled, $order_column, $order_direction));
+        $totalRecords = count($obj->getStockRequestList($row, $rowperpage, $searchValue, $filter_from_date, $filter_to_date, $filter_factory_id, $filter_godown_id, $cancelled, $is_deliveried, $order_column, $order_direction));
+        $filteredRecords = count($obj->getStockRequestList('', '', $searchValue, $filter_from_date, $filter_to_date, $filter_factory_id, $filter_godown_id, $cancelled, $is_deliveried, $order_column, $order_direction));
 
         $data = [];
 
-        $StockRequestList = $obj->getStockRequestList($row, $rowperpage, $searchValue, $filter_from_date, $filter_to_date, $filter_factory_id, $filter_godown_id, $cancelled, $order_column, $order_direction);
+        $StockRequestList = $obj->getStockRequestList($row, $rowperpage, $searchValue, $filter_from_date, $filter_to_date, $filter_factory_id, $filter_godown_id, $cancelled, $is_deliveried, $order_column, $order_direction);
         
         $sno = $row + 1;
         foreach ($StockRequestList as $val) {
@@ -893,6 +889,8 @@
             if(!empty($val['total_quantity']) && $val['total_quantity'] != $GLOBALS['null_value']){
                 $total_quantity = $val['total_quantity'];
             }
+            $stock_request_linked_id = "";
+            $stock_request_linked_id = $obj->getTableColumnValue($GLOBALS['delivery_slip_table'], 'stock_request_id', $val['stock_request_id'], 'id');
             $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['stock_request_table'].'\''.', '.'\''.$val['stock_request_id'].'\''.');"><i class="fa fa-eye"></i></a>';
             $action = ""; $edit_option = ""; $delete_option = ""; $print_option = ""; $a5_print_option = ""; $delivery_slip = "";
             $access_error = "";
@@ -900,7 +898,7 @@
                 $permission_action = $edit_action;
                 include('permission_action.php');
             }
-            if(empty($access_error) && empty($val['cancelled'])) {
+            if(empty($access_error) && empty($val['cancelled']) && empty($stock_request_linked_id) && empty($is_deliveried)) {
                 $edit_option = '<li><a class="dropdown-item" href="Javascript:ShowModalContent('.'\''.$page_title.'\''.', '.'\''.$val['stock_request_id'].'\''.');"><i class="fa fa-pencil"></i>&nbsp; Edit</a></li>';
             }
             $access_error = "";
@@ -908,14 +906,14 @@
                 $permission_action = $delete_action;
                 include('permission_action.php');
             }
-            if(empty($access_error) && empty($val['cancelled'])) {
+            if(empty($access_error) && empty($val['cancelled']) && empty($stock_request_linked_id) && empty($is_deliveried)) {
                 $delete_option = '<li><a class="dropdown-item" href="Javascript:DeleteModalContent('.'\''.$page_title.'\''.', '.'\''.$val['stock_request_id'].'\''.');"><i class="fa fa-ban"></i>&nbsp; Cancel</a></li>';
             }
             $print_option = '<li><a class="dropdown-item" target="_blank" href="reports/rpt_stock_request_a4.php?view_stock_request_id=' . $val['stock_request_id'] . '"><i class="fa fa-print"></i>&nbsp; A4 Print</a></li>';
 
             $a5_print_option = '<li><a class="dropdown-item" target="_blank" href="reports/rpt_stock_request_a5.php?view_stock_request_id=' . $val['stock_request_id'] . '"><i class="fa fa-print"></i>&nbsp; A5 Print</a></li>';
 
-            if(empty($val['cancelled'])) {
+            if(empty($val['cancelled']) && empty($is_deliveried)) {
                 $delivery_slip = '<li><a class="dropdown-item" href="Javascript:ShowStockRequestConversion('.'\''.$val['stock_request_id'].'\''.');"><i class="fa fa-share"></i>&nbsp; Delivery Slip</a></li>';
             }
             
@@ -962,17 +960,12 @@
                 if(!empty($stock_request_number)) {
                     $action = "Stock Request Cancelled. Bill No. - ".$stock_request_number;
                 }
-                // $stock_delete = 0;
-                // $stock_delete = $obj->DeleteBillStock($GLOBALS['stock_request_table'], $delete_stock_request_id);
-                // if($stock_delete == '1') {
-                    $columns = array(); $values = array();
-                    $columns = array('cancelled');
-                    $values = array("'1'");
-                    $msg = $obj->UpdateSQL($GLOBALS['stock_request_table'], $stock_request_unique_id, $columns, $values, $action);
-                // }
-                // else {
-                //     $msg = "Can't Cancel. Stock goes to negative!";
-                // }
+                $conversion_delete = 0;
+                $conversion_delete = $obj->DeleteConversionList($delete_stock_request_id, '');
+                $columns = array(); $values = array();
+                $columns = array('cancelled');
+                $values = array("'1'");
+                $msg = $obj->UpdateSQL($GLOBALS['stock_request_table'], $stock_request_unique_id, $columns, $values, $action);
             }
             else {
                 $msg = "Invalid Request";

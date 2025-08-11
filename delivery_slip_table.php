@@ -1,4 +1,5 @@
 <input type="hidden" name="show_cancel_<?php echo $id; ?>" value="<?php echo $cancelled; ?>">
+<input type="hidden" name="show_approved_<?php echo $id; ?>" value="<?php echo $is_approved; ?>">
 <div class="table-responsive" style="height:800px; overflow-y:scroll!important;">
     <table id="<?php echo $id; ?>" class="datatable table nowrap border cursor text-center smallfnt table-bordered">
         <thead class="bg-light">

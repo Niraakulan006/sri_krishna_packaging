@@ -159,3 +159,36 @@ CREATE TABLE `sri_krishna_inward_approval` (
  `deleted` int(100) NOT NULL,
  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+CREATE TABLE `sri_krishna_conversion` (
+ `id` int(100) NOT NULL AUTO_INCREMENT,
+ `created_date_time` datetime NOT NULL,
+ `updated_date_time` datetime NOT NULL,
+ `creator` mediumtext NOT NULL,
+ `creator_name` mediumtext NOT NULL,
+ `bill_company_id` mediumtext NOT NULL,
+ `bill_date` date NOT NULL,
+ `bill_type` mediumtext NOT NULL,
+ `bill_id` mediumtext NOT NULL,
+ `bill_number` mediumtext NOT NULL,
+ `conversion_id` mediumtext NOT NULL,
+ `conversion_number` mediumtext NOT NULL,
+ `godown_id` mediumtext NOT NULL,
+ `godown_name` mediumtext NOT NULL,
+ `factory_id` mediumtext NOT NULL,
+ `factory_name` mediumtext NOT NULL,
+ `size_id` mediumtext NOT NULL,
+ `size_name` mediumtext NOT NULL,
+ `gsm_id` mediumtext NOT NULL,
+ `gsm_name` mediumtext NOT NULL,
+ `bf_id` mediumtext NOT NULL,
+ `bf_name` mediumtext NOT NULL,
+ `request_qty` mediumtext NOT NULL,
+ `delivery_qty` mediumtext NOT NULL,
+ `inward_qty` mediumtext NOT NULL,
+ `deleted` int(100) NOT NULL,
+ PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `sri_krishna_stock_request` ADD `is_deliveried` INT(100) NOT NULL AFTER `total_quantity`; 
+ALTER TABLE `sri_krishna_delivery_slip` ADD `is_approved` INT(100) NOT NULL AFTER `total_quantity`; 

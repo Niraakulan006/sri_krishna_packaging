@@ -40,6 +40,7 @@
 	$GLOBALS['stock_request_table'] = $GLOBALS['table_prefix']."stock_request";
 	$GLOBALS['delivery_slip_table'] = $GLOBALS['table_prefix']."delivery_slip";
 	$GLOBALS['inward_approval_table'] = $GLOBALS['table_prefix']."inward_approval";
+	$GLOBALS['conversion_table'] = $GLOBALS['table_prefix']."conversion";
 	
 	// Modules
 	$GLOBALS['size_module'] = "Size";

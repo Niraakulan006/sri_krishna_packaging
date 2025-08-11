@@ -175,7 +175,8 @@
 				$log_backup_file = $GLOBALS['log_backup_file'];
 	
 				$columns = array('type', 'created_date_time', 'creator', 'creator_name', 'creator_mobile_number', 'log_table', 'log_table_unique_id', 'action', 'query');	
-				$values = array("'".$creator_type."'", "'".$create_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$creator_mobile_number."'", "'".$table."'", "'".$table_unique_id."'", "'".$action."'", "'".$query."'");			
+				$values = array("'".$creator_type."'", "'".$create_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$creator_mobile_number."'", "'".$table."'", "'".$table_unique_id."'", "'".$action."'", "'".$query."'");		
+					
 				if(count($columns) == count($values)) {	
 					$log_data = array();
 					$log_data = array('type' => $creator_type, 'created_date_time' => $create_date_time, 'creator' => $creator, 'creator_name' => $creator_name, 'creator_mobile_number' => $creator_mobile_number, 'table' => $table, 'table_unique_id' => $table_unique_id, 'action' => $action, 'query' => $query);	

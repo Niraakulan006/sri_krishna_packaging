@@ -315,7 +315,7 @@
 			$list = $this->getQueryRecords($GLOBALS['material_transfer_table'], $select_query);
 			return $list;
 		}
-		public function getStockRequestList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $order_column, $order_direction) {
+		public function getStockRequestList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $is_deliveried, $order_column, $order_direction) {
 			$select_query = ""; $list = array(); $where = ""; $order_by_query = "";
 			if(!empty($from_date)) {
 				$from_date = date("Y-m-d", strtotime($from_date));
@@ -373,19 +373,19 @@
 
 			if(!empty($rowperpage)) {
 				$select_query = "SELECT * FROM ".$GLOBALS['stock_request_table']."
-							WHERE ".$where." cancelled = '".$cancelled."' AND deleted = '0'
+							WHERE ".$where." is_deliveried = '".$is_deliveried."' AND cancelled = '".$cancelled."' AND deleted = '0'
 							".$order_by_query."
 							LIMIT $row, $rowperpage";
 			}
 			else {
 				$select_query = "SELECT * FROM ".$GLOBALS['stock_request_table']."
-							WHERE ".$where." cancelled = '".$cancelled."' AND deleted = '0'
+							WHERE ".$where." is_deliveried = '".$is_deliveried."' AND cancelled = '".$cancelled."' AND deleted = '0'
 							".$order_by_query;
 			}
 			$list = $this->getQueryRecords($GLOBALS['stock_request_table'], $select_query);
 			return $list;
 		}
-		public function getDeliverySlipList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $order_column, $order_direction) {
+		public function getDeliverySlipList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $is_approved, $order_column, $order_direction) {
 			$select_query = ""; $list = array(); $where = ""; $order_by_query = "";
 			if(!empty($from_date)) {
 				$from_date = date("Y-m-d", strtotime($from_date));
@@ -443,13 +443,13 @@
 
 			if(!empty($rowperpage)) {
 				$select_query = "SELECT * FROM ".$GLOBALS['delivery_slip_table']."
-							WHERE ".$where." cancelled = '".$cancelled."' AND deleted = '0'
+							WHERE ".$where." is_approved = '".$is_approved."' AND cancelled = '".$cancelled."' AND deleted = '0'
 							".$order_by_query."
 							LIMIT $row, $rowperpage";
 			}
 			else {
 				$select_query = "SELECT * FROM ".$GLOBALS['delivery_slip_table']."
-							WHERE ".$where." cancelled = '".$cancelled."' AND deleted = '0'
+							WHERE ".$where." is_approved = '".$is_approved."' AND cancelled = '".$cancelled."' AND deleted = '0'
 							".$order_by_query;
 			}
 			$list = $this->getQueryRecords($GLOBALS['delivery_slip_table'], $select_query);

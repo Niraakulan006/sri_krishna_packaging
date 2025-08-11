@@ -129,20 +129,30 @@
                                             <button class="nav-link active" id="pills-active-tab" data-bs-toggle="pill" data-bs-target="#pills-active" type="button" role="tab" aria-controls="pills-active" aria-selected="true">Active Bill</button>
                                         </li>
                                         <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="pills-approved-tab" data-bs-toggle="pill" data-bs-target="#pills-approved" type="button" role="tab" aria-controls="pills-approved" aria-selected="true">Approved Bill</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
                                             <button class="nav-link" id="pills-cancel-tab" data-bs-toggle="pill" data-bs-target="#pills-cancel" type="button" role="tab" aria-controls="pills-cancel" aria-selected="false">Cancelled Bill</button>
                                         </li>
                                     </ul>
                                     <div class="tab-content" id="pills-tabContent">
                                         <div class="tab-pane fade show active" id="pills-active" role="tabpanel" aria-labelledby="pills-active-tab" tabindex="0">
                                             <?php 
-                                                $cancelled = 0;
+                                                $cancelled = 0; $is_approved = 0;
                                                 $id = "table-active";
+                                                include("delivery_slip_table.php"); 
+                                            ?>
+                                        </div>
+                                        <div class="tab-pane fade" id="pills-approved" role="tabpanel" aria-labelledby="pills-approved-tab" tabindex="0">
+                                            <?php 
+                                                $cancelled = 0; $is_approved = 1;
+                                                $id = "table-approved";
                                                 include("delivery_slip_table.php"); 
                                             ?>
                                         </div>
                                         <div class="tab-pane fade" id="pills-cancel" role="tabpanel" aria-labelledby="pills-cancel-tab" tabindex="0">
                                             <?php 
-                                                $cancelled = 1;
+                                                $cancelled = 1; $is_approved = 0;
                                                 $id = "table-cancel";
                                                 include("delivery_slip_table.php"); 
                                             ?>
@@ -198,6 +208,9 @@
                         }
                         if(jQuery('input[name="show_cancel_'+tableId+'"]').length > 0) {
                             d.cancel = jQuery('input[name="show_cancel_'+tableId+'"]').val();
+                        }
+                        if(jQuery('input[name="show_approved_'+tableId+'"]').length > 0) {
+                            d.is_approved = jQuery('input[name="show_approved_'+tableId+'"]').val();
                         }
                     }
                 },

@@ -15490,6 +15490,8 @@ span.flatpickr-weekday {
 .f-12{font-size:12px;}
 .nav-pills .nav-link.active#pills-active-tab {color: #fff!important; background-color: #116ec1 !important;}
 .nav-pills .nav-link.active#pills-cancel-tab {color: #fff!important; background-color: #c21636 !important;}
+.nav-pills .nav-link.active#pills-delivery-tab {color: #fff!important; background-color: #0a6224 !important;}
+.nav-pills .nav-link.active#pills-approved-tab {color: #fff!important; background-color: #0a6224 !important;}
 .nav-pills .nav-link {color: #aaa; background: #fff; position: relative; font-size:14px;}
 .nav-pills .nav-link.active {color: #fff!important; background: #fff;}
 /* @media (min-width: 992px) {

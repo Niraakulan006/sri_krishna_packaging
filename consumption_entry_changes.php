@@ -718,8 +718,10 @@
                         $quantity = array();
                     }
                     if(!empty($size_ids)) {
+                        $remarks = "";
+                        $remarks = $obj->encode_decode('encrypt', $consumption_entry_number);
                         for($i=0; $i < count($size_ids); $i++) {
-                            $stock_update = $obj->StockUpdate($GLOBALS['consumption_entry_table'], 'Out', '', $consumption_entry_id, $consumption_entry_number, $consumption_entry_number, $consumption_entry_date, $selected_factory_id, '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
+                            $stock_update = $obj->StockUpdate($GLOBALS['consumption_entry_table'], 'Out', '', $consumption_entry_id, $consumption_entry_number, $remarks, $consumption_entry_date, $selected_factory_id, '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
                             
                         }
                     }
