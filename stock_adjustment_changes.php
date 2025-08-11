@@ -1092,23 +1092,20 @@
                         $stock_type = array();
                     }
                     if(!empty($size_ids)) {
-                        $remarks = "";
-                        $remarks = $obj->encode_decode('encrypt', $stock_adjustment_number);
                         for($i=0; $i < count($size_ids); $i++) {
-                            if($stock_type[$i] == 'plus'){
+                            if($stock_type[$i] =='plus'){
                                 if($location_type == '1') {
-                                    $stock_update = $obj->StockUpdate($GLOBALS['stock_adjustment_table'], 'In', '', $stock_adjustment_id, $stock_adjustment_number, $remarks, $stock_adjustment_date, '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
+                                    $stock_update = $obj->StockUpdate($GLOBALS['stock_adjustment_table'], 'In', '', $stock_adjustment_id, $stock_adjustment_number, $stock_adjustment_number, $stock_adjustment_date, '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
                                 }
                                 else if($location_type == '2') {
-                                    $stock_update = $obj->StockUpdate($GLOBALS['stock_adjustment_table'], 'In', '', $stock_adjustment_id, $stock_adjustment_number, $remarks, $stock_adjustment_date, $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
+                                    $stock_update = $obj->StockUpdate($GLOBALS['stock_adjustment_table'], 'In', '', $stock_adjustment_id, $stock_adjustment_number, $stock_adjustment_number, $stock_adjustment_date, $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
                                 }
-                            }
-                            else if($stock_type[$i] == 'minus'){
+                            }else if($stock_type[$i] =='minus'){
                                 if($location_type == '1') {
-                                    $stock_update = $obj->StockUpdate($GLOBALS['stock_adjustment_table'], 'Out', '', $stock_adjustment_id, $stock_adjustment_number, $remarks, $stock_adjustment_date, '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
+                                    $stock_update = $obj->StockUpdate($GLOBALS['stock_adjustment_table'], 'Out', '', $stock_adjustment_id, $stock_adjustment_number, $stock_adjustment_number, $stock_adjustment_date, '', $godown_ids[$i], $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
                                 }
                                 else if($location_type == '2') {
-                                    $stock_update = $obj->StockUpdate($GLOBALS['stock_adjustment_table'], 'Out', '', $stock_adjustment_id, $stock_adjustment_number, $remarks, $stock_adjustment_date, $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
+                                    $stock_update = $obj->StockUpdate($GLOBALS['stock_adjustment_table'], 'Out', '', $stock_adjustment_id, $stock_adjustment_number, $stock_adjustment_number, $stock_adjustment_date, $factory_ids[$i], '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
                                 }
                             }
                         }

@@ -198,5 +198,180 @@
                 }
             }
         }
+
+        public function GetPrevRequestQty($bill_id, $godown_id, $factory_id, $size_id, $gsm_id, $bf_id) {
+            $where = ""; $select_query = ""; $list = array(); $request_qty = 0;
+            if(!empty($bill_id)) {
+                if(!empty($where)) {
+                    $where = $where." bill_id = '".$bill_id."' AND ";
+                }
+                else {
+                    $where = " bill_id = '".$bill_id."' AND ";
+                }
+            }
+            if(!empty($factory_id)) {
+                if(!empty($where)) {
+                    $where = $where." factory_id = '".$factory_id."' AND ";
+                }
+                else {
+                    $where = " factory_id = '".$factory_id."' AND ";
+                }
+            }
+            if(!empty($godown_id)) {
+                if(!empty($where)) {
+                    $where = $where." godown_id = '".$godown_id."' AND ";
+                }
+                else {
+                    $where = " godown_id = '".$godown_id."' AND ";
+                }
+            }
+            if(!empty($size_id)) {
+                if(!empty($where)) {
+                    $where = $where." size_id = '".$size_id."' AND ";
+                }
+                else {
+                    $where = " size_id = '".$size_id."' AND ";
+                }
+            }
+            if(!empty($gsm_id)) {
+                if(!empty($where)) {
+                    $where = $where." gsm_id = '".$gsm_id."' AND ";
+                }
+                else {
+                    $where = " gsm_id = '".$gsm_id."' AND ";
+                }
+            }
+            if(!empty($bf_id)) {
+                if(!empty($where)) {
+                    $where = $where." bf_id = '".$bf_id."' AND ";
+                }
+                else {
+                    $where = " bf_id = '".$bf_id."' AND ";
+                }
+            }
+            if(!empty($where)) {
+                $select_query = "SELECT request_qty FROM ".$GLOBALS['conversion_table']." WHERE ".$where." deleted = '0'";
+                $list = $this->getQueryRecords('', $select_query);
+            }
+            if(!empty($list)) {
+                foreach($list as $data) {
+                    if(!empty($data['request_qty']) && $data['request_qty'] != $GLOBALS['null_value']) {
+                        $request_qty = $data['request_qty'];
+                    }
+                }
+            }
+            return $request_qty;
+        }
+
+        public function GetOtherDeliveryQty($bill_id, $conversion_id, $godown_id, $factory_id, $size_id, $gsm_id, $bf_id) {
+            $where = ""; $select_query = ""; $list = array(); $delivery_qty = 0;
+            if(!empty($bill_id)) {
+                if(!empty($where)) {
+                    $where = $where." bill_id != '".$bill_id."' AND ";
+                }
+                else {
+                    $where = " bill_id != '".$bill_id."' AND ";
+                }
+            }
+            if(!empty($conversion_id)) {
+                if(!empty($where)) {
+                    $where = $where." conversion_id = '".$conversion_id."' AND ";
+                }
+                else {
+                    $where = " conversion_id = '".$conversion_id."' AND ";
+                }
+            }
+            if(!empty($factory_id)) {
+                if(!empty($where)) {
+                    $where = $where." factory_id = '".$factory_id."' AND ";
+                }
+                else {
+                    $where = " factory_id = '".$factory_id."' AND ";
+                }
+            }
+            if(!empty($godown_id)) {
+                if(!empty($where)) {
+                    $where = $where." godown_id = '".$godown_id."' AND ";
+                }
+                else {
+                    $where = " godown_id = '".$godown_id."' AND ";
+                }
+            }
+            if(!empty($size_id)) {
+                if(!empty($where)) {
+                    $where = $where." size_id = '".$size_id."' AND ";
+                }
+                else {
+                    $where = " size_id = '".$size_id."' AND ";
+                }
+            }
+            if(!empty($gsm_id)) {
+                if(!empty($where)) {
+                    $where = $where." gsm_id = '".$gsm_id."' AND ";
+                }
+                else {
+                    $where = " gsm_id = '".$gsm_id."' AND ";
+                }
+            }
+            if(!empty($bf_id)) {
+                if(!empty($where)) {
+                    $where = $where." bf_id = '".$bf_id."' AND ";
+                }
+                else {
+                    $where = " bf_id = '".$bf_id."' AND ";
+                }
+            }
+            if(!empty($where)) {
+                $select_query = "SELECT SUM(delivery_qty) as delivery_qty FROM ".$GLOBALS['conversion_table']." WHERE ".$where." deleted = '0'";
+                $list = $this->getQueryRecords('', $select_query);
+            }
+            if(!empty($list)) {
+                foreach($list as $data) {
+                    if(!empty($data['delivery_qty']) && $data['delivery_qty'] != $GLOBALS['null_value']) {
+                        $delivery_qty = $data['delivery_qty'];
+                    }
+                }
+            }
+            return $delivery_qty;
+        }
+
+        public function CheckRequestDeliveried($stock_request_id) {
+            $conversion_list = array();
+            $conversion_list = $this->PrevConversionList($stock_request_id);
+            $success = 0; $product_count = 0;
+            $size_id = $this->getTableColumnValue($GLOBALS['stock_request_table'], 'stock_request_id', $stock_request_id, 'size_id');
+            if(!empty($size_id) && $size_id != $GLOBALS['null_value']) {
+                $product_count = count(explode(",", $size_id));
+            }
+            if(!empty($conversion_list)) {
+                foreach($conversion_list as $data) {
+                    $request_qty = 0;
+                    if(!empty($data['request_qty']) && $data['request_qty'] != $GLOBALS['null_value']) {
+                        $request_qty = $data['request_qty'];
+                    }
+                    $deliveried_qty = 0;
+                    $deliveried_qty = $this->GetOtherDeliveryQty('', $stock_request_id, $data['godown_id'], $data['factory_id'], $data['size_id'], $data['gsm_id'], $data['bf_id']);
+                    if($request_qty <= $deliveried_qty) {
+                        $success++;
+                    }
+                }
+            }
+            $stock_request_unique_id = "";
+            $stock_request_unique_id = $this->getTableColumnValue($GLOBALS['stock_request_table'], 'stock_request_id', $stock_request_id, 'id');
+            if(preg_match("/^\d+$/", $stock_request_unique_id)) {
+                if($success == $product_count) {
+                    $columns = array(); $values = array();
+                    $columns = array('is_deliveried');
+                    $values = array("'1'");
+                    $stock_request_update_id = $this->UpdateSQL($GLOBALS['stock_request_table'], $stock_request_unique_id, $columns, $values, '');
+                }
+                else {
+                    $columns = array(); $values = array();
+                    $columns = array('is_deliveried');
+                    $values = array("'0'");
+                    $stock_request_update_id = $this->UpdateSQL($GLOBALS['stock_request_table'], $stock_request_unique_id, $columns, $values, '');
+                }
+            }
+        }
     }
 ?>

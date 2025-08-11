@@ -238,6 +238,29 @@ function DeleteRequestRow(id_name, row_index) {
 		}
 	});
 }
+function DeleteDeliveryRow(id_name, row_index) {
+	var check_login_session = 1;
+	var post_url = "dashboard_changes.php?check_login_session=1";
+	jQuery.ajax({
+		url: post_url, success: function (check_login_session) {
+			if (check_login_session == 1) {
+				if (jQuery('#'+id_name+row_index).length > 0) {
+					jQuery('#'+id_name+row_index).remove();
+				}
+                if(jQuery('.'+id_name).length == 1 && id_name == 'product_row') {
+                    if(jQuery('.delete_product').length > 0) {
+                        jQuery('.delete_product').addClass('d-none');
+                    }
+                }
+                SnoCalcPlus();
+                TotalReelsCount();
+			}
+			else {
+				window.location.reload();
+			}
+		}
+	});
+}
 function RequestRowCheck(obj) {
     if(jQuery(obj).closest('tr.product_row').find('span.infos').length > 0) {
         jQuery(obj).closest('tr.product_row').find('span.infos').remove();

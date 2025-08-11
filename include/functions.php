@@ -332,6 +332,27 @@
 			$conversion_update = $conversion_obj->DeleteConversionList($bill_id, $conversion_unique_ids);
 			return $conversion_update;
 		}
+		public function GetPrevRequestQty($bill_id, $godown_id, $factory_id, $size_id, $gsm_id, $bf_id) {
+			$conversion_obj = "";
+			$conversion_obj = $this->conversion_function_object();
+			$conversion_update = "";
+			$conversion_update = $conversion_obj->GetPrevRequestQty($bill_id, $godown_id, $factory_id, $size_id, $gsm_id, $bf_id);
+			return $conversion_update;
+		}
+		public function GetOtherDeliveryQty($bill_id, $conversion_id, $godown_id, $factory_id, $size_id, $gsm_id, $bf_id) {
+			$conversion_obj = "";
+			$conversion_obj = $this->conversion_function_object();
+			$conversion_update = "";
+			$conversion_update = $conversion_obj->GetOtherDeliveryQty($bill_id, $conversion_id, $godown_id, $factory_id, $size_id, $gsm_id, $bf_id);
+			return $conversion_update;
+		}
+		public function CheckRequestDeliveried($stock_request_id) {
+			$conversion_obj = "";
+			$conversion_obj = $this->conversion_function_object();
+			$conversion_update = "";
+			$conversion_update = $conversion_obj->CheckRequestDeliveried($stock_request_id);
+			return $conversion_update;
+		}
 
 		// Report Functions
 		public function report_function_object() {
@@ -339,11 +360,25 @@
 			$report_obj = new report_functions();
 			return $report_obj;
 		}
-		public function getCurrentStockList($location_type,$factory_id, $godown_id,$size_id,$gsm_id,$bf_id) {
+		public function getCurrentStockList($location_type,$factory_id, $godown_id,$size_id,$gsm_id,$bf_id,$from_date,$to_date) {
 			$report_obj = "";
 			$report_obj = $this->report_function_object();
 			$report_update = "";
-			$report_update = $report_obj->getCurrentStockList($location_type,$factory_id, $godown_id,$size_id,$gsm_id,$bf_id);
+			$report_update = $report_obj->getCurrentStockList($location_type,$factory_id, $godown_id,$size_id,$gsm_id,$bf_id,$from_date,$to_date);
+			return $report_update;
+		}
+		public function getConsumptionStockReport($from_date,$to_date,$size_id,$gsm_id,$bf_id) {
+			$report_obj = "";
+			$report_obj = $this->report_function_object();
+			$report_update = "";
+			$report_update = $report_obj->getConsumptionStockReport($from_date,$to_date,$size_id,$gsm_id,$bf_id);
+			return $report_update;
+		}
+		public function getSupplierReport($supplier_id,$from_date,$to_date) {
+			$report_obj = "";
+			$report_obj = $this->report_function_object();
+			$report_update = "";
+			$report_update = $report_obj->getSupplierReport($supplier_id,$from_date,$to_date);
 			return $report_update;
 		}
 	}

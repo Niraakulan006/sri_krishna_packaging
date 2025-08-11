@@ -207,8 +207,8 @@
                         if(jQuery('input[name="show_cancel_'+tableId+'"]').length > 0) {
                             d.cancel = jQuery('input[name="show_cancel_'+tableId+'"]').val();
                         }
-                        if(jQuery('input[name="show_cancel_'+tableId+'"]').length > 0) {
-                            d.is_deliveried = jQuery('input[name="show_cancel_'+tableId+'"]').val();
+                        if(jQuery('input[name="show_deliveried_'+tableId+'"]').length > 0) {
+                            d.is_deliveried = jQuery('input[name="show_deliveried_'+tableId+'"]').val();
                         }
                     }
                 },
