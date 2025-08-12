@@ -118,60 +118,48 @@
 			}
 			return $godown_id;
 		}
-        public function GetRoleLinkedCount($role_id) {
-			$list = array(); $select_query = ""; $count = 0;
-			if(!empty($role_id)) {
-				$select_query = "SELECT id_count FROM ((SELECT count(id) as id_count FROM ".$GLOBALS['user_table']." WHERE FIND_IN_SET('".$role_id."', role_id) AND deleted = '0')) as g";
-				$list = $this->getQueryRecords('', $select_query);
-			}
-			if(!empty($list)) {
-				foreach($list as $data) {
-					if(!empty($data['id_count']) && $data['id_count'] != $GLOBALS['null_value']) {
-						$count = $data['id_count'];
-					}
-				}
-			}
-			return $count;
-		}
-        public function GetLinkedCount($id, $table, $field_id) {
+        public function GetLinkedCount($table, $creation_id) {
 			$list = array(); $select_query = ""; $where = ""; $count = 0;
-			if(!empty($id) && !empty($table) && !empty($field_id)) {
-				$where = $field_id." = '".$id."' AND";
-				$select_query = "SELECT id_count FROM 
-									((SELECT COUNT(id) as id_count FROM ".$table." WHERE ".$where." deleted = '0')
-									)
-								as g";
-				$list = $this->getQueryRecords('', $select_query);
+			$linked_tables = array(); $linked_query = ""; $field_id = ""; $cancelled_where = "";
+			if($table == $GLOBALS['role_table']) {
+				$linked_tables = array($GLOBALS['user_table'], $GLOBALS['godown_table']);
+				$field_id = "role_id";
 			}
-			if(!empty($list)) {
-				foreach($list as $data) {
-					if(!empty($data['id_count']) && $data['id_count'] != $GLOBALS['null_value']) {
-						$count = $data['id_count'];
+			else if($table == $GLOBALS['size_table'] || $table == $GLOBALS['gsm_table'] || $table == $GLOBALS['bf_table']) {
+				$linked_tables = array($GLOBALS['inward_material_table'], $GLOBALS['material_transfer_table'], $GLOBALS['stock_adjustment_table'], $GLOBALS['stock_request_table'], $GLOBALS['delivery_slip_table'], $GLOBALS['inward_approval_table'], $GLOBALS['consumption_entry_table']);
+				if($table == $GLOBALS['size_table']) {
+					$field_id = "size_id";
+				}
+				else if($table == $GLOBALS['gsm_table']) {
+					$field_id = "gsm_id";
+				}
+				else if($table == $GLOBALS['bf_table']) {
+					$field_id = "bf_id";
+				}
+				$cancelled_where = " AND cancelled = '0'";
+			}
+			else if($table == $GLOBALS['godown_table']) {
+				$linked_tables = array($GLOBALS['inward_material_table'], $GLOBALS['material_transfer_table'], $GLOBALS['stock_adjustment_table'], $GLOBALS['stock_request_table'], $GLOBALS['delivery_slip_table'], $GLOBALS['inward_approval_table']);
+				$field_id = "godown_id";
+				$cancelled_where = " AND cancelled = '0'";
+			}
+			else if($table == $GLOBALS['supplier_table']) {
+				$linked_tables = array($GLOBALS['inward_material_table']);
+				$field_id = "supplier_id";
+				$cancelled_where = " AND cancelled = '0'";
+			}
+			if(!empty($linked_tables)) {
+				for($i=0; $i < count($linked_tables); $i++) {
+					if(!empty($linked_query)) {
+						$linked_query = $linked_query." UNION ALL (SELECT COUNT(id) as id_count FROM ".$linked_tables[$i]." WHERE FIND_IN_SET('".$creation_id."', ".$field_id.") ".$cancelled_where." AND deleted = '0')";
+					}
+					else {
+						$linked_query = "(SELECT COUNT(id) as id_count FROM ".$linked_tables[$i]." WHERE FIND_IN_SET('".$creation_id."', ".$field_id.") ".$cancelled_where." AND deleted = '0')";
 					}
 				}
 			}
-			return $count;
-		}
-		public function GetGodownLinkedCount($godown_id) {
-			$list = array(); $select_query = ""; $where = ""; $mt_where = ""; $count = 0;
-			if(!empty($godown_id)) {
-				$where = " FIND_IN_SET('".$godown_id."', godown_id) AND ";
-				$mt_where = " (FIND_IN_SET('".$godown_id."', from_location) OR FIND_IN_SET('".$godown_id."', to_location)) AND ";
-				$pt_where = " FIND_IN_SET('".$godown_id."', location_id) AND ";
-
-				// $select_query = "SELECT id_count FROM 
-				// 					((SELECT count(id) as id_count FROM ".$GLOBALS['consumption_entry_table']." WHERE ".$where." cancelled = '0')
-				// 					UNION ALL
-				// 					(SELECT count(id) as id_count FROM ".$GLOBALS['purchase_entry_table']." WHERE ".$pt_where." cancelled = '0')
-				// 					UNION ALL
-				// 					(SELECT count(id) as id_count FROM ".$GLOBALS['material_transfer_table']." WHERE ".$mt_where." cancelled = '0')
-				// 					UNION ALL
-				// 					(SELECT count(id) as id_count FROM ".$GLOBALS['stock_adjustment_table']." WHERE ".$pt_where." cancelled = '0')
-				// 					UNION ALL
-				// 					(SELECT count(id) as id_count FROM ".$GLOBALS['godown_table']." WHERE ".$where." factory_id != '".$GLOBALS['null_value']."' AND deleted = '0')
-				// 					UNION ALL
-				// 					(SELECT count(id) as id_count FROM ".$GLOBALS['product_table']." WHERE ".$pt_where." deleted = '0'))
-				// 				as g";
+			if(!empty($linked_query)) {
+				$select_query = "SELECT id_count FROM (".$linked_query.") as g";
 				$list = $this->getQueryRecords('', $select_query);
 			}
 			if(!empty($list)) {
@@ -661,6 +649,132 @@
 				$new_created_id = $this->getTableColumnValue($table, 'id', $material_insert_id, $field_id);
 			}
 			return $new_created_id;
+		}
+		public function MonthwiseChart() {
+			$select_query = ""; $list = array(); $inward_data = array_fill(1, 12, 0); $outward_data = array_fill(1, 12, 0);
+			$select_query = "SELECT MONTH(stock_date) as month, SUM(inward_unit) as inward, SUM(outward_unit) as outward FROM ".$GLOBALS['stock_table']." WHERE deleted = '0' GROUP BY MONTH(stock_date)";
+			$list = $this->getQueryRecords('', $select_query);
+			if(!empty($list)) {
+				foreach($list as $data) {
+					if(!empty($data['inward']) && $data['inward'] != $GLOBALS['null_value']) {
+						$inward_data[(int)$data['month']] = (int)$data['inward'];
+					}
+					if(!empty($data['outward']) && $data['outward'] != $GLOBALS['null_value']) {
+						$outward_data[(int)$data['month']] = (int)$data['outward'];
+					}
+				}
+			}
+			return json_encode([
+						"inward" => array_values($inward_data),
+						"outward" => array_values($outward_data)
+					]);
+		}
+		public function LocationVariationChart() {
+			$distinct_query = ""; $distinct_list = array(); $variations = array();
+			$distinct_query = "SELECT DISTINCT size_id, gsm_id, bf_id FROM ".$GLOBALS['stock_table']." WHERE deleted = '0' ORDER BY size_id, gsm_id, bf_id";
+			$distinct_list = $this->getQueryRecords('', $distinct_query);
+			if(!empty($distinct_list)) {
+				foreach($distinct_list as $data) {
+					if(!empty($data['size_id']) && $data['size_id'] != $GLOBALS['null_value'] && !empty($data['gsm_id']) && $data['gsm_id'] != $GLOBALS['null_value'] && !empty($data['bf_id']) && $data['bf_id'] != $GLOBALS['null_value']) {
+						$label = ""; $size_name = ""; $gsm_name = ""; $bf_name = ""; $size_value = ""; $gsm_value = ""; $bf_value = "";
+						$size_name = $this->getTableColumnValue($GLOBALS['size_table'], 'size_id', $data['size_id'], 'size_name');
+						if(!empty($size_name) && $size_name != $GLOBALS['null_value']) {
+							$size_value = $this->encode_decode('decrypt', $size_name);
+						}
+						$gsm_name = $this->getTableColumnValue($GLOBALS['gsm_table'], 'gsm_id', $data['gsm_id'], 'gsm_name');
+						if(!empty($gsm_name) && $gsm_name != $GLOBALS['null_value']) {
+							$gsm_value = $this->encode_decode('decrypt', $gsm_name);
+						}
+						$bf_name = $this->getTableColumnValue($GLOBALS['bf_table'], 'bf_id', $data['bf_id'], 'bf_name');
+						if(!empty($bf_name) && $bf_name != $GLOBALS['null_value']) {
+							$bf_value = $this->encode_decode('decrypt', $bf_name);
+						}
+						$label = "Size : ".$size_value."/ GSM : ".$gsm_value."/ BF : ".$bf_value;
+						$variations[] = [
+											'label' => $label,
+											'size_id' => $data['size_id'],
+											'gsm_id' => $data['gsm_id'],
+											'bf_id' => $data['bf_id']
+										];
+					}
+				}
+			}
+			$datasets = array(); $locations = array();
+
+			$factory_list = array();
+			$factory_list = $this->getTableRecords($GLOBALS['factory_table'], '', '');
+			if(!empty($factory_list)) {
+				foreach($factory_list as $data) {
+					if(!empty($data['factory_id']) && $data['factory_id'] != $GLOBALS['null_value']) {
+						$locations[] = html_entity_decode($this->encode_decode('decrypt', $data['factory_name']));
+					}
+				}
+			}
+			$godown_list = array();
+			$godown_list = $this->getTableRecords($GLOBALS['godown_table'], '', '');
+			if(!empty($godown_list)) {
+				foreach($godown_list as $data) {
+					if(!empty($data['godown_id']) && $data['godown_id'] != $GLOBALS['null_value']) {
+						$locations[] = html_entity_decode($this->encode_decode('decrypt', $data['godown_name']));
+					}
+				}
+			}
+			if(!empty($variations)) {
+				foreach($variations as $data) {
+					$row = array();
+					if(!empty($factory_list)) {
+						foreach($factory_list as $list) {
+							if(!empty($list['factory_id']) && $list['factory_id'] != $GLOBALS['null_value']) {
+								$factory_query = ""; $factory_array = array(); $inward = 0; $outward = 0; $current_stock = 0;
+								$factory_query = "SELECT SUM(inward_unit) as inward, SUM(outward_unit) as outward FROM ".$GLOBALS['stock_table']." WHERE factory_id = '".$list['factory_id']."' AND size_id = '".$data['size_id']."' AND gsm_id = '".$data['gsm_id']."' AND bf_id = '".$data['bf_id']."' AND deleted = '0'";
+								$factory_array = $this->getQueryRecords('', $factory_query);
+								if(!empty($factory_array)) {
+									foreach($factory_array as $val) {
+										if(!empty($val['inward']) && $val['inward'] != $GLOBALS['null_value']) {
+											$inward = (int)$val['inward'];
+										}
+										if(!empty($val['outward']) && $val['outward'] != $GLOBALS['null_value']) {
+											$outward = (int)$val['outward'];
+										}
+									}
+								}
+								$current_stock = $inward - $outward;
+								$row[] = (int)($current_stock ?? 0);
+							}
+						}
+					}
+					if(!empty($godown_list)) {
+						foreach($godown_list as $list) {
+							if(!empty($list['godown_id']) && $list['godown_id'] != $GLOBALS['null_value']) {
+								$godown_query = ""; $godown_array = array(); $inward = 0; $outward = 0; $current_stock = 0;
+								$godown_query = "SELECT SUM(inward_unit) as inward, SUM(outward_unit) as outward FROM ".$GLOBALS['stock_table']." WHERE godown_id = '".$list['godown_id']."' AND size_id = '".$data['size_id']."' AND gsm_id = '".$data['gsm_id']."' AND bf_id = '".$data['bf_id']."' AND deleted = '0'";
+								$godown_array = $this->getQueryRecords('', $godown_query);
+								if(!empty($godown_array)) {
+									foreach($godown_array as $val) {
+										if(!empty($val['inward']) && $val['inward'] != $GLOBALS['null_value']) {
+											$inward = (int)$val['inward'];
+										}
+										if(!empty($val['outward']) && $val['outward'] != $GLOBALS['null_value']) {
+											$outward = (int)$val['outward'];
+										}
+									}
+								}
+								$current_stock = $inward - $outward;
+								$row[] = (int)($current_stock ?? 0);
+							}
+						}
+					}
+					$datasets[] = [
+						'label' => $data['label'],
+						'data' => $row,
+						'backgroundColor' => sprintf('hsl(%d, 70%%, 50%%)', rand(0, 360))
+					];
+				}
+			}
+			return json_encode([
+						'locations' => $locations,
+						'datasets' => $datasets
+					]);
 		}
     }
 ?>

@@ -20,7 +20,7 @@ include("include_files.php");
         }
        
         $total_records_list = array();
-        $total_records_list = $obj->getTableRecords($GLOBALS['supplier_table'],'','','');
+        $total_records_list = $obj->getTableRecords($GLOBALS['supplier_table'],'','');
         
         if (!empty($search_text)) {
             $search_text = strtolower($search_text);

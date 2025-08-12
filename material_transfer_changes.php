@@ -1,12 +1,8 @@
 <?php
 	include("include_files.php");
-    $login_staff_id = "";
-    if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'])) {
-        if(!empty($GLOBALS['user_type']) && $GLOBALS['user_type'] != $GLOBALS['admin_user_type']) {
-            $login_staff_id = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'];
-            $permission_module = $GLOBALS['material_transfer_module'];
-        }
-    }
+    $permission_module = $GLOBALS['material_transfer_module'];
+    include("include_module_action.php");
+
 	if(isset($_REQUEST['show_material_transfer_id'])) { 
         $show_material_transfer_id = trim($_REQUEST['show_material_transfer_id']); 
         $factory_id = "";
@@ -256,12 +252,7 @@
                 </div>
             </div>
             <div class="row px-3 py-1">
-                <div class="col-lg-6 col-md-6 col-12 px-lg-1 text-center align-content-center" id="current_stock_div">
-                    <div class="form-group mb-0">
-                        <span class="h4 d-none text-center fw-bold mb-0">Current Stock : <span class="current_stock_span text-danger">0</span></span>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-6 col-12 px-lg-1 text-center align-content-center" id="total_reels_div">
+                <div class="col-12 px-lg-1 text-center align-content-center" id="total_reels_div">
                     <div class="form-group mb-0">
                         <span class="h4 text-center fw-bold mb-0">Total Reels : <span class="total_reels_span text-success"><?php echo $total_quantity; ?></span></span>
                     </div>
@@ -719,48 +710,58 @@
                 }
                 $update_stock = 0; $material_transfer_id = ""; $material_transfer_number = "";
                 if(empty($edit_id)) {
-                    $action = "";
-                    $action = "New Material Transfer Created.";
+                    if(empty($add_access_error)) {
+                        $action = "";
+                        $action = "New Material Transfer Created.";
 
-                    $null_value = $GLOBALS['null_value'];
-                    $columns = array(); $values = array();
-                    $columns = array('created_date_time', 'updated_date_time', 'creator', 'creator_name', 'bill_company_id', 'bill_company_name', 'bill_company_details', 'material_transfer_id', 'material_transfer_number', 'bill_date', 'factory_id', 'factory_name', 'factory_name_location', 'godown_id', 'godown_name', 'godown_name_location', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity', 'cancelled', 'deleted');
-                    $values = array("'".$created_date_time."'", "'".$updated_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$null_value."'", "'".$null_value."'", "'".$bill_date."'", "'".$factory_id."'", "'".$factory_name."'", "'".$factory_name_location."'", "'".$godown_id."'", "'".$godown_name."'", "'".$godown_name_location."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'", "'0'", "'0'");
+                        $null_value = $GLOBALS['null_value'];
+                        $columns = array(); $values = array();
+                        $columns = array('created_date_time', 'updated_date_time', 'creator', 'creator_name', 'bill_company_id', 'bill_company_name', 'bill_company_details', 'material_transfer_id', 'material_transfer_number', 'bill_date', 'factory_id', 'factory_name', 'factory_name_location', 'godown_id', 'godown_name', 'godown_name_location', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity', 'cancelled', 'deleted');
+                        $values = array("'".$created_date_time."'", "'".$updated_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$null_value."'", "'".$null_value."'", "'".$bill_date."'", "'".$factory_id."'", "'".$factory_name."'", "'".$factory_name_location."'", "'".$godown_id."'", "'".$godown_name."'", "'".$godown_name_location."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'", "'0'", "'0'");
 
-                    $material_transfer_insert_id = $obj->InsertSQL($GLOBALS['material_transfer_table'], $columns, $values,'material_transfer_id', 'material_transfer_number', $action);
+                        $material_transfer_insert_id = $obj->InsertSQL($GLOBALS['material_transfer_table'], $columns, $values,'material_transfer_id', 'material_transfer_number', $action);
 
-                    if(preg_match("/^\d+$/", $material_transfer_insert_id)) {
-                        $update_stock = 1;
-                        $material_transfer_id = $obj->getTableColumnValue($GLOBALS['material_transfer_table'], 'id', $material_transfer_insert_id, 'material_transfer_id');
-                        $material_transfer_number = $obj->getTableColumnValue($GLOBALS['material_transfer_table'], 'id', $material_transfer_insert_id, 'material_transfer_number');
-                        $result = array('number' => '1', 'msg' => 'Materials Successfully Transfered');
+                        if(preg_match("/^\d+$/", $material_transfer_insert_id)) {
+                            $update_stock = 1;
+                            $material_transfer_id = $obj->getTableColumnValue($GLOBALS['material_transfer_table'], 'id', $material_transfer_insert_id, 'material_transfer_id');
+                            $material_transfer_number = $obj->getTableColumnValue($GLOBALS['material_transfer_table'], 'id', $material_transfer_insert_id, 'material_transfer_number');
+                            $result = array('number' => '1', 'msg' => 'Materials Successfully Transfered');
+                        }
+                        else {
+                            $result = array('number' => '2', 'msg' => $material_transfer_insert_id);
+                        }
                     }
                     else {
-                        $result = array('number' => '2', 'msg' => $material_transfer_insert_id);
+                        $result = array('number' => '2', 'msg' => $add_access_error);
                     }
                 }
                 else {
                     $getUniqueID = "";
                     $getUniqueID = $obj->getTableColumnValue($GLOBALS['material_transfer_table'], 'material_transfer_id', $edit_id, 'id');
                     if(preg_match("/^\d+$/", $getUniqueID)) {
-                        $action = "";
-                        $action = "Material Transfer Updated.";
+                        if(empty($edit_access_error)) {
+                            $action = "";
+                            $action = "Material Transfer Updated.";
 
-                        $columns = array(); $values = array();		
-                        $columns = array('updated_date_time', 'creator_name', 'bill_company_name', 'bill_company_details', 'bill_date', 'factory_id', 'factory_name', 'factory_name_location', 'godown_id', 'godown_name', 'godown_name_location', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity');
-                        $values = array("'".$updated_date_time."'", "'".$creator_name."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$bill_date."'", "'".$factory_id."'", "'".$factory_name."'", "'".$factory_name_location."'", "'".$godown_id."'", "'".$godown_name."'", "'".$godown_name_location."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'");
+                            $columns = array(); $values = array();		
+                            $columns = array('updated_date_time', 'creator_name', 'bill_company_name', 'bill_company_details', 'bill_date', 'factory_id', 'factory_name', 'factory_name_location', 'godown_id', 'godown_name', 'godown_name_location', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity');
+                            $values = array("'".$updated_date_time."'", "'".$creator_name."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$bill_date."'", "'".$factory_id."'", "'".$factory_name."'", "'".$factory_name_location."'", "'".$godown_id."'", "'".$godown_name."'", "'".$godown_name_location."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'");
 
-                        $material_transfer_update_id = $obj->UpdateSQL($GLOBALS['material_transfer_table'], $getUniqueID, $columns, $values, $action);
+                            $material_transfer_update_id = $obj->UpdateSQL($GLOBALS['material_transfer_table'], $getUniqueID, $columns, $values, $action);
 
-                        if(preg_match("/^\d+$/", $material_transfer_update_id)) {
-                            $update_stock = 1;
-                            $material_transfer_id = $edit_id;
-                            $material_transfer_number = $obj->getTableColumnValue($GLOBALS['material_transfer_table'], 'material_transfer_id', $material_transfer_id, 'material_transfer_number');
-                            $result = array('number' => '1', 'msg' => 'Updated Successfully');
+                            if(preg_match("/^\d+$/", $material_transfer_update_id)) {
+                                $update_stock = 1;
+                                $material_transfer_id = $edit_id;
+                                $material_transfer_number = $obj->getTableColumnValue($GLOBALS['material_transfer_table'], 'material_transfer_id', $material_transfer_id, 'material_transfer_number');
+                                $result = array('number' => '1', 'msg' => 'Updated Successfully');
+                            }
+                            else {
+                                $result = array('number' => '2', 'msg' => $material_transfer_update_id);
+                            }	
                         }
                         else {
-                            $result = array('number' => '2', 'msg' => $material_transfer_update_id);
-                        }							
+                            $result = array('number' => '2', 'msg' => $edit_access_error);
+                        }						
                     }
                 }
                 if($update_stock == '1' && !empty($material_transfer_id) && !empty($material_transfer_number)) {
@@ -897,20 +898,10 @@
             }
             $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['material_transfer_table'].'\''.', '.'\''.$val['material_transfer_id'].'\''.');"><i class="fa fa-eye"></i></a>';
             $action = ""; $edit_option = ""; $delete_option = ""; $print_option = ""; $a5_print_option = "";
-            $access_error = "";
-            if(!empty($login_staff_id)) {
-                $permission_action = $edit_action;
-                include('permission_action.php');
-            }
-            if(empty($access_error) && empty($val['cancelled'])) {
+            if(empty($edit_access_error) && empty($val['cancelled'])) {
                 $edit_option = '<li><a class="dropdown-item" href="Javascript:ShowModalContent('.'\''.$page_title.'\''.', '.'\''.$val['material_transfer_id'].'\''.');"><i class="fa fa-pencil"></i>&nbsp; Edit</a></li>';
             }
-            $access_error = "";
-            if(!empty($login_staff_id)) {
-                $permission_action = $delete_action;
-                include('permission_action.php');
-            }
-            if(empty($access_error) && empty($val['cancelled'])) {
+            if(empty($delete_access_error) && empty($val['cancelled'])) {
                 $delete_option = '<li><a class="dropdown-item" href="Javascript:DeleteModalContent('.'\''.$page_title.'\''.', '.'\''.$val['material_transfer_id'].'\''.');"><i class="fa fa-ban"></i>&nbsp; Cancel</a></li>';
             }
             $print_option = '<li><a class="dropdown-item" target="_blank" href="reports/rpt_material_transfer_a4.php?view_material_transfer_id=' . $val['material_transfer_id'] . '"><i class="fa fa-print"></i>&nbsp; A4 Print</a></li>';
@@ -963,10 +954,15 @@
                 $stock_delete = 0;
                 $stock_delete = $obj->DeleteBillStock($GLOBALS['material_transfer_table'], $delete_material_transfer_id);
                 if($stock_delete == '1') {
-                    $columns = array(); $values = array();
-                    $columns = array('cancelled');
-                    $values = array("'1'");
-                    $msg = $obj->UpdateSQL($GLOBALS['material_transfer_table'], $material_transfer_unique_id, $columns, $values, $action);
+                    if(empty($delete_access_error)) {
+                        $columns = array(); $values = array();
+                        $columns = array('cancelled');
+                        $values = array("'1'");
+                        $msg = $obj->UpdateSQL($GLOBALS['material_transfer_table'], $material_transfer_unique_id, $columns, $values, $action);
+                    }
+                    else {
+                        $msg = $delete_access_error;
+                    }
                 }
                 else {
                     $msg = "Can't Cancel. Stock goes to negative!";

@@ -362,7 +362,7 @@
         public function DeleteBillStock($table, $bill_id) {
             /* Use Only if Inward exists in the Screen */
             $can_delete = 1;
-            if($table == $GLOBALS['inward_material_table'] || $table == $GLOBALS['material_transfer_table'] || $table == $GLOBALS['stock_adjustment_table']) {
+            if($table == $GLOBALS['inward_material_table'] || $table == $GLOBALS['material_transfer_table'] || $table == $GLOBALS['stock_adjustment_table'] || $table == $GLOBALS['inward_approval_table']) {
                 $bill_id_field = ""; 
                 if($table == $GLOBALS['inward_material_table']) {
                     $bill_id_field = "inward_material_id";
@@ -373,8 +373,11 @@
                 else if($table == $GLOBALS['stock_adjustment_table']) {
                     $bill_id_field = "stock_adjustment_id";
                 }
+                else if($table == $GLOBALS['inward_approval_table']) {
+                    $bill_id_field = "inward_approval_id";
+                }
                 $bill_list = array(); 
-                $bill_list = $this->getTableRecords($table, $bill_id_field, $bill_id, '');
+                $bill_list = $this->getTableRecords($table, $bill_id_field, $bill_id);
 
                 $location_type = "";
                 $factory_ids = array(); $godown_ids = array(); $size_ids = array(); $gsm_ids = array(); $bf_ids = array();
@@ -385,6 +388,8 @@
                             if(!empty($data['location_type']) && $data['location_type'] != $GLOBALS['null_value']) {
                                 $location_type = $data['location_type'];
                             }
+                        }
+                        if($table == $GLOBALS['inward_material_table'] || $table == $GLOBALS['stock_adjustment_table'] || $table == $GLOBALS['inward_approval_table']) {
                             if(!empty($data['factory_id']) && $data['factory_id'] != $GLOBALS['null_value']) {
                                 $factory_ids = $data['factory_id'];
                                 $factory_ids = explode(",", $factory_ids);
@@ -421,6 +426,10 @@
                             if($table == $GLOBALS['material_transfer_table']) {
                                 $location_type = 1;
                                 $godown_ids[$i] = $godown_ids[0];
+                            }
+                            if($table == $GLOBALS['inward_approval_table']) {
+                                $location_type = 2;
+                                $factory_ids[$i] = $factory_ids[0];
                             }
                             if(isset($stock_type[$i]) && $stock_type[$i] == 'minus') {
                                 continue;

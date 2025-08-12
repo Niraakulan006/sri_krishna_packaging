@@ -1,12 +1,8 @@
 <?php
     include("include_files.php");
-    $login_staff_id = "";
-    if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'])) {
-        if(!empty($GLOBALS['user_type']) && $GLOBALS['user_type'] != $GLOBALS['admin_user_type']) {
-            $login_staff_id = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'];
-            $permission_module = $GLOBALS['stock_adjustment_module'];
-        }
-    }
+    $permission_module = $GLOBALS['stock_adjustment_module'];
+    include("include_module_action.php");
+
 	if(isset($_REQUEST['show_stock_adjustment_id'])) { 
         $show_stock_adjustment_id = trim($_REQUEST['show_stock_adjustment_id']);
 
@@ -316,6 +312,13 @@
                         <div class="col-lg-1 col-md-4 col-6 px-lg-1 py-2 text-end ms-auto">
                             <div class="form-group">
                                 <button class="btn btn-danger py-2 add_product_button" style="font-size:11px; " type="button" onclick="Javascript:AddStockAdjustmentRow('');">Add</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row px-3 py-1">
+                        <div class="col-12 px-lg-1 text-center align-content-center" id="total_reels_div">
+                            <div class="form-group mb-0">
+                                <span class="h4 text-center fw-bold mb-0">Total Reels : <span class="total_reels_span text-success"><?php echo $total_quantity; ?></span></span>
                             </div>
                         </div>
                     </div>
@@ -1004,47 +1007,57 @@
                 }
                 $update_stock = 0; $stock_adjustment_id = ""; $stock_adjustment_number = "";
                 if(empty($edit_id)) {
-                    $action = "";
-                    $action = "New Stock Adjustment Created";
-                    
-                    $null_value = $GLOBALS['null_value'];
-                    $columns = array(); $values = array();
-                    $columns = array('created_date_time', 'updated_date_time', 'creator', 'creator_name', 'bill_company_id', 'bill_company_name', 'bill_company_details', 'stock_adjustment_id', 'stock_adjustment_number', 'stock_adjustment_date', 'remarks', 'location_type', 'godown_type', 'godown_id', 'godown_name', 'factory_id', 'factory_name', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity','stock_type', 'total_quantity', 'cancelled', 'deleted');
-                    $values = array("'".$created_date_time."'", "'".$updated_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$null_value."'", "'".$null_value."'", "'".$stock_adjustment_date."'", "'".$remarks."'", "'".$location_type."'", "'".$godown_type."'", "'".$godown_ids."'", "'".$godown_names."'", "'".$factory_ids."'", "'".$factory_names."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'","'".$stock_type."'", "'".$total_quantity."'", "'0'", "'0'");
+                    if(empty($add_access_error)) {
+                        $action = "";
+                        $action = "New Stock Adjustment Created";
+                        
+                        $null_value = $GLOBALS['null_value'];
+                        $columns = array(); $values = array();
+                        $columns = array('created_date_time', 'updated_date_time', 'creator', 'creator_name', 'bill_company_id', 'bill_company_name', 'bill_company_details', 'stock_adjustment_id', 'stock_adjustment_number', 'stock_adjustment_date', 'remarks', 'location_type', 'godown_type', 'godown_id', 'godown_name', 'factory_id', 'factory_name', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity','stock_type', 'total_quantity', 'cancelled', 'deleted');
+                        $values = array("'".$created_date_time."'", "'".$updated_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$null_value."'", "'".$null_value."'", "'".$stock_adjustment_date."'", "'".$remarks."'", "'".$location_type."'", "'".$godown_type."'", "'".$godown_ids."'", "'".$godown_names."'", "'".$factory_ids."'", "'".$factory_names."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'","'".$stock_type."'", "'".$total_quantity."'", "'0'", "'0'");
 
-                    $stock_adjustment_insert_id = $obj->InsertSQL($GLOBALS['stock_adjustment_table'], $columns, $values,'stock_adjustment_id', 'stock_adjustment_number', $action);
+                        $stock_adjustment_insert_id = $obj->InsertSQL($GLOBALS['stock_adjustment_table'], $columns, $values,'stock_adjustment_id', 'stock_adjustment_number', $action);
 
-                    if(preg_match("/^\d+$/", $stock_adjustment_insert_id)) {
-                        $update_stock = 1;
-                        $stock_adjustment_id = $obj->getTableColumnValue($GLOBALS['stock_adjustment_table'], 'id', $stock_adjustment_insert_id, 'stock_adjustment_id');
-                        $stock_adjustment_number = $obj->getTableColumnValue($GLOBALS['stock_adjustment_table'], 'id', $stock_adjustment_insert_id, 'stock_adjustment_number');
-                        $result = array('number' => '1', 'msg' => 'Stock Adjusted Successfully');
+                        if(preg_match("/^\d+$/", $stock_adjustment_insert_id)) {
+                            $update_stock = 1;
+                            $stock_adjustment_id = $obj->getTableColumnValue($GLOBALS['stock_adjustment_table'], 'id', $stock_adjustment_insert_id, 'stock_adjustment_id');
+                            $stock_adjustment_number = $obj->getTableColumnValue($GLOBALS['stock_adjustment_table'], 'id', $stock_adjustment_insert_id, 'stock_adjustment_number');
+                            $result = array('number' => '1', 'msg' => 'Stock Adjusted Successfully');
+                        }
+                        else {
+                            $result = array('number' => '2', 'msg' => $stock_adjustment_insert_id);
+                        }
                     }
                     else {
-                        $result = array('number' => '2', 'msg' => $stock_adjustment_insert_id);
+                        $result = array('number' => '2', 'msg' => $add_access_error);
                     }
                 }
                 else {
                     $getUniqueID = "";
                     $getUniqueID = $obj->getTableColumnValue($GLOBALS['stock_adjustment_table'], 'stock_adjustment_id', $edit_id, 'id');
                     if(preg_match("/^\d+$/", $getUniqueID)) {
-                        $action = "";
-                        $action = "Inward Updated";
-                        
-                        $columns = array(); $values = array();		
-                        $columns = array('updated_date_time', 'creator_name', 'bill_company_name', 'bill_company_details', 'stock_adjustment_date', 'remarks', 'location_type', 'godown_type', 'godown_id', 'godown_name', 'factory_id', 'factory_name', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity','stock_type');
-                        $values = array("'".$updated_date_time."'", "'".$creator_name."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$stock_adjustment_date."'","'".$remarks."'", "'".$location_type."'", "'".$godown_type."'", "'".$godown_ids."'", "'".$godown_names."'", "'".$factory_ids."'", "'".$factory_names."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'", "'".$stock_type."'");
+                        if(empty($edit_access_error)) {
+                            $action = "";
+                            $action = "Inward Updated";
+                            
+                            $columns = array(); $values = array();		
+                            $columns = array('updated_date_time', 'creator_name', 'bill_company_name', 'bill_company_details', 'stock_adjustment_date', 'remarks', 'location_type', 'godown_type', 'godown_id', 'godown_name', 'factory_id', 'factory_name', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity','stock_type');
+                            $values = array("'".$updated_date_time."'", "'".$creator_name."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$stock_adjustment_date."'","'".$remarks."'", "'".$location_type."'", "'".$godown_type."'", "'".$godown_ids."'", "'".$godown_names."'", "'".$factory_ids."'", "'".$factory_names."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'", "'".$stock_type."'");
 
-                        $stock_adjustment_update_id = $obj->UpdateSQL($GLOBALS['stock_adjustment_table'], $getUniqueID, $columns, $values, $action);
+                            $stock_adjustment_update_id = $obj->UpdateSQL($GLOBALS['stock_adjustment_table'], $getUniqueID, $columns, $values, $action);
 
-                        if(preg_match("/^\d+$/", $stock_adjustment_update_id)) {
-                            $update_stock = 1;
-                            $stock_adjustment_id = $edit_id;
-                            $stock_adjustment_number = $obj->getTableColumnValue($GLOBALS['stock_adjustment_table'], 'stock_adjustment_id', $stock_adjustment_id, 'stock_adjustment_number');
-                            $result = array('number' => '1', 'msg' => 'Updated Successfully');
+                            if(preg_match("/^\d+$/", $stock_adjustment_update_id)) {
+                                $update_stock = 1;
+                                $stock_adjustment_id = $edit_id;
+                                $stock_adjustment_number = $obj->getTableColumnValue($GLOBALS['stock_adjustment_table'], 'stock_adjustment_id', $stock_adjustment_id, 'stock_adjustment_number');
+                                $result = array('number' => '1', 'msg' => 'Updated Successfully');
+                            }
+                            else {
+                                $result = array('number' => '2', 'msg' => $stock_adjustment_update_id);
+                            }	
                         }
                         else {
-                            $result = array('number' => '2', 'msg' => $stock_adjustment_update_id);
+                            $result = array('number' => '2', 'msg' => $edit_access_error);
                         }							
                     }
                 }
@@ -1131,7 +1144,6 @@
         echo $result; exit;
     }
 
-
     if(isset($_POST['draw'])){
         $draw = trim($_POST['draw']);
 
@@ -1198,20 +1210,10 @@
             }
             $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['stock_adjustment_table'].'\''.', '.'\''.$val['stock_adjustment_id'].'\''.');"><i class="fa fa-eye"></i></a>';
             $action = ""; $edit_option = ""; $delete_option = ""; $print_option = ""; $a5_print_option = "";
-            $access_error = "";
-            if(!empty($login_staff_id)) {
-                $permission_action = $edit_action;
-                include('permission_action.php');
-            }
-            if(empty($access_error) && empty($val['cancelled'])) {
+            if(empty($edit_access_error) && empty($val['cancelled'])) {
                 $edit_option = '<li><a class="dropdown-item" href="Javascript:ShowModalContent('.'\''.$page_title.'\''.', '.'\''.$val['stock_adjustment_id'].'\''.');"><i class="fa fa-pencil"></i>&nbsp; Edit</a></li>';
             }
-            $access_error = "";
-            if(!empty($login_staff_id)) {
-                $permission_action = $delete_action;
-                include('permission_action.php');
-            }
-            if(empty($access_error) && empty($val['cancelled'])) {
+            if(empty($delete_access_error) && empty($val['cancelled'])) {
                 $delete_option = '<li><a class="dropdown-item" href="Javascript:DeleteModalContent('.'\''.$page_title.'\''.', '.'\''.$val['stock_adjustment_id'].'\''.');"><i class="fa fa-ban"></i>&nbsp; Cancel</a></li>';
             }
             $print_option = '<li><a class="dropdown-item" target="_blank" href="reports/rpt_stock_adjustment_a4.php?view_stock_adjustment_id=' . $val['stock_adjustment_id'] . '"><i class="fa fa-print"></i>&nbsp; A4 Print</a></li>';
@@ -1264,10 +1266,15 @@
                 $stock_delete = 0;
                 $stock_delete = $obj->DeleteBillStock($GLOBALS['stock_adjustment_table'], $delete_stock_adjustment_id);
                 if($stock_delete == '1') {
-                    $columns = array(); $values = array();
-                    $columns = array('cancelled');
-                    $values = array("'1'");
-                    $msg = $obj->UpdateSQL($GLOBALS['stock_adjustment_table'], $stock_adjustment_unique_id, $columns, $values, $action);
+                    if(empty($delete_access_error)) {
+                        $columns = array(); $values = array();
+                        $columns = array('cancelled');
+                        $values = array("'1'");
+                        $msg = $obj->UpdateSQL($GLOBALS['stock_adjustment_table'], $stock_adjustment_unique_id, $columns, $values, $action);
+                    }
+                    else {
+                        $msg = $delete_access_error;
+                    }
                 }
                 else {
                     $msg = "Can't Cancel. Stock goes to negative!";

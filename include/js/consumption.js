@@ -156,6 +156,7 @@ function AddConsumptionRow(empty_row) {
                                         jQuery('.add_product_button').attr('disabled', false);
                                     }
                                     SnoCalcPlus();
+                                    TotalReelsCount();
                                 }
                             });
                         }else{
@@ -202,6 +203,7 @@ function DeleteProductRow(id_name, row_index) {
                     }
                 }
                 SnoCalcPlus();
+                TotalReelsCount();
 			}
 			else {
 				window.location.reload();
@@ -222,6 +224,7 @@ function ConsumptionRowCheck(obj) {
             }
         }
     }
+    TotalReelsCount();
 }
 
 function GetCurrentStock() {

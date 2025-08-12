@@ -3,8 +3,16 @@
 	include("include_user_check_and_files.php");
 	$page_number = $GLOBALS['page_number']; $page_limit = $GLOBALS['page_limit'];
 
+    if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type']) && !empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type'])) {
+        $company_count = $obj->CompanyCount();
+        if($company_count == '0' || $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type'] != $GLOBALS['admin_user_type']) {
+            header("Location:factory.php");
+            exit;
+        }
+    }
+
     $user_list = array(); $user_count = 0;
-    $user_list = $obj->getTableRecords($GLOBALS['user_table'], '', '');
+    $user_list = $obj->getTableRecords($GLOBALS['user_table'], '', '','');
     if(!empty($user_list)) {
         $user_count = count($user_list);
     }
@@ -36,7 +44,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-lg-2 col-md-2 col-4">
-                                                <?php if($user_count < $GLOBALS['max_user_count'])  { ?>
+                                                <?php if($user_count < $GLOBALS['max_user_count']) { ?>
                                                     <button class="btn btn-danger float-end" style="font-size:11px;" type="button" onclick="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '');"> <i class="fa fa-plus-circle"></i> Add </button>
                                                 <?php } ?>
                                             </div>

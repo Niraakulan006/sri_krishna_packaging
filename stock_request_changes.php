@@ -1,12 +1,8 @@
 <?php
 	include("include_files.php");
-    $login_staff_id = "";
-    if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'])) {
-        if(!empty($GLOBALS['user_type']) && $GLOBALS['user_type'] != $GLOBALS['admin_user_type']) {
-            $login_staff_id = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'];
-            $permission_module = $GLOBALS['stock_request_module'];
-        }
-    }
+    $permission_module = $GLOBALS['stock_request_module'];
+    include("include_module_action.php");
+
 	if(isset($_REQUEST['show_stock_request_id'])) { 
         $show_stock_request_id = trim($_REQUEST['show_stock_request_id']); 
         $factory_id = "";
@@ -267,12 +263,7 @@
                 </div>
             </div>
             <div class="row px-3 py-1">
-                <div class="col-lg-6 col-md-6 col-12 px-lg-1 text-center align-content-center" id="current_stock_div">
-                    <div class="form-group mb-0">
-                        <span class="h4 d-none text-center fw-bold mb-0">Current Stock : <span class="current_stock_span text-danger">0</span></span>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-6 col-12 px-lg-1 text-center align-content-center" id="total_reels_div">
+                <div class="col-12 px-lg-1 text-center align-content-center" id="total_reels_div">
                     <div class="form-group mb-0">
                         <span class="h4 text-center fw-bold mb-0">Total Reels : <span class="total_reels_span text-success"><?php echo $total_quantity; ?></span></span>
                     </div>
@@ -716,47 +707,57 @@
                 }
                 $update_stock = 0; $stock_request_id = ""; $stock_request_number = "";
                 if(empty($edit_id)) {
-                    $action = "";
-                    $action = "New Stock Request Created.";
+                    if(empty($add_access_error)) {
+                        $action = "";
+                        $action = "New Stock Request Created.";
 
-                    $null_value = $GLOBALS['null_value'];
-                    $columns = array(); $values = array();
-                    $columns = array('created_date_time', 'updated_date_time', 'creator', 'creator_name', 'bill_company_id', 'bill_company_name', 'bill_company_details', 'stock_request_id', 'stock_request_number', 'bill_date', 'godown_id', 'godown_name', 'godown_name_location', 'factory_id', 'factory_name', 'factory_name_location', 'remarks', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity', 'is_deliveried', 'cancelled', 'deleted');
-                    $values = array("'".$created_date_time."'", "'".$updated_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$null_value."'", "'".$null_value."'", "'".$bill_date."'", "'".$godown_id."'", "'".$godown_name."'", "'".$godown_name_location."'", "'".$factory_id."'", "'".$factory_name."'", "'".$factory_name_location."'", "'".$remarks."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'", "'0'", "'0'", "'0'");
+                        $null_value = $GLOBALS['null_value'];
+                        $columns = array(); $values = array();
+                        $columns = array('created_date_time', 'updated_date_time', 'creator', 'creator_name', 'bill_company_id', 'bill_company_name', 'bill_company_details', 'stock_request_id', 'stock_request_number', 'bill_date', 'godown_id', 'godown_name', 'godown_name_location', 'factory_id', 'factory_name', 'factory_name_location', 'remarks', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity', 'is_deliveried', 'cancelled', 'deleted');
+                        $values = array("'".$created_date_time."'", "'".$updated_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$null_value."'", "'".$null_value."'", "'".$bill_date."'", "'".$godown_id."'", "'".$godown_name."'", "'".$godown_name_location."'", "'".$factory_id."'", "'".$factory_name."'", "'".$factory_name_location."'", "'".$remarks."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'", "'0'", "'0'", "'0'");
 
-                    $stock_request_insert_id = $obj->InsertSQL($GLOBALS['stock_request_table'], $columns, $values,'stock_request_id', 'stock_request_number', $action);
+                        $stock_request_insert_id = $obj->InsertSQL($GLOBALS['stock_request_table'], $columns, $values,'stock_request_id', 'stock_request_number', $action);
 
-                    if(preg_match("/^\d+$/", $stock_request_insert_id)) {
-                        $update_conversion = 1;
-                        $stock_request_id = $obj->getTableColumnValue($GLOBALS['stock_request_table'], 'id', $stock_request_insert_id, 'stock_request_id');
-                        $stock_request_number = $obj->getTableColumnValue($GLOBALS['stock_request_table'], 'id', $stock_request_insert_id, 'stock_request_number');
-                        $result = array('number' => '1', 'msg' => 'Stock Requested Successfully');
+                        if(preg_match("/^\d+$/", $stock_request_insert_id)) {
+                            $update_conversion = 1;
+                            $stock_request_id = $obj->getTableColumnValue($GLOBALS['stock_request_table'], 'id', $stock_request_insert_id, 'stock_request_id');
+                            $stock_request_number = $obj->getTableColumnValue($GLOBALS['stock_request_table'], 'id', $stock_request_insert_id, 'stock_request_number');
+                            $result = array('number' => '1', 'msg' => 'Stock Requested Successfully');
+                        }
+                        else {
+                            $result = array('number' => '2', 'msg' => $stock_request_insert_id);
+                        }
                     }
                     else {
-                        $result = array('number' => '2', 'msg' => $stock_request_insert_id);
+                        $result = array('number' => '2', 'msg' => $add_access_error);
                     }
                 }
                 else {
                     $getUniqueID = "";
                     $getUniqueID = $obj->getTableColumnValue($GLOBALS['stock_request_table'], 'stock_request_id', $edit_id, 'id');
                     if(preg_match("/^\d+$/", $getUniqueID)) {
-                        $action = "";
-                        $action = "Stock Request Updated.";
+                        if(empty($edit_access_error)) {
+                            $action = "";
+                            $action = "Stock Request Updated.";
 
-                        $columns = array(); $values = array();		
-                        $columns = array('updated_date_time', 'creator_name', 'bill_company_name', 'bill_company_details', 'bill_date', 'godown_id', 'godown_name', 'godown_name_location', 'factory_id', 'factory_name', 'factory_name_location', 'remarks', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity');
-                        $values = array("'".$updated_date_time."'", "'".$creator_name."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$bill_date."'", "'".$godown_id."'", "'".$godown_name."'", "'".$godown_name_location."'", "'".$factory_id."'", "'".$factory_name."'", "'".$factory_name_location."'", "'".$remarks."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'");
+                            $columns = array(); $values = array();		
+                            $columns = array('updated_date_time', 'creator_name', 'bill_company_name', 'bill_company_details', 'bill_date', 'godown_id', 'godown_name', 'godown_name_location', 'factory_id', 'factory_name', 'factory_name_location', 'remarks', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity');
+                            $values = array("'".$updated_date_time."'", "'".$creator_name."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$bill_date."'", "'".$godown_id."'", "'".$godown_name."'", "'".$godown_name_location."'", "'".$factory_id."'", "'".$factory_name."'", "'".$factory_name_location."'", "'".$remarks."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'");
 
-                        $stock_request_update_id = $obj->UpdateSQL($GLOBALS['stock_request_table'], $getUniqueID, $columns, $values, $action);
+                            $stock_request_update_id = $obj->UpdateSQL($GLOBALS['stock_request_table'], $getUniqueID, $columns, $values, $action);
 
-                        if(preg_match("/^\d+$/", $stock_request_update_id)) {
-                            $update_conversion = 1;
-                            $stock_request_id = $edit_id;
-                            $stock_request_number = $obj->getTableColumnValue($GLOBALS['stock_request_table'], 'stock_request_id', $stock_request_id, 'stock_request_number');
-                            $result = array('number' => '1', 'msg' => 'Updated Successfully');
+                            if(preg_match("/^\d+$/", $stock_request_update_id)) {
+                                $update_conversion = 1;
+                                $stock_request_id = $edit_id;
+                                $stock_request_number = $obj->getTableColumnValue($GLOBALS['stock_request_table'], 'stock_request_id', $stock_request_id, 'stock_request_number');
+                                $result = array('number' => '1', 'msg' => 'Updated Successfully');
+                            }
+                            else {
+                                $result = array('number' => '2', 'msg' => $stock_request_update_id);
+                            }	
                         }
                         else {
-                            $result = array('number' => '2', 'msg' => $stock_request_update_id);
+                            $result = array('number' => '2', 'msg' => $edit_access_error);
                         }							
                     }
                 }
@@ -858,9 +859,10 @@
             1 => 'bill_date',
             2 => 'stock_request_number',
             3 => 'godown_name',
-            4 => 'total_quantity',
-            5 => '',
+            4 => '',
+            5 => 'total_quantity',
             6 => '',
+            7 => '',
         ];
         if(!empty($order_column_index) && isset($columns[$order_column_index])) {
             $order_column = $columns[$order_column_index];
@@ -889,24 +891,24 @@
             if(!empty($val['total_quantity']) && $val['total_quantity'] != $GLOBALS['null_value']){
                 $total_quantity = $val['total_quantity'];
             }
+            $delivery_qty = 0;
+            $delivery_qty = $obj->GetOtherDeliveryQty('', $val['stock_request_id'], $val['godown_id'], $val['factory_id'], '', '', '');
+            $pending_qty = "-";
+            if(empty($val['cancelled'])) {
+                $pending_view_btn = "";
+                if($total_quantity > $delivery_qty) {
+                    $pending_view_btn = '&nbsp; <a href="Javascript:PendingQtyContent('.'\''.$GLOBALS['stock_request_table'].'\''.', '.'\''.$val['stock_request_id'].'\''.');"><i class="fa fa-info-circle"></i></a>';
+                }
+                $pending_qty = $delivery_qty.'/'.$total_quantity.$pending_view_btn;
+            }
             $stock_request_linked_id = "";
             $stock_request_linked_id = $obj->getTableColumnValue($GLOBALS['delivery_slip_table'], 'stock_request_id', $val['stock_request_id'], 'id');
             $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['stock_request_table'].'\''.', '.'\''.$val['stock_request_id'].'\''.');"><i class="fa fa-eye"></i></a>';
             $action = ""; $edit_option = ""; $delete_option = ""; $print_option = ""; $a5_print_option = ""; $delivery_slip = "";
-            $access_error = "";
-            if(!empty($login_staff_id)) {
-                $permission_action = $edit_action;
-                include('permission_action.php');
-            }
-            if(empty($access_error) && empty($val['cancelled']) && empty($stock_request_linked_id) && empty($is_deliveried)) {
+            if(empty($edit_access_error) && empty($val['cancelled']) && empty($stock_request_linked_id) && empty($is_deliveried)) {
                 $edit_option = '<li><a class="dropdown-item" href="Javascript:ShowModalContent('.'\''.$page_title.'\''.', '.'\''.$val['stock_request_id'].'\''.');"><i class="fa fa-pencil"></i>&nbsp; Edit</a></li>';
             }
-            $access_error = "";
-            if(!empty($login_staff_id)) {
-                $permission_action = $delete_action;
-                include('permission_action.php');
-            }
-            if(empty($access_error) && empty($val['cancelled']) && empty($stock_request_linked_id) && empty($is_deliveried)) {
+            if(empty($delete_access_error) && empty($val['cancelled']) && empty($stock_request_linked_id) && empty($is_deliveried)) {
                 $delete_option = '<li><a class="dropdown-item" href="Javascript:DeleteModalContent('.'\''.$page_title.'\''.', '.'\''.$val['stock_request_id'].'\''.');"><i class="fa fa-ban"></i>&nbsp; Cancel</a></li>';
             }
             $print_option = '<li><a class="dropdown-item" target="_blank" href="reports/rpt_stock_request_a4.php?view_stock_request_id=' . $val['stock_request_id'] . '"><i class="fa fa-print"></i>&nbsp; A4 Print</a></li>';
@@ -930,6 +932,7 @@
                 "bill_date" => $bill_date,
                 "stock_request_number" => $stock_request_number,
                 "godown_name" => $godown_name,
+                "pending_qty" => $pending_qty,
                 "total_quantity" => $total_quantity,
                 "view" => $material_view,
                 "action" => $action
@@ -962,10 +965,15 @@
                 }
                 $conversion_delete = 0;
                 $conversion_delete = $obj->DeleteConversionList($delete_stock_request_id, '');
-                $columns = array(); $values = array();
-                $columns = array('cancelled');
-                $values = array("'1'");
-                $msg = $obj->UpdateSQL($GLOBALS['stock_request_table'], $stock_request_unique_id, $columns, $values, $action);
+                if(empty($delete_access_error)) {
+                    $columns = array(); $values = array();
+                    $columns = array('cancelled');
+                    $values = array("'1'");
+                    $msg = $obj->UpdateSQL($GLOBALS['stock_request_table'], $stock_request_unique_id, $columns, $values, $action);
+                }
+                else {
+                    $msg = $delete_access_error;
+                }
             }
             else {
                 $msg = "Invalid Request";

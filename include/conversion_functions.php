@@ -349,9 +349,9 @@
                     if(!empty($data['request_qty']) && $data['request_qty'] != $GLOBALS['null_value']) {
                         $request_qty = $data['request_qty'];
                     }
-                    $deliveried_qty = 0;
-                    $deliveried_qty = $this->GetOtherDeliveryQty('', $stock_request_id, $data['godown_id'], $data['factory_id'], $data['size_id'], $data['gsm_id'], $data['bf_id']);
-                    if($request_qty <= $deliveried_qty) {
+                    $delivery_qty = 0;
+                    $delivery_qty = $this->GetOtherDeliveryQty('', $stock_request_id, $data['godown_id'], $data['factory_id'], $data['size_id'], $data['gsm_id'], $data['bf_id']);
+                    if($request_qty <= $delivery_qty) {
                         $success++;
                     }
                 }
@@ -370,6 +370,180 @@
                     $columns = array('is_deliveried');
                     $values = array("'0'");
                     $stock_request_update_id = $this->UpdateSQL($GLOBALS['stock_request_table'], $stock_request_unique_id, $columns, $values, '');
+                }
+            }
+        }
+
+        public function GetPrevDeliveryQty($bill_id, $godown_id, $factory_id, $size_id, $gsm_id, $bf_id) {
+            $where = ""; $select_query = ""; $list = array(); $delivery_qty = 0;
+            if(!empty($bill_id)) {
+                if(!empty($where)) {
+                    $where = $where." bill_id = '".$bill_id."' AND ";
+                }
+                else {
+                    $where = " bill_id = '".$bill_id."' AND ";
+                }
+            }
+            if(!empty($factory_id)) {
+                if(!empty($where)) {
+                    $where = $where." factory_id = '".$factory_id."' AND ";
+                }
+                else {
+                    $where = " factory_id = '".$factory_id."' AND ";
+                }
+            }
+            if(!empty($godown_id)) {
+                if(!empty($where)) {
+                    $where = $where." godown_id = '".$godown_id."' AND ";
+                }
+                else {
+                    $where = " godown_id = '".$godown_id."' AND ";
+                }
+            }
+            if(!empty($size_id)) {
+                if(!empty($where)) {
+                    $where = $where." size_id = '".$size_id."' AND ";
+                }
+                else {
+                    $where = " size_id = '".$size_id."' AND ";
+                }
+            }
+            if(!empty($gsm_id)) {
+                if(!empty($where)) {
+                    $where = $where." gsm_id = '".$gsm_id."' AND ";
+                }
+                else {
+                    $where = " gsm_id = '".$gsm_id."' AND ";
+                }
+            }
+            if(!empty($bf_id)) {
+                if(!empty($where)) {
+                    $where = $where." bf_id = '".$bf_id."' AND ";
+                }
+                else {
+                    $where = " bf_id = '".$bf_id."' AND ";
+                }
+            }
+            if(!empty($where)) {
+                $select_query = "SELECT delivery_qty FROM ".$GLOBALS['conversion_table']." WHERE ".$where." deleted = '0'";
+                $list = $this->getQueryRecords('', $select_query);
+            }
+            if(!empty($list)) {
+                foreach($list as $data) {
+                    if(!empty($data['delivery_qty']) && $data['delivery_qty'] != $GLOBALS['null_value']) {
+                        $delivery_qty = $data['delivery_qty'];
+                    }
+                }
+            }
+            return $delivery_qty;
+        }
+
+        public function GetOtherInwardQty($bill_id, $conversion_id, $godown_id, $factory_id, $size_id, $gsm_id, $bf_id) {
+            $where = ""; $select_query = ""; $list = array(); $inward_qty = 0;
+            if(!empty($bill_id)) {
+                if(!empty($where)) {
+                    $where = $where." bill_id != '".$bill_id."' AND ";
+                }
+                else {
+                    $where = " bill_id != '".$bill_id."' AND ";
+                }
+            }
+            if(!empty($conversion_id)) {
+                if(!empty($where)) {
+                    $where = $where." conversion_id = '".$conversion_id."' AND ";
+                }
+                else {
+                    $where = " conversion_id = '".$conversion_id."' AND ";
+                }
+            }
+            if(!empty($factory_id)) {
+                if(!empty($where)) {
+                    $where = $where." factory_id = '".$factory_id."' AND ";
+                }
+                else {
+                    $where = " factory_id = '".$factory_id."' AND ";
+                }
+            }
+            if(!empty($godown_id)) {
+                if(!empty($where)) {
+                    $where = $where." godown_id = '".$godown_id."' AND ";
+                }
+                else {
+                    $where = " godown_id = '".$godown_id."' AND ";
+                }
+            }
+            if(!empty($size_id)) {
+                if(!empty($where)) {
+                    $where = $where." size_id = '".$size_id."' AND ";
+                }
+                else {
+                    $where = " size_id = '".$size_id."' AND ";
+                }
+            }
+            if(!empty($gsm_id)) {
+                if(!empty($where)) {
+                    $where = $where." gsm_id = '".$gsm_id."' AND ";
+                }
+                else {
+                    $where = " gsm_id = '".$gsm_id."' AND ";
+                }
+            }
+            if(!empty($bf_id)) {
+                if(!empty($where)) {
+                    $where = $where." bf_id = '".$bf_id."' AND ";
+                }
+                else {
+                    $where = " bf_id = '".$bf_id."' AND ";
+                }
+            }
+            if(!empty($where)) {
+                $select_query = "SELECT SUM(inward_qty) as inward_qty FROM ".$GLOBALS['conversion_table']." WHERE ".$where." deleted = '0'";
+                $list = $this->getQueryRecords('', $select_query);
+            }
+            if(!empty($list)) {
+                foreach($list as $data) {
+                    if(!empty($data['inward_qty']) && $data['inward_qty'] != $GLOBALS['null_value']) {
+                        $inward_qty = $data['inward_qty'];
+                    }
+                }
+            }
+            return $inward_qty;
+        }
+        public function CheckDeliveryApproved($delivery_slip_id) {
+            $conversion_list = array();
+            $conversion_list = $this->PrevConversionList($delivery_slip_id);
+            $success = 0; $product_count = 0;
+            $size_id = $this->getTableColumnValue($GLOBALS['delivery_slip_table'], 'delivery_slip_id', $delivery_slip_id, 'size_id');
+            if(!empty($size_id) && $size_id != $GLOBALS['null_value']) {
+                $product_count = count(explode(",", $size_id));
+            }
+            if(!empty($conversion_list)) {
+                foreach($conversion_list as $data) {
+                    $delivery_qty = 0;
+                    if(!empty($data['delivery_qty']) && $data['delivery_qty'] != $GLOBALS['null_value']) {
+                        $delivery_qty = $data['delivery_qty'];
+                    }
+                    $inward_qty = 0;
+                    $inward_qty = $this->GetOtherInwardQty('', $delivery_slip_id, $data['godown_id'], $data['factory_id'], $data['size_id'], $data['gsm_id'], $data['bf_id']);
+                    if($delivery_qty <= $inward_qty) {
+                        $success++;
+                    }
+                }
+            }
+            $delivery_slip_unique_id = "";
+            $delivery_slip_unique_id = $this->getTableColumnValue($GLOBALS['delivery_slip_table'], 'delivery_slip_id', $delivery_slip_id, 'id');
+            if(preg_match("/^\d+$/", $delivery_slip_unique_id)) {
+                if($success == $product_count) {
+                    $columns = array(); $values = array();
+                    $columns = array('is_approved');
+                    $values = array("'1'");
+                    $delivery_slip_update_id = $this->UpdateSQL($GLOBALS['delivery_slip_table'], $delivery_slip_unique_id, $columns, $values, '');
+                }
+                else {
+                    $columns = array(); $values = array();
+                    $columns = array('is_approved');
+                    $values = array("'0'");
+                    $delivery_slip_update_id = $this->UpdateSQL($GLOBALS['delivery_slip_table'], $delivery_slip_unique_id, $columns, $values, '');
                 }
             }
         }

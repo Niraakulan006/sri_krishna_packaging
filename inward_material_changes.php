@@ -1,12 +1,8 @@
 <?php
 	include("include_files.php");
-    $login_staff_id = "";
-    if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'])) {
-        if(!empty($GLOBALS['user_type']) && $GLOBALS['user_type'] != $GLOBALS['admin_user_type']) {
-            $login_staff_id = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'];
-            $permission_module = $GLOBALS['inward_material_module'];
-        }
-    }
+    $permission_module = $GLOBALS['inward_material_module'];
+    include("include_module_action.php");
+
 	if(isset($_REQUEST['show_inward_material_id'])) { 
         $show_inward_material_id = trim($_REQUEST['show_inward_material_id']);
 
@@ -376,12 +372,7 @@
                 </div>
             </div>
             <div class="row px-3 py-1">
-                <div class="col-lg-5 col-md-4 col-12 px-lg-1 text-center align-content-center" id="current_stock_div">
-                    <div class="form-group mb-0">
-                        <span class="h4 d-none text-center fw-bold mb-0">Current Stock : <span class="current_stock_span text-danger">0</span></span>
-                    </div>
-                </div>
-                <div class="col-lg-5 col-md-4 col-12 px-lg-1 text-center align-content-center" id="total_reels_div">
+                <div class="col-lg-10 col-md-8 col-12 px-lg-1 text-center align-content-center" id="total_reels_div">
                     <div class="form-group mb-0">
                         <span class="h4 text-center fw-bold mb-0">Total Reels : <span class="total_reels_span text-success"><?php echo $total_quantity; ?></span></span>
                     </div>
@@ -1014,51 +1005,61 @@
                 }
                 $update_stock = 0; $inward_material_id = ""; $inward_material_number = "";
                 if(empty($edit_id)) {
-                    $action = "";
-                    if(!empty($supplier_name) && $supplier_name != $GLOBALS['null_value']) {
-                        $action = "New Inward Created. Supplier Name. - ".($obj->encode_decode('decrypt', $supplier_name));
-                    }
-                    $null_value = $GLOBALS['null_value'];
-                    $columns = array(); $values = array();
-                    $columns = array('created_date_time', 'updated_date_time', 'creator', 'creator_name', 'bill_company_id', 'bill_company_name', 'bill_company_details', 'inward_material_id', 'inward_material_number', 'bill_date', 'bill_number', 'supplier_id', 'supplier_name', 'supplier_details', 'location_type', 'godown_type', 'godown_id', 'godown_name', 'factory_id', 'factory_name', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity', 'cancelled', 'deleted');
-                    $values = array("'".$created_date_time."'", "'".$updated_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$null_value."'", "'".$null_value."'", "'".$bill_date."'", "'".$bill_number."'", "'".$supplier_id."'", "'".$supplier_name."'", "'".$supplier_details."'", "'".$location_type."'", "'".$godown_type."'", "'".$godown_ids."'", "'".$godown_names."'", "'".$factory_ids."'", "'".$factory_names."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'", "'0'", "'0'");
+                    if(empty($add_access_error)) {
+                        $action = "";
+                        if(!empty($supplier_name) && $supplier_name != $GLOBALS['null_value']) {
+                            $action = "New Inward Created. Supplier Name. - ".($obj->encode_decode('decrypt', $supplier_name));
+                        }
+                        $null_value = $GLOBALS['null_value'];
+                        $columns = array(); $values = array();
+                        $columns = array('created_date_time', 'updated_date_time', 'creator', 'creator_name', 'bill_company_id', 'bill_company_name', 'bill_company_details', 'inward_material_id', 'inward_material_number', 'bill_date', 'bill_number', 'supplier_id', 'supplier_name', 'supplier_details', 'location_type', 'godown_type', 'godown_id', 'godown_name', 'factory_id', 'factory_name', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity', 'cancelled', 'deleted');
+                        $values = array("'".$created_date_time."'", "'".$updated_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$null_value."'", "'".$null_value."'", "'".$bill_date."'", "'".$bill_number."'", "'".$supplier_id."'", "'".$supplier_name."'", "'".$supplier_details."'", "'".$location_type."'", "'".$godown_type."'", "'".$godown_ids."'", "'".$godown_names."'", "'".$factory_ids."'", "'".$factory_names."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'", "'0'", "'0'");
 
-                    $inward_material_insert_id = $obj->InsertSQL($GLOBALS['inward_material_table'], $columns, $values,'inward_material_id', 'inward_material_number', $action);
+                        $inward_material_insert_id = $obj->InsertSQL($GLOBALS['inward_material_table'], $columns, $values,'inward_material_id', 'inward_material_number', $action);
 
-                    if(preg_match("/^\d+$/", $inward_material_insert_id)) {
-                        $update_stock = 1;
-                        $inward_material_id = $obj->getTableColumnValue($GLOBALS['inward_material_table'], 'id', $inward_material_insert_id, 'inward_material_id');
-                        $inward_material_number = $obj->getTableColumnValue($GLOBALS['inward_material_table'], 'id', $inward_material_insert_id, 'inward_material_number');
-                        $result = array('number' => '1', 'msg' => 'Inward Successfully Created');
+                        if(preg_match("/^\d+$/", $inward_material_insert_id)) {
+                            $update_stock = 1;
+                            $inward_material_id = $obj->getTableColumnValue($GLOBALS['inward_material_table'], 'id', $inward_material_insert_id, 'inward_material_id');
+                            $inward_material_number = $obj->getTableColumnValue($GLOBALS['inward_material_table'], 'id', $inward_material_insert_id, 'inward_material_number');
+                            $result = array('number' => '1', 'msg' => 'Inward Successfully Created');
+                        }
+                        else {
+                            $result = array('number' => '2', 'msg' => $inward_material_insert_id);
+                        }
                     }
                     else {
-                        $result = array('number' => '2', 'msg' => $inward_material_insert_id);
+                        $result = array('number' => '2', 'msg' => $add_access_error);
                     }
                 }
                 else {
                     $getUniqueID = "";
                     $getUniqueID = $obj->getTableColumnValue($GLOBALS['inward_material_table'], 'inward_material_id', $edit_id, 'id');
                     if(preg_match("/^\d+$/", $getUniqueID)) {
-                        $action = "";
-                        if(!empty($supplier_name) && $supplier_name != $GLOBALS['null_value']) {
-                            $action = "Inward Updated. Supplier Name. - ".($obj->encode_decode('decrypt', $supplier_name));
-                        }
+                        if(empty($edit_access_error)) {
+                            $action = "";
+                            if(!empty($supplier_name) && $supplier_name != $GLOBALS['null_value']) {
+                                $action = "Inward Updated. Supplier Name. - ".($obj->encode_decode('decrypt', $supplier_name));
+                            }
 
-                        $columns = array(); $values = array();		
-                        $columns = array('updated_date_time', 'creator_name', 'bill_company_name', 'bill_company_details', 'bill_date', 'bill_number', 'supplier_id', 'supplier_name', 'supplier_details', 'location_type', 'godown_type', 'godown_id', 'godown_name', 'factory_id', 'factory_name', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity');
-                        $values = array("'".$updated_date_time."'", "'".$creator_name."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$bill_date."'", "'".$bill_number."'", "'".$supplier_id."'", "'".$supplier_name."'", "'".$supplier_details."'", "'".$location_type."'", "'".$godown_type."'", "'".$godown_ids."'", "'".$godown_names."'", "'".$factory_ids."'", "'".$factory_names."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'");
+                            $columns = array(); $values = array();		
+                            $columns = array('updated_date_time', 'creator_name', 'bill_company_name', 'bill_company_details', 'bill_date', 'bill_number', 'supplier_id', 'supplier_name', 'supplier_details', 'location_type', 'godown_type', 'godown_id', 'godown_name', 'factory_id', 'factory_name', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity');
+                            $values = array("'".$updated_date_time."'", "'".$creator_name."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$bill_date."'", "'".$bill_number."'", "'".$supplier_id."'", "'".$supplier_name."'", "'".$supplier_details."'", "'".$location_type."'", "'".$godown_type."'", "'".$godown_ids."'", "'".$godown_names."'", "'".$factory_ids."'", "'".$factory_names."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'");
 
-                        $inward_material_update_id = $obj->UpdateSQL($GLOBALS['inward_material_table'], $getUniqueID, $columns, $values, $action);
+                            $inward_material_update_id = $obj->UpdateSQL($GLOBALS['inward_material_table'], $getUniqueID, $columns, $values, $action);
 
-                        if(preg_match("/^\d+$/", $inward_material_update_id)) {
-                            $update_stock = 1;
-                            $inward_material_id = $edit_id;
-                            $inward_material_number = $obj->getTableColumnValue($GLOBALS['inward_material_table'], 'inward_material_id', $inward_material_id, 'inward_material_number');
-                            $result = array('number' => '1', 'msg' => 'Updated Successfully');
+                            if(preg_match("/^\d+$/", $inward_material_update_id)) {
+                                $update_stock = 1;
+                                $inward_material_id = $edit_id;
+                                $inward_material_number = $obj->getTableColumnValue($GLOBALS['inward_material_table'], 'inward_material_id', $inward_material_id, 'inward_material_number');
+                                $result = array('number' => '1', 'msg' => 'Updated Successfully');
+                            }
+                            else {
+                                $result = array('number' => '2', 'msg' => $inward_material_update_id);
+                            }
                         }
                         else {
-                            $result = array('number' => '2', 'msg' => $inward_material_update_id);
-                        }							
+                            $result = array('number' => '2', 'msg' => $edit_access_error);
+                        }								
                     }
                 }
                 if($update_stock == '1' && !empty($inward_material_id) && !empty($inward_material_number)) {
@@ -1202,20 +1203,10 @@
             }
             $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['inward_material_table'].'\''.', '.'\''.$val['inward_material_id'].'\''.');"><i class="fa fa-eye"></i></a>';
             $action = ""; $edit_option = ""; $delete_option = ""; $print_option = ""; $a5_print_option = "";
-            $access_error = "";
-            if(!empty($login_staff_id)) {
-                $permission_action = $edit_action;
-                include('permission_action.php');
-            }
-            if(empty($access_error) && empty($val['cancelled'])) {
+            if(empty($edit_access_error) && empty($val['cancelled'])) {
                 $edit_option = '<li><a class="dropdown-item" href="Javascript:ShowModalContent('.'\''.$page_title.'\''.', '.'\''.$val['inward_material_id'].'\''.');"><i class="fa fa-pencil"></i>&nbsp; Edit</a></li>';
             }
-            $access_error = "";
-            if(!empty($login_staff_id)) {
-                $permission_action = $delete_action;
-                include('permission_action.php');
-            }
-            if(empty($access_error) && empty($val['cancelled'])) {
+            if(empty($delete_access_error) && empty($val['cancelled'])) {
                 $delete_option = '<li><a class="dropdown-item" href="Javascript:DeleteModalContent('.'\''.$page_title.'\''.', '.'\''.$val['inward_material_id'].'\''.');"><i class="fa fa-ban"></i>&nbsp; Cancel</a></li>';
             }
             $print_option = '<li><a class="dropdown-item" target="_blank" href="reports/rpt_inward_material_a4.php?view_inward_material_id=' . $val['inward_material_id'] . '"><i class="fa fa-print"></i>&nbsp; A4 Print</a></li>';
@@ -1268,10 +1259,15 @@
                 $stock_delete = 0;
                 $stock_delete = $obj->DeleteBillStock($GLOBALS['inward_material_table'], $delete_inward_material_id);
                 if($stock_delete == '1') {
-                    $columns = array(); $values = array();
-                    $columns = array('cancelled');
-                    $values = array("'1'");
-                    $msg = $obj->UpdateSQL($GLOBALS['inward_material_table'], $inward_material_unique_id, $columns, $values, $action);
+                    if(empty($delete_access_error)) {
+                        $columns = array(); $values = array();
+                        $columns = array('cancelled');
+                        $values = array("'1'");
+                        $msg = $obj->UpdateSQL($GLOBALS['inward_material_table'], $inward_material_unique_id, $columns, $values, $action);
+                    }
+                    else {
+                        $msg = $delete_access_error;
+                    }
                 }
                 else {
                     $msg = "Can't Cancel. Stock goes to negative!";

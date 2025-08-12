@@ -1,12 +1,8 @@
 <?php
-include("include_files.php");
-$login_staff_id = "";
-if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'])) {
-    if(!empty($GLOBALS['user_type']) && $GLOBALS['user_type'] != $GLOBALS['admin_user_type']) {
-        $login_staff_id = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'];
-        $permission_module = $GLOBALS['unit_module'];
-    }
-}
+    include("include_files.php");
+    $permission_module = $GLOBALS['unit_module'];
+    include("include_module_action.php");
+
 	if(isset($_REQUEST['show_unit_id'])) { 
         $show_unit_id = "";
         $show_unit_id = $_REQUEST['show_unit_id'];
@@ -14,7 +10,7 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
         $unit_name = "";
         if(!empty($show_unit_id)) {
             $unit_list = array();
-            $unit_list = $obj->getTableRecords($GLOBALS['unit_table'], 'unit_id', $show_unit_id, '');
+            $unit_list = $obj->getTableRecords($GLOBALS['unit_table'], 'unit_id', $show_unit_id);
             if(!empty($unit_list)) {
                 foreach ($unit_list as $data) {
                     if(!empty($data['unit_name'])) {
@@ -23,7 +19,7 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                 }
             }
         } 
-    ?>
+        ?>
         <form class="poppins pd-20 redirection_form" name="unit_form" method="POST">
 			<div class="card-header">
 				<div class="row p-2">
@@ -205,20 +201,25 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                         $action = array();
                         for ($p = 0; $p < count($unit_name); $p++) {
                             if(empty($prev_unit_id)) {
-                                if(!empty($unit_name[$p])) {
-                                    $action[$p] = "New Unit Created. Name - " . $obj->encode_decode('decrypt', $unit_name[$p]);
-                                }
-    
-                                $null_value = $GLOBALS['null_value'];
-                                $columns = array('created_date_time', 'creator', 'creator_name', 'bill_company_id', 'unit_id', 'unit_name', 'lower_case_name', 'deleted');
-                                $values = array("'".$created_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$null_value."'", "'".$unit_name[$p]."'", "'".$lower_case_name[$p]."'", "'0'");
-    
-                                $unit_insert_id = $obj->InsertSQL($GLOBALS['unit_table'], $columns, $values, 'unit_id', '', $action[$p]);		
-                                if(preg_match("/^\d+$/", $unit_insert_id)) {								
-                                    $result = array('number' => '1', 'msg' => 'Unit Successfully Created');						
+                                if(empty($add_access_error)) {
+                                    if(!empty($unit_name[$p])) {
+                                        $action[$p] = "New Unit Created. Name - " . $obj->encode_decode('decrypt', $unit_name[$p]);
+                                    }
+        
+                                    $null_value = $GLOBALS['null_value'];
+                                    $columns = array('created_date_time', 'creator', 'creator_name', 'bill_company_id', 'unit_id', 'unit_name', 'lower_case_name', 'deleted');
+                                    $values = array("'".$created_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$null_value."'", "'".$unit_name[$p]."'", "'".$lower_case_name[$p]."'", "'0'");
+        
+                                    $unit_insert_id = $obj->InsertSQL($GLOBALS['unit_table'], $columns, $values, 'unit_id', '', $action[$p]);		
+                                    if(preg_match("/^\d+$/", $unit_insert_id)) {								
+                                        $result = array('number' => '1', 'msg' => 'Unit Successfully Created');						
+                                    }
+                                    else {
+                                        $result = array('number' => '2', 'msg' => $unit_insert_id);
+                                    }
                                 }
                                 else {
-                                    $result = array('number' => '2', 'msg' => $unit_insert_id);
+                                    $result = array('number' => '2', 'msg' => $add_access_error);
                                 }
                             } 
                             else {
@@ -230,20 +231,25 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                         $getUniqueID = "";
                         $getUniqueID = $obj->getTableColumnValue($GLOBALS['unit_table'], 'unit_id', $edit_id, 'id');
                         if(preg_match("/^\d+$/", $getUniqueID)) {
-                            $action = "";
-                            if(!empty($single_unit_name)) {
-                                $action = "Unit Updated. Name - " . $obj->encode_decode('decrypt', $single_unit_name);
+                            if(empty($edit_access_error)) {
+                                $action = "";
+                                if(!empty($single_unit_name)) {
+                                    $action = "Unit Updated. Name - " . $obj->encode_decode('decrypt', $single_unit_name);
+                                }
+        
+                                $columns = array(); $values = array();
+                                $columns = array('creator_name', 'unit_name', 'lower_case_name');
+                                $values = array("'".$creator_name."'", "'".$single_unit_name."'", "'".$single_lower_case_name."'");
+                                $unit_update_id = $obj->UpdateSQL($GLOBALS['unit_table'], $getUniqueID, $columns, $values, $action);
+                                if(preg_match("/^\d+$/", $unit_update_id)) {
+                                    $result = array('number' => '1', 'msg' => 'Updated Successfully');
+                                } 
+                                else {
+                                    $result = array('number' => '2', 'msg' => $unit_update_id);
+                                }
                             }
-    
-                            $columns = array(); $values = array();
-                            $columns = array('creator_name', 'unit_name', 'lower_case_name');
-                            $values = array("'".$creator_name."'", "'".$single_unit_name."'", "'".$single_lower_case_name."'");
-                            $unit_update_id = $obj->UpdateSQL($GLOBALS['unit_table'], $getUniqueID, $columns, $values, $action);
-                            if(preg_match("/^\d+$/", $unit_update_id)) {
-                                $result = array('number' => '1', 'msg' => 'Updated Successfully');
-                            } 
                             else {
-                                $result = array('number' => '2', 'msg' => $unit_update_id);
+                                $result = array('number' => '2', 'msg' => $edit_access_error);
                             }
                         }
                     }
@@ -280,7 +286,7 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
         }
     
         $total_records_list = array();
-        $total_records_list = $obj->getTableRecords($GLOBALS['unit_table'], '', '','');
+        $total_records_list = $obj->getTableRecords($GLOBALS['unit_table'], '', '');
     
         if(!empty($search_text)) {
             $search_text = strtolower($search_text);
@@ -333,19 +339,13 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
             </div>
             <?php 
         } 
-        $access_error = "";
-        if(!empty($login_staff_id)) {
-            $permission_action = $view_action;
-            include('permission_action.php');
-        }
-        if(empty($access_error)) { ?>
+        if(empty($view_access_error)) { ?>
            
             <table class="table nowrap cursor text-center smallfnt">
                 <thead class="bg-light">
                     <tr>
                         <th>S.No</th>
                         <th>Unit Name</th>
-                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -361,7 +361,6 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                                 ?>
                                 <tr style="cursor:default;">
                                     <td><?php echo $index; ?></td>
-    
                                     <td class="text-center">
                                         <?php
                                             $unit_name = "";
@@ -371,46 +370,6 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                                                 echo $unit_name;
                                             }
                                         ?>
-                                    </td>
-                        <td>
-                            <?php $edit_access_error = "";
-                                    if(!empty($login_staff_id)) {
-                                        $permission_action = $edit_action;
-                                        include('permission_action.php');
-                                    }
-                                    $delete_access_error = "";
-                                    if(!empty($login_staff_id)) {
-                                        $permission_action = $delete_action;
-                                        include('permission_action.php');
-                                    }
-                            ?>
-                        <?php if (empty($edit_access_error) || empty($delete_access_error)) { ?>
-                            <div class="dropdown">
-                                <a href="#" role="button" id="dropdownMenuLink1" class="btn btn-dark show-button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink1">
-                                <?php if(empty($edit_access_error)) { 
-                                        ?>
-                                    <li><a class="dropdown-item" href="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '<?php if(!empty($list['unit_id'])) { echo $list['unit_id']; } ?>');"><i class="fa fa-pencil"></i> &ensp; Edit</a></li>
-                                    <?php } 
-                                    /*
-                                    if(empty($delete_access_error)) {
-                                        $linked_count = 0;
-                                        // $linked_count = $obj->GetLinkedCount($list['unit_id'], $GLOBALS['inward_material_table'], 'unit_id');
-                                        if(!empty($linked_count)) { ?>
-                                            <li><a class="dropdown-item text-secondary"><i class="fa fa-trash"></i> &ensp; Delete</a></li>
-                                        <?php 
-                                        } else {  ?>
-                                            <li><a class="dropdown-item" onclick="Javascript:DeleteModalContent('<?php if(!empty($page_title)) { echo $page_title;} ?>', '<?php if(!empty($list['unit_id'])) { echo $list['unit_id']; } ?>');"><i class="fa fa-trash"></i> &ensp; Delete</a></li>
-                                        <?php } 
-                                            } ?>
-                                        </ul>
-                                        <?php */ ?>
-                                    </div>
-
-                                    <?php } ?>
                                     </td>
                                 </tr>
                                 <?php
@@ -464,18 +423,16 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                 if(!empty($unit_name)) {
                     $action = "Unit Deleted. Name - " . $obj->encode_decode('decrypt', $unit_name);
                 }
-                $linked_count = 0;
-                // $linked_count = $obj->GetUnitLinkedCount($delete_unit_id);
-                // if(empty($linked_count)) {
+                if(empty($delete_access_error)) {
                     $columns = array();
                     $values = array();
                     $columns = array('deleted');
                     $values = array("'1'");
                     $msg = $obj->UpdateSQL($GLOBALS['unit_table'], $unit_unique_id, $columns, $values, $action);
-                // }
-                // else {
-                //     $msg = "This Unit is associated with other screens";
-                // }
+                }
+                else {
+                    $msg = $delete_access_error;
+                }
             }
         }
         echo $msg;

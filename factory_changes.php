@@ -280,7 +280,7 @@
 		}
         $total_records_list = array();
 		if(!empty($GLOBALS['bill_company_id'])) {
-			$total_records_list = $obj->getTableRecords($GLOBALS['factory_table'],'','','');
+			$total_records_list = $obj->getTableRecords($GLOBALS['factory_table'],'','');
 		}
 
        if(!empty($search_text)) {

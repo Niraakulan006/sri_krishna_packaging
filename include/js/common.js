@@ -89,56 +89,41 @@ function CustomCheckboxToggle(obj, toggle_id) {
 					toggle_id = toggle_id.replace('delete', '');
 					toggle_id = jQuery.trim(toggle_id);
 					var checkbox_cover = toggle_id + "cover";
-					// console.log('checkbox_cover - '+checkbox_cover+', checbox count - '+jQuery('#'+checkbox_cover).find('input[type="checkbox"]').length);
+					//console.log('checkbox_cover - '+checkbox_cover+', checbox count - '+jQuery('#'+checkbox_cover).find('input[type="checkbox"]').length);
 					if (jQuery('#' + checkbox_cover).find('input[type="checkbox"]').length > 0) {
-						
 						var view_checkbox = toggle_id + "view"; var add_checkbox = toggle_id + "add"; var edit_checkbox = toggle_id + "edit";
 						var delete_checkbox = toggle_id + "delete"; var select_count = 0; var select_all_checkbox = toggle_id + "select_all";
 						//console.log('add_checkbox - '+add_checkbox+', edit_checkbox - '+edit_checkbox+', delete_checkbox - '+delete_checkbox+', select_all_checkbox - '+select_all_checkbox);
+						var view_count = 0;
 						if (jQuery('#' + view_checkbox).prop('checked') == true) {
 							select_count = parseInt(select_count) + 1;
+							view_count = parseInt(view_count) + 1;
 						}
 						if (jQuery('#' + add_checkbox).prop('checked') == true) {
-							jQuery('#' + view_checkbox).prop('checked',true);
-							if (jQuery('#' + view_checkbox).prop('checked') == true) {
-                                select_count = parseInt(select_count) + 1;
-								jQuery('#'+view_checkbox).val(1);
-                            }
-                            else {
-                                jQuery('#' + view_checkbox).prop('checked', true);
-								select_count = parseInt(select_count) + 1;
-								jQuery('#'+view_checkbox).val(1);
-                            }
+							select_count = parseInt(select_count) + 1;
+							view_count = parseInt(view_count) + 1;
 						}
 						if (jQuery('#' + edit_checkbox).prop('checked') == true) {
-							jQuery('#' + view_checkbox).prop('checked',true);
-							if (jQuery('#' + view_checkbox).prop('checked') == true) {
-                                select_count = parseInt(select_count) + 1;
-								jQuery('#'+view_checkbox).val(1);
-                            }
-                            else {
-                                jQuery('#' + view_checkbox).prop('checked', true);
-								select_count = parseInt(select_count) + 1;
-								jQuery('#'+view_checkbox).val(1);
-                            }
+							select_count = parseInt(select_count) + 1;
+							view_count = parseInt(view_count) + 1;
 						}
 						if (jQuery('#' + delete_checkbox).prop('checked') == true) {
-							jQuery('#' + view_checkbox).prop('checked',true);
-							if (jQuery('#' + view_checkbox).prop('checked') == true) {
-                                select_count = parseInt(select_count) + 1;
-								jQuery('#'+view_checkbox).val(1);
-                            }
-                            else {
-                                jQuery('#' + view_checkbox).prop('checked', true);
-								select_count = parseInt(select_count) + 1;
-                            }
+							select_count = parseInt(select_count) + 1;
+							view_count = parseInt(view_count) + 1;
 						}
-						
-						if (parseInt(select_count) == 4 || parseInt(select_count) > 4) {
+						if (parseInt(select_count) == 4 || (toggle_id == '5247567361585a6c636e6b675532787063413d3d_' && parseInt(select_count) == 3) || (toggle_id == '5357353359584a6b4945467763484a76646d4673_' && parseInt(select_count) == 3)) {
 							jQuery('#' + select_all_checkbox).prop('checked', true);
 						}
 						else {
 							jQuery('#' + select_all_checkbox).prop('checked', false);
+						}
+						if(parseInt(view_count) > 0){
+							jQuery('#' + view_checkbox).prop('checked', true);
+							jQuery('#' + view_checkbox).val('1');
+						}
+						else {
+							jQuery('#' + view_checkbox).prop('checked', false);
+							jQuery('#' + view_checkbox).val('2');
 						}
 					}
 				}
@@ -150,7 +135,6 @@ function CustomCheckboxToggle(obj, toggle_id) {
 	});
 }
 function SelectAllModuleActionToggle(obj, toggle_id) {
-
 	var check_login_session = 1;
 	var post_url = "dashboard_changes.php?check_login_session=1";
 	jQuery.ajax({
@@ -766,4 +750,22 @@ function ShowDeliverySlipConversion(delivery_slip_id) {
             jQuery('.add_update_form_content').html(result);
         }
     }});
+}
+
+function PendingQtyContent(table, bill_id) {
+	if (jQuery('#PendingQtyModal').length > 0) {
+		jQuery('#PendingQtyModal').find('.modal-body').html('');
+	}
+	var post_url = "view_bill_changes.php?pending_table="+table+"&pending_bill_id="+bill_id;
+	jQuery.ajax({
+		url: post_url, success: function (result) {
+			result = jQuery.trim(result);
+			if (jQuery('#PendingQtyModal').length > 0) {
+				jQuery('#PendingQtyModal').find('.modal-body').html(result);
+			}
+			if (jQuery('.pending_qty_modal_button').length > 0) {
+				jQuery('.pending_qty_modal_button').trigger('click');
+			}
+		}
+	});
 }

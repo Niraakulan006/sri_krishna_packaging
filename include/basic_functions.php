@@ -531,19 +531,6 @@
 			}
 			return $count;
 		}
-		// public function getOtherCityList($district) {
-		// 	$company_query = ""; 
-		// 	$select_query = ""; $list = array(); $party_query = "";
-
-		// 	$company_query = "SELECT DISTINCT(city) as others_city FROM ".$GLOBALS['company_table']." WHERE district = '".$district."' AND city != '".$GLOBALS['null_value']."' ORDER BY id DESC";
-		// 	$party_query = "SELECT DISTINCT(city) as others_city FROM ".$GLOBALS['party_table']." WHERE district = '".$district."' AND city != '".$GLOBALS['null_value']."' ORDER BY id DESC";
-	
-		// 	$select_query = " SELECT DISTINCT others_city AS city FROM (($company_query) UNION ALL (".$party_query.") UNION ALL (".$suspense_party_query.")) AS g ORDER BY city DESC";
-		// 	$list = $this->getQueryRecords('', $select_query);
-
-		// 	return $list;
-
-		// }
 		public function CheckRoleAccessPage($role_id, $permission_page) {
 			$list = array(); $select_query = ""; $acccess_permission = 0;
 			$select_query = "SELECT * FROM ".$GLOBALS['role_table']." WHERE role_id = '".$role_id."' AND deleted = '0'";

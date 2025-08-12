@@ -6,7 +6,7 @@
         $role_name = ""; $access_pages = ""; $access_page_actions = ""; $incharger = 0;
         if(!empty($show_role_id)) {
             $role_list = array();
-            $role_list = $obj->getTableRecords($GLOBALS['role_table'], 'role_id', $show_role_id, '');
+            $role_list = $obj->getTableRecords($GLOBALS['role_table'], 'role_id', $show_role_id);
             if(!empty($role_list)) {
                 foreach($role_list as $data) {
                     if(!empty($data['role_name']) && $data['role_name'] != $GLOBALS['null_value']) {
@@ -55,7 +55,7 @@
                 </div>
                 <div class="col-lg-8 col-md-12 col-12">
                     <div class="table-responsive poppins">
-                        <table class="table nowrap table-bordered smallfnt staff_access_table">
+                        <table class="table table-nowrap nowrap table-bordered smallfnt staff_access_table">
                             <thead class="bg-light">
                                 <tr>
                                     <th>Module</th>
@@ -63,9 +63,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                 <!-- <tr class="bg-dark text-white text-center">
-                                    <td colspan="2">Creation</td>
-                                </tr> -->
                                 <?php				
                                     if(!empty($access_pages_list)) {
                                         foreach($access_pages_list as $module) {
@@ -77,6 +74,7 @@
                                                 $module_encrypted = $obj->encode_decode('encrypt', $module);
                                                 $view_checkbox_value = 2; $add_checkbox_value = 2; $edit_checkbox_value = 2; $delete_checkbox_value = 2; $convert_checkbox_value = 2;
                                                 $select_all_checkbox_value = 2;
+
                                                 $module_selected = 0; $module_action = array();
                                                 if(!empty($access_pages) && !empty($access_page_actions)) {
                                                     for($i = 0; $i < count($access_pages); $i++) {
@@ -103,7 +101,7 @@
                                                             $delete_checkbox_value = 1;
                                                             $module_selected++;
                                                         }
-                                                        if($module_selected == 4) {
+                                                        if($module_selected == 4 || ($module == $GLOBALS['delivery_slip_module'] && $module_selected == 3) || ($module == $GLOBALS['inward_approval_module'] && $module_selected == 3)) {
                                                             $select_all_checkbox_value = 1;
                                                         }
                                                     }
@@ -113,57 +111,44 @@
                                                     <td><?php if(!empty($module)) { echo trim($module); } ?></td>
                                                     <td>
                                                         <div class="d-flex" id="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_cover"; } ?>">
-                                                            <!-- <?php 
-                                                                if($module != $GLOBALS['reports_module'] && $module != $GLOBALS['group_module']) {
-                                                            ?> -->
+                                                            <?php if($module != $GLOBALS['reports_module'] && $module != $GLOBALS['unit_module']) { ?>
+                                                                <div class="form-check pe-3">
+                                                                    <input class="form-check-input" type="checkbox"  name="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_select_all"; } ?>" id="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_select_all"; } ?>" value="<?php if(!empty($select_all_checkbox_value)) { echo $select_all_checkbox_value; } ?>" <?php if(!empty($select_all_checkbox_value) && $select_all_checkbox_value == 1) { ?>checked="checked"<?php } ?> onClick="Javascript:SelectAllModuleActionToggle(this, '<?php if(!empty($module_encrypted)) { echo $module_encrypted."_select_all"; } ?>');">
+                                                                    <label class="form-check-label checkbox">
+                                                                        Select All
+                                                                    </label>
+                                                                </div>
+                                                            <?php } ?>
                                                             <div class="form-check pe-3">
-                                                            <input class="form-check-input" type="checkbox"  name="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_select_all"; } ?>" id="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_select_all"; } ?>" value="<?php if(!empty($select_all_checkbox_value)) { echo $select_all_checkbox_value; } ?>" <?php if(!empty($select_all_checkbox_value) && $select_all_checkbox_value == 1) { ?>checked="checked"<?php } ?> onClick="Javascript:SelectAllModuleActionToggle(this, '<?php if(!empty($module_encrypted)) { echo $module_encrypted."_select_all"; } ?>');">
-                                                                <label class="form-check-label checkbox">
-                                                                    Select All
-                                                                </label>
-                                                            </div>
-                                                            <!-- <?php
-                                                                }
-                                                            ?> -->
-                                                            <div class="form-check pe-3">
-                                                            <input class="form-check-input" type="checkbox" name="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_view"; } ?>" id="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_view"; } ?>" value="<?php if(!empty($view_checkbox_value)) { echo $view_checkbox_value; } ?>" <?php if(!empty($view_checkbox_value) && $view_checkbox_value == 1) { ?>checked="checked"<?php } ?> onClick="Javascript:CustomCheckboxToggle(this, '<?php if(!empty($module_encrypted)) { echo $module_encrypted."_view"; } ?>');">
+                                                                <input class="form-check-input" type="checkbox" name="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_view"; } ?>" id="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_view"; } ?>" value="<?php if(!empty($view_checkbox_value)) { echo $view_checkbox_value; } ?>" <?php if(!empty($view_checkbox_value) && $view_checkbox_value == 1) { ?>checked="checked"<?php } ?> onClick="Javascript:CustomCheckboxToggle(this, '<?php if(!empty($module_encrypted)) { echo $module_encrypted."_view"; } ?>');">
                                                                 <label class="form-check-label checkbox">
                                                                     View
                                                                 </label>
                                                             </div>
-                                                            <!-- <?php 
-                                                                if($module != $GLOBALS['reports_module'] && $module != $GLOBALS['group_module']) {
-                                                            ?> -->
+                                                            <?php if($module != $GLOBALS['delivery_slip_module'] && $module != $GLOBALS['inward_approval_module'] && $module != $GLOBALS['reports_module'] && $module != $GLOBALS['unit_module']) { ?>
                                                                 <div class="form-check pe-3">
-                                                                <input class="form-check-input" type="checkbox" name="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_add"; } ?>" id="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_add"; } ?>" value="<?php if(!empty($add_checkbox_value)) { echo $add_checkbox_value; } ?>" <?php if(!empty($add_checkbox_value) && $add_checkbox_value == 1) { ?>checked="checked"<?php } ?> onClick="Javascript:CustomCheckboxToggle(this, '<?php if(!empty($module_encrypted)) { echo $module_encrypted."_add"; } ?>');">
+                                                                    <input class="form-check-input" type="checkbox" name="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_add"; } ?>" id="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_add"; } ?>" value="<?php if(!empty($add_checkbox_value)) { echo $add_checkbox_value; } ?>" <?php if(!empty($add_checkbox_value) && $add_checkbox_value == 1) { ?>checked="checked"<?php } ?> onClick="Javascript:CustomCheckboxToggle(this, '<?php if(!empty($module_encrypted)) { echo $module_encrypted."_add"; } ?>');">
                                                                     <label class="form-check-label checkbox">
                                                                         Add
                                                                     </label>
                                                                 </div>
-                                                            <!-- <?php
-                                                                }
-                                                            ?> -->
-                                            
-                                                            <!-- <?php 
-                                                                if($module != $GLOBALS['reports_module'] && $module != $GLOBALS['group_module'] && $module != $GLOBALS['receipt_module'] && $module != $GLOBALS['voucher_module'] && $module != $GLOBALS['suspense_receipt_module'] && $module != $GLOBALS['suspense_voucher_module'] && $module != $GLOBALS['expense_module']) {
-                                                            ?> -->
+                                                            <?php } ?>
+                                                            <?php if($module != $GLOBALS['unit_module'] && $module != $GLOBALS['reports_module']) { ?>
                                                                 <div class="form-check pe-3">
-                                                                <input class="form-check-input" type="checkbox" name="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_edit"; } ?>" id="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_edit"; } ?>" value="<?php if(!empty($edit_checkbox_value)) { echo $edit_checkbox_value; } ?>" <?php if(!empty($edit_checkbox_value) && $edit_checkbox_value == 1) { ?>checked="checked"<?php } ?> onClick="Javascript:CustomCheckboxToggle(this, '<?php if(!empty($module_encrypted)) { echo $module_encrypted."_edit"; } ?>');">
+                                                                    <input class="form-check-input" type="checkbox" name="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_edit"; } ?>" id="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_edit"; } ?>" value="<?php if(!empty($edit_checkbox_value)) { echo $edit_checkbox_value; } ?>" <?php if(!empty($edit_checkbox_value) && $edit_checkbox_value == 1) { ?>checked="checked"<?php } ?> onClick="Javascript:CustomCheckboxToggle(this, '<?php if(!empty($module_encrypted)) { echo $module_encrypted."_edit"; } ?>');">
                                                                     <label class="form-check-label checkbox">
                                                                         Edit
                                                                     </label>
                                                                 </div>
-                                                            <!-- <?php } ?> -->
-                                                            <!-- <?php 
-                                                                if($module != $GLOBALS['reports_module'] && $module != $GLOBALS['group_module']) {
-                                                            ?> -->
-                                                            <div class="form-check pe-3">
-                                                            <input class="form-check-input" type="checkbox" name="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_delete"; } ?>" id="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_delete"; } ?>" value="<?php if(!empty($delete_checkbox_value)) { echo $delete_checkbox_value; } ?>" <?php if(!empty($delete_checkbox_value) && $delete_checkbox_value == 1) { ?>checked="checked"<?php } ?> onClick="Javascript:CustomCheckboxToggle(this, '<?php if(!empty($module_encrypted)) { echo $module_encrypted."_delete"; } ?>');">
-                                                                <label class="form-check-label checkbox">
-                                                                    Delete
-                                                                </label>
-                                                            </div>
-                                                            <!-- <?php } ?> -->
+                                                            <?php } ?>
+                                                            <?php if($module != $GLOBALS['unit_module'] && $module != $GLOBALS['reports_module']) { ?>
+                                                                <div class="form-check pe-3">
+                                                                    <input class="form-check-input" type="checkbox" name="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_delete"; } ?>" id="<?php if(!empty($module_encrypted)) { echo $module_encrypted."_delete"; } ?>" value="<?php if(!empty($delete_checkbox_value)) { echo $delete_checkbox_value; } ?>" <?php if(!empty($delete_checkbox_value) && $delete_checkbox_value == 1) { ?>checked="checked"<?php } ?> onClick="Javascript:CustomCheckboxToggle(this, '<?php if(!empty($module_encrypted)) { echo $module_encrypted."_delete"; } ?>');">
+                                                                    <label class="form-check-label checkbox">
+                                                                        Delete
+                                                                    </label>
+                                                                </div>
+                                                            <?php } ?>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -201,7 +186,7 @@
         }
         if(empty($role_name_error) && empty($edit_id)) {
             $role_list = array(); $role_count = 0;
-            $role_list = $obj->getTableRecords($GLOBALS['role_table'], '', '','');
+            $role_list = $obj->getTableRecords($GLOBALS['role_table'], '', '');
             if(!empty($role_list)) {
                 $role_count = count($role_list);
             }
@@ -224,8 +209,8 @@
 					$module_encrypted = "";
 					$module_encrypted = $obj->encode_decode('encrypt', $module);
 					$module_action = array(); 
-					$view_checkbox_value = 2; $add_checkbox_value = 2; $convert_checkbox_value = 2; $edit_checkbox_value = 2; $delete_checkbox_value = 2;
-					$view_field = $module_encrypted."_view"; $add_field = $module_encrypted."_add"; $convert_field = $module_encrypted."_convert"; $edit_field = $module_encrypted."_edit"; 
+					$view_checkbox_value = 2; $add_checkbox_value = 2; $edit_checkbox_value = 2; $delete_checkbox_value = 2;
+					$view_field = $module_encrypted."_view"; $add_field = $module_encrypted."_add"; $edit_field = $module_encrypted."_edit"; 
 					$delete_field = $module_encrypted."_delete";
 					if(isset($_POST[$view_field])) {
 						$view_checkbox_value = $_POST[$view_field];
@@ -242,14 +227,6 @@
 					if($add_checkbox_value != 1 && $add_checkbox_value != 2) { $add_checkbox_value = 2; }
 					if($add_checkbox_value == 1) { 
 						$module_action[] = $add_action;
-					}
-                    if(isset($_POST[$convert_field])) {
-						$convert_checkbox_value = $_POST[$convert_field];
-						$convert_checkbox_value = trim($convert_checkbox_value);
-					}
-					if($convert_checkbox_value != 1 && $convert_checkbox_value != 2) { $convert_checkbox_value = 2; }
-					if($convert_checkbox_value == 1) { 
-						$module_action[] = $convert_action;
 					}
 					if(isset($_POST[$edit_field])) {
 						$edit_checkbox_value = $_POST[$edit_field];
@@ -388,7 +365,7 @@
         }
     
         $total_records_list = array();
-        $total_records_list = $obj->getTableRecords($GLOBALS['role_table'], '', '', 'DESC'); 
+        $total_records_list = $obj->getTableRecords($GLOBALS['role_table'], '', ''); 
         if(!empty($search_text)) {
             $search_text = strtolower($search_text);
             $list = array();
@@ -478,7 +455,7 @@
                                     <?php
                                     //  if(!empty($type) && $type != $GLOBALS['admin_user_type']){  
                                         $linked_count = 0;
-                                        $linked_count = $obj->GetRoleLinkedCount($list['role_id']);
+                                        $linked_count = $obj->GetLinkedCount($GLOBALS['role_table'], $list['role_id']);
                                         ?>
                                         <div class="dropdown">
                                             <a href="#" role="button" id="dropdownMenuLink1" class="btn btn-dark show-button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -521,7 +498,7 @@
             $role_unique_id = $obj->getTableColumnValue($GLOBALS['role_table'], 'role_id', $delete_role_id, 'id');
             if(preg_match("/^\d+$/", $role_unique_id)) { 
                 $linked_count = 0;
-                $linked_count = $obj->GetRoleLinkedCount($delete_role_id);
+                $linked_count = $obj->GetLinkedCount($GLOBALS['role_table'], $delete_role_id);
                 if(empty($linked_count)) {       
                     $role_name = "";
                     $role_name = $obj->getTableColumnValue($GLOBALS['role_table'], 'role_id', $delete_role_id, 'role_name');

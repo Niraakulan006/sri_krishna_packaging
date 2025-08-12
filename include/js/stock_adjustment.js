@@ -320,6 +320,7 @@ function AddStockAdjustmentRow(empty_row) {
                                     jQuery('.add_product_button').attr('disabled', false);
                                 }
                                 SnoCalcPlus();
+                                TotalReelsCount();
                             }
                         });
                     }
@@ -356,7 +357,7 @@ function DeleteProductRow(id_name, row_index) {
 				}
                 if(jQuery('.'+id_name).length == 0 && id_name == 'product_row') {
                     if(jQuery('.product_table').find('tbody').length > 0) {
-                        jQuery('.product_table').find('tbody').html('<tr class="no_data_row"><th colspan="7" class="text-center px-2 py-2">No Data Found!</th></tr>');
+                        jQuery('.product_table').find('tbody').html('<tr class="no_data_row"><th colspan="8" class="text-center px-2 py-2">No Data Found!</th></tr>');
                     }
                     if(jQuery('select[name="location_type"]').length > 0) {
                         jQuery('select[name="location_type"]').parent().css('pointer-events', 'auto');
@@ -372,6 +373,7 @@ function DeleteProductRow(id_name, row_index) {
                     }
                 }
                 SnoCalcPlus();
+                TotalReelsCount();
 			}
 			else {
 				window.location.reload();
@@ -392,6 +394,7 @@ function AdjustmentRowCheck(obj) {
             }
         }
     }
+    TotalReelsCount();
 }
 
 function GetCurrentStock() {

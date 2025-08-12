@@ -190,4 +190,137 @@
         <?php
         echo "$$$"."Reels in this Bill - ".$bill_number;
     }
+
+    if(isset($_REQUEST['pending_table'])) {
+        $table = trim($_REQUEST['pending_table']);
+
+        $bill_id = "";
+        if(isset($_REQUEST['pending_bill_id'])) {
+            $bill_id = trim($_REQUEST['pending_bill_id']);
+        }
+        $field_id = "";
+        if($table == $GLOBALS['stock_request_table']) {
+            $field_id = "stock_request_id";
+        }
+        else if($table == $GLOBALS['delivery_slip_table']) {
+            $field_id = "delivery_slip_id";
+        }
+        $bill_details = array();
+        $bill_details = $obj->getTableRecords($table, $field_id, $bill_id);
+
+        $size_names = array(); $gsm_names = array(); $bf_names = array(); $quantity = array(); $godown_id = ""; $factory_id = "";
+        $bill_number = ""; $size_ids = array(); $gsm_ids = array(); $bf_ids = array();
+        if(!empty($bill_details)) {
+            foreach($bill_details as $data) {
+                if(!empty($data['godown_id']) && $data['godown_id'] != $GLOBALS['null_value']) {
+                    $godown_id = $data['godown_id'];
+                }
+                if(!empty($data['factory_id']) && $data['factory_id'] != $GLOBALS['null_value']) {
+                    $factory_id = $data['factory_id'];
+                }
+                if(!empty($data['size_name']) && $data['size_name'] != $GLOBALS['null_value']) {
+                    $size_names = explode(",", $data['size_name']);
+                }
+                if(!empty($data['gsm_name']) && $data['gsm_name'] != $GLOBALS['null_value']) {
+                    $gsm_names = explode(",", $data['gsm_name']);
+                }
+                if(!empty($data['bf_name']) && $data['bf_name'] != $GLOBALS['null_value']) {
+                    $bf_names = explode(",", $data['bf_name']);
+                }
+                if(!empty($data['quantity']) && $data['quantity'] != $GLOBALS['null_value']) {
+                    $quantity = explode(",", $data['quantity']);
+                }
+                if(!empty($data['size_id']) && $data['size_id'] != $GLOBALS['null_value']) {
+                    $size_ids = explode(",", $data['size_id']);
+                }
+                if(!empty($data['gsm_id']) && $data['gsm_id'] != $GLOBALS['null_value']) {
+                    $gsm_ids = explode(",", $data['gsm_id']);
+                }
+                if(!empty($data['bf_id']) && $data['bf_id'] != $GLOBALS['null_value']) {
+                    $bf_ids = explode(",", $data['bf_id']);
+                }
+            }
+        }
+        ?>
+        <div class="row mx-0">
+            <div class="col-12 table-responsive text-center" style="height:400px !important; overflow-y:scroll !important;">
+                <table class="table table-bordered nowrap cursor smallfnt w-100 view_table border">
+                    <thead class="bg-dark text-white">
+                        <tr>
+                            <th class="text-center px-2 py-2">S.No</th>
+                            <th class="text-center px-2 py-2">Reel Size</th>
+                            <th class="text-center px-2 py-2">GSM</th>
+                            <th class="text-center px-2 py-2">BF</th>
+                            <th class="text-center px-2 py-2">Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            if(empty($bill_details)) {
+                                ?>
+                                <tr class="no_data_row py-2">
+                                    <th class="text-center px-2 py-2" colspan="6">No Data Found!</th>
+                                </tr>
+                                <?php
+                            }
+                            else {
+                                $sno = 1;
+                                if(!empty($size_names)) {
+                                    for($i=0; $i < count($size_names); $i++) {
+                                        $converted_qty = 0; $pending_qty = "-"; $show_product = 0;
+                                        if(!empty($quantity[$i]) && $quantity[$i] != $GLOBALS['null_value']) {
+                                            if($table == $GLOBALS['stock_request_table']) {
+                                                $converted_qty = $obj->GetOtherDeliveryQty('', $bill_id, $godown_id, $factory_id, $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                                            }
+                                            else if($table == $GLOBALS['delivery_slip_table']) {
+                                                $converted_qty = $obj->GetOtherInwardQty('', $bill_id, $godown_id, $factory_id, $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                                            }
+                                            if($quantity[$i] > $converted_qty) {
+                                                $pending_qty = $converted_qty.'/'.$quantity[$i];
+                                                $show_product = 1;
+                                            }
+                                        }
+                                        if($show_product == '1') {
+                                            ?>
+                                            <tr class="product_row">
+                                                <th class="text-center px-2 py-2"><?php echo $sno++; ?></th>
+                                                <th class="text-center px-2 py-2">
+                                                    <?php
+                                                        if(!empty($size_names[$i]) && $size_names[$i] != $GLOBALS['null_value']) {
+                                                            echo $obj->encode_decode('decrypt', $size_names[$i]);
+                                                        }
+                                                    ?>
+                                                </th>
+                                                <th class="text-center px-2 py-2">
+                                                    <?php
+                                                        if(!empty($gsm_names[$i]) && $gsm_names[$i] != $GLOBALS['null_value']) {
+                                                            echo $obj->encode_decode('decrypt', $gsm_names[$i]);
+                                                        }
+                                                    ?>
+                                                </th>
+                                                <th class="text-center px-2 py-2">
+                                                    <?php
+                                                        if(!empty($bf_names[$i]) && $bf_names[$i] != $GLOBALS['null_value']) {
+                                                            echo $obj->encode_decode('decrypt', $bf_names[$i]);
+                                                        }
+                                                    ?>
+                                                </th>
+                                                <th class="text-center px-2 py-2">
+                                                    <?php
+                                                        echo $pending_qty;
+                                                    ?>
+                                                </th>
+                                            </tr>
+                                            <?php
+                                        }
+                                    }
+                                }
+                            }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <?php
+    }
 ?>

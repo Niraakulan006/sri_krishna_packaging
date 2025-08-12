@@ -1,12 +1,8 @@
 <?php
 	include("include_files.php");
-    $login_staff_id = "";
-	if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'])) {
-		if(!empty($GLOBALS['user_type']) && $GLOBALS['user_type'] != $GLOBALS['admin_user_type']) {
-			$login_staff_id = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'];
-			$permission_module = $GLOBALS['supplier_module'];
-		}
-	}
+    $permission_module = $GLOBALS['supplier_module'];
+    include("include_module_action.php");
+
 	if(isset($_REQUEST['show_supplier_id'])) { 
         $show_supplier_id = $_REQUEST['show_supplier_id'];
 
@@ -16,7 +12,7 @@
 			$add_custom_supplier = trim($add_custom_supplier);
 		}
 
-      $location = "";$supplier_name = "";$mobile_number = "";
+        $location = "";$supplier_name = "";$mobile_number = "";
         if(!empty($show_supplier_id)){
             $supplier_list = array();
             $supplier_list = $obj->getTableRecords($GLOBALS['supplier_table'],'supplier_id',$show_supplier_id);
@@ -232,25 +228,30 @@
 				if(empty($edit_id)) {
 					if(empty($prev_supplier_id)) {
 						if(empty($prev_mobile_id)){
-							$action = "";
-							if(!empty($supplier_name)) {
-								$action = "New supplier Created - ".$obj->encode_decode("decrypt",$supplier_name);
-							}
+                            if(empty($add_access_error)) {
+                                $action = "";
+                                if(!empty($supplier_name)) {
+                                    $action = "New supplier Created - ".$obj->encode_decode("decrypt",$supplier_name);
+                                }
 
-							$null_value = $GLOBALS['null_value'];
-							$columns = array('created_date_time', 'creator', 'creator_name','bill_company_id', 'supplier_id', 'supplier_name','lower_case_name', 'mobile_number','location','name_mobile_location','supplier_details','deleted');
-							$values = array("'".$created_date_time."'", "'".$creator."'", "'".$creator_name."'","'".$bill_company_id."'", "'".$null_value."'", "'".$supplier_name."'", "'".$lower_case_name."'","'".$mobile_number."'","'".$location."'","'".$name_mobile_location."'","'".$supplier_details."'","'0'");
-							$supplier_insert_id = $obj->InsertSQL($GLOBALS['supplier_table'], $columns, $values, 'supplier_id', '', $action);			
-							if(preg_match("/^\d+$/", $supplier_insert_id)) {
-								$supplier_id = "";
-                                $supplier_id = $obj->getTableColumnValue($GLOBALS['supplier_table'], 'id', $supplier_insert_id, 'supplier_id');	
-                                $update_payment =1;
-								$result = array('number' => '1', 'msg' => 'Supplier Successfully Created','supplier_id' => $supplier_id);
-								
-							}
-							else {
-								$result = array('number' => '2', 'msg' => $supplier_insert_id);
-							}
+                                $null_value = $GLOBALS['null_value'];
+                                $columns = array('created_date_time', 'creator', 'creator_name','bill_company_id', 'supplier_id', 'supplier_name','lower_case_name', 'mobile_number','location','name_mobile_location','supplier_details','deleted');
+                                $values = array("'".$created_date_time."'", "'".$creator."'", "'".$creator_name."'","'".$bill_company_id."'", "'".$null_value."'", "'".$supplier_name."'", "'".$lower_case_name."'","'".$mobile_number."'","'".$location."'","'".$name_mobile_location."'","'".$supplier_details."'","'0'");
+                                $supplier_insert_id = $obj->InsertSQL($GLOBALS['supplier_table'], $columns, $values, 'supplier_id', '', $action);			
+                                if(preg_match("/^\d+$/", $supplier_insert_id)) {
+                                    $supplier_id = "";
+                                    $supplier_id = $obj->getTableColumnValue($GLOBALS['supplier_table'], 'id', $supplier_insert_id, 'supplier_id');	
+                                    $update_payment =1;
+                                    $result = array('number' => '1', 'msg' => 'Supplier Successfully Created','supplier_id' => $supplier_id);
+                                    
+                                }
+                                else {
+                                    $result = array('number' => '2', 'msg' => $supplier_insert_id);
+                                }
+                            }
+                            else {
+                                $result = array('number' => '2', 'msg' => $add_access_error);
+                            }
 						}
 						else{
 							$result = array('number' => '2', 'msg' => $mobile_error);
@@ -267,23 +268,28 @@
 							$getUniqueID = $obj->getTableColumnValue($GLOBALS['supplier_table'], 'supplier_id', $edit_id, 'id');
                             $supplier_id = $edit_id;
 							if(preg_match("/^\d+$/", $getUniqueID)) {
-								$action = "";
-								if(!empty($supplier_name)) {
-									$action = "supplier Updated.";
-								}
+                                if(empty($edit_access_error)) {
+                                    $action = "";
+                                    if(!empty($supplier_name)) {
+                                        $action = "supplier Updated.";
+                                    }
 
-								$columns = array(); $values = array();			
-								$columns = array('creator_name', 'supplier_name', 'lower_case_name', 'mobile_number','location','name_mobile_location','supplier_details');
-								$values = array( "'".$creator_name."'","'".$supplier_name."'", "'".$lower_case_name."'","'".$mobile_number."'","'".$location."'","'".$name_mobile_location."'","'".$supplier_details."'");
-								$supplier_update_id = $obj->UpdateSQL($GLOBALS['supplier_table'], $getUniqueID, $columns, $values, $action);
-								if(preg_match("/^\d+$/", $supplier_update_id)) {
-                                         $update_payment =1;
+                                    $columns = array(); $values = array();			
+                                    $columns = array('creator_name', 'supplier_name', 'lower_case_name', 'mobile_number','location','name_mobile_location','supplier_details');
+                                    $values = array( "'".$creator_name."'","'".$supplier_name."'", "'".$lower_case_name."'","'".$mobile_number."'","'".$location."'","'".$name_mobile_location."'","'".$supplier_details."'");
+                                    $supplier_update_id = $obj->UpdateSQL($GLOBALS['supplier_table'], $getUniqueID, $columns, $values, $action);
+                                    if(preg_match("/^\d+$/", $supplier_update_id)) {
+                                            $update_payment =1;
 
-									$result = array('number' => '1', 'msg' => 'Updated Successfully');					
-								}
-								else {
-									$result = array('number' => '2', 'msg' => $supplier_update_id);
-								}							
+                                        $result = array('number' => '1', 'msg' => 'Updated Successfully');					
+                                    }
+                                    else {
+                                        $result = array('number' => '2', 'msg' => $supplier_update_id);
+                                    }	
+                                }
+                                else {
+                                    $result = array('number' => '2', 'msg' => $edit_access_error);
+                                }						
 							}
 						}
 						else{
@@ -321,7 +327,7 @@
 		}
         $total_records_list = array();
 		if(!empty($GLOBALS['bill_company_id'])) {
-			$total_records_list = $obj->getTableRecords($GLOBALS['supplier_table'],'','','');
+			$total_records_list = $obj->getTableRecords($GLOBALS['supplier_table'],'','');
 		}
 
        if(!empty($search_text)) {
@@ -375,14 +381,8 @@
 				?> 
 			</div> 
 		<?php }
-        $access_error = "";
-        if(!empty($login_staff_id)) {
-            $permission_action = $view_action;
-            include('permission_action.php');
-        }
-		if(empty($access_error)) { 
-             ?>
-            
+		if(empty($view_access_error)) { 
+            ?>
             <table class="table nowrap cursor text-center smallfnt">
                 <thead class="bg-light">
                     <tr>
@@ -442,45 +442,29 @@
                                     </td>
                                     <td>
                                         <?php 
-                                        $edit_access_error = "";
-                                        if(!empty($login_staff_id)) {
-                                            $permission_action = $edit_action;
-                                            include('permission_action.php');
-                                        }
-                                        $delete_access_error = "";
-                                        if(!empty($login_staff_id)) {
-                                            $permission_action = $delete_action;
-                                            include('permission_action.php');
-                                        }
-                                        if(empty($edit_access_error) || empty($delete_access_error)){ ?>
-                                        <div class="dropdown">
-                                           <a href="#" role="button" id="dropdownMenuLink1" class="btn btn-dark show-button" class="btn btn-dark show-button poppins" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="bi bi-three-dots-vertical"></i>
-                                            </a>
-                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink1">
-                                              
-                                                <li><a class="dropdown-item" href="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '<?php if(!empty($data['supplier_id'])) { echo $data['supplier_id']; } ?>');"><i class="fa fa-pencil"></i> &ensp;Edit</a></li>
-                                                
+                                        $linked_count = 0;
+                                        $linked_count = $obj->GetLinkedCount($GLOBALS['supplier_table'], $data['supplier_id']);
+                                        if (empty($edit_access_error) || (empty($delete_access_error) && empty($linked_count))) { ?>
+                                            <div class="dropdown">
+                                                <a href="#" role="button" id="dropdownMenuLink1" class="btn btn-dark show-button"
+                                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                </a>
+                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink1">
                                                     <?php 
-                                                       
-                                                if(empty($delete_access_error)) {
-                                                    $linked_count = 0;
-                                                    // $linked_count = $obj->GetSupplierLinkedCount($data['supplier_id']); 
-                                                    if($linked_count > 0) {
-                                                    ?>                             
-                                                <li><a class="dropdown-item text-secondary" href="#"><i class="fa fa-trash"></i> &ensp; Delete</a></li>
-                                                <?php 
-                                                    }
-                                                    else {
-                                                ?>
-                                                <li><a class="dropdown-item" href="Javascript:DeleteModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '<?php if(!empty($data['supplier_id'])) { echo $data['supplier_id']; } ?>');"><i class="fa fa-trash"></i> &ensp; Delete</a></li>
-                                                            
-                                                <?php 
-                                                        }
-                                                    } 
-                                                ?>
-                                            </ul>
-                                        </div> 
+                                                        if(empty($edit_access_error)) { 
+                                                            ?>
+                                                            <li><a class="dropdown-item" href="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '<?php if(!empty($data['supplier_id'])) { echo $data['supplier_id']; } ?>');"><i class="fa fa-pencil"></i> &ensp; Edit</a></li>
+                                                            <?php 
+                                                        } 
+                                                        if(empty($delete_access_error) && empty($linked_count)) {
+                                                            ?>
+                                                            <li><a class="dropdown-item" onclick="Javascript:DeleteModalContent('<?php if(!empty($page_title)) { echo $page_title;} ?>', '<?php if(!empty($data['supplier_id'])) { echo $data['supplier_id']; } ?>');"><i class="fa fa-trash"></i> &ensp; Delete</a></li>
+                                                            <?php 
+                                                        } 
+                                                    ?>
+                                                </ul>
+                                            </div>
                                         <?php } ?>
                                     </td>
                                 </tr>
@@ -511,22 +495,18 @@
                
                 $action = "";
                 if(!empty($supplier_name)) {
-                    $action = "supplier Deleted - ".$obj->encode_decode("decrypt",$supplier_name);
+                    $action = "Supplier Deleted - ".$obj->encode_decode("decrypt",$supplier_name);
                 }
 
-                $supplier_list = array();
-				$delete = 1;
-				foreach($supplier_list as $data){
-					if($data['id_count'] > 0){
-						$delete = 0;
-					}
-				}
-           
-                $columns = array(); $values = array();						
-                $columns = array('deleted');
-                $values = array("'1'");
-                $msg = $obj->UpdateSQL($GLOBALS['supplier_table'], $supplier_unique_id, $columns, $values, $action);
-
+                if(empty($delete_access_error)) {
+                    $columns = array(); $values = array();			
+                    $columns = array('deleted');
+                    $values = array("'1'");
+                    $msg = $obj->UpdateSQL($GLOBALS['supplier_table'], $supplier_unique_id, $columns, $values, $action);
+                }
+                else {
+                    $msg = $delete_access_error;
+                }
             }
         }
         echo $msg;

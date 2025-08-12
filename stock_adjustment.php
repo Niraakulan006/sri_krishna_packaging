@@ -3,6 +3,19 @@
 	include("include_user_check_and_files.php");
 	$page_number = $GLOBALS['page_number']; $page_limit = $GLOBALS['page_limit'];
 
+    $login_staff_id = "";
+    if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'])) {
+        if(!empty($GLOBALS['user_type']) && $GLOBALS['user_type'] != $GLOBALS['admin_user_type']) {
+            $login_staff_id = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'];
+            $permission_module = $GLOBALS['stock_adjustment_module'];
+            include("permission_check.php");
+        }
+    }
+    $add_access_error = ""; $view_access_error = "";
+    if(!empty($login_staff_id)) {
+        $permission_actions = array($view_action, $add_action, $edit_action, $delete_action);
+        include('permission_action.php');
+    }
     $from_date = date('Y-m-d', strtotime('-30 days')); $to_date = date('Y-m-d');
 ?>
 <!DOCTYPE html>
@@ -48,41 +61,45 @@
                                                     <span class="input-group-text" style="height:34px;" id="basic-addon2"><i class="bi bi-search"></i></span>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-2 col-4">
-                                                <button class="btn btn-danger float-end" style="font-size:11px;" type="button" onclick="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '');"> <i class="fa fa-plus-circle"></i> Add </button>
-                                            </div>
+                                            <?php if(empty($add_access_error)) { ?>
+                                                <div class="col-lg-2 col-4">
+                                                    <button class="btn btn-danger float-end" style="font-size:11px;" type="button" onclick="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '');"> <i class="fa fa-plus-circle"></i> Add </button>
+                                                </div>
+                                            <?php } ?>
                                         </div>
                                     </form>
                                 </div>
                         
                                 <div id="table_listing_records">
-                                    <input type="hidden" name="page_title" value="<?php if(!empty($page_title)) { echo $page_title; } ?>">
-                                    <div class="new">
-                                        <ul class="new nav nav-pills my-3 justify-content-center" id="pills-tab" role="tablist">
-                                            <li class="nav-item" role="presentation">
-                                                <button class="nav-link active" id="pills-active-tab" data-bs-toggle="pill" data-bs-target="#pills-active" type="button" role="tab" aria-controls="pills-active" aria-selected="true">Active Bill</button>
-                                            </li>
-                                            <li class="nav-item" role="presentation">
-                                                <button class="nav-link" id="pills-cancel-tab" data-bs-toggle="pill" data-bs-target="#pills-cancel" type="button" role="tab" aria-controls="pills-cancel" aria-selected="false">Cancelled Bill</button>
-                                            </li>
-                                        </ul>
-                                        <div class="tab-content" id="pills-tabContent">
-                                            <div class="tab-pane fade show active" id="pills-active" role="tabpanel" aria-labelledby="pills-active-tab" tabindex="0">
-                                                <?php 
-                                                    $cancelled = 0;
-                                                    $id = "table-active";
-                                                    include("stock_adjustment_table.php"); 
-                                                ?>
-                                            </div>
-                                            <div class="tab-pane fade" id="pills-cancel" role="tabpanel" aria-labelledby="pills-cancel-tab" tabindex="0">
-                                                <?php 
-                                                    $cancelled = 1;
-                                                    $id = "table-cancel";
-                                                    include("stock_adjustment_table.php"); 
-                                                ?>
+                                    <?php if(empty($view_access_error)) { ?>
+                                        <input type="hidden" name="page_title" value="<?php if(!empty($page_title)) { echo $page_title; } ?>">
+                                        <div class="new">
+                                            <ul class="new nav nav-pills my-3 justify-content-center" id="pills-tab" role="tablist">
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link active" id="pills-active-tab" data-bs-toggle="pill" data-bs-target="#pills-active" type="button" role="tab" aria-controls="pills-active" aria-selected="true">Active Bill</button>
+                                                </li>
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link" id="pills-cancel-tab" data-bs-toggle="pill" data-bs-target="#pills-cancel" type="button" role="tab" aria-controls="pills-cancel" aria-selected="false">Cancelled Bill</button>
+                                                </li>
+                                            </ul>
+                                            <div class="tab-content" id="pills-tabContent">
+                                                <div class="tab-pane fade show active" id="pills-active" role="tabpanel" aria-labelledby="pills-active-tab" tabindex="0">
+                                                    <?php 
+                                                        $cancelled = 0;
+                                                        $id = "table-active";
+                                                        include("stock_adjustment_table.php"); 
+                                                    ?>
+                                                </div>
+                                                <div class="tab-pane fade" id="pills-cancel" role="tabpanel" aria-labelledby="pills-cancel-tab" tabindex="0">
+                                                    <?php 
+                                                        $cancelled = 1;
+                                                        $id = "table-cancel";
+                                                        include("stock_adjustment_table.php"); 
+                                                    ?>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    <?php } ?>
                                 </div>
                             </div>
                         </div>   
@@ -143,30 +160,40 @@
     }
 
     // Initial load for active tab
-    $(document).ready(function() {
-        var initialTableId = jQuery('.tab-pane.active .datatable').attr('id');
-        initializeDataTableIfNeeded(initialTableId);
+    jQuery(document).ready(function() {
+        if(jQuery('.tab-pane.active .datatable').length > 0) {
+            var initialTableId = jQuery('.tab-pane.active .datatable').attr('id');
+            initializeDataTableIfNeeded(initialTableId);
+        }
 
         // On tab change
-        jQuery('button[data-bs-toggle="pill"]').on('shown.bs.tab', function (e) {
-            var targetPaneId = jQuery(e.target).attr('data-bs-target'); // e.g., "#pills-draft"
-            var tableId = jQuery(targetPaneId).find('.datatable').attr('id');
-            initializeDataTableIfNeeded(tableId);
-        });
+        if(jQuery('button[data-bs-toggle="pill"]').length > 0) {
+            jQuery('button[data-bs-toggle="pill"]').on('shown.bs.tab', function (e) {
+                var targetPaneId = jQuery(e.target).attr('data-bs-target'); // e.g., "#pills-draft"
+                var tableId = jQuery(targetPaneId).find('.datatable').attr('id');
+                initializeDataTableIfNeeded(tableId);
+            });
+        }
 
         if(jQuery('#search_text').length > 0) {
             jQuery('#search_text').on('keyup', function() {
-                jQuery('.tab-pane.active .datatable').DataTable().ajax.reload();
+                if(jQuery('.tab-pane.active .datatable').length > 0) {
+                    jQuery('.tab-pane.active .datatable').DataTable().ajax.reload();
+                }
             });
         }
         if(jQuery('input[name="filter_from_date"]').length > 0) {
             jQuery('input[name="filter_from_date"]').on('change', function() {
-                jQuery('.tab-pane.active .datatable').DataTable().ajax.reload();
+                if(jQuery('.tab-pane.active .datatable').length > 0) {
+                    jQuery('.tab-pane.active .datatable').DataTable().ajax.reload();
+                }
             });
         }
         if(jQuery('input[name="filter_to_date"]').length > 0) {
             jQuery('input[name="filter_to_date"]').on('change', function() {
-                jQuery('.tab-pane.active .datatable').DataTable().ajax.reload();
+                if(jQuery('.tab-pane.active .datatable').length > 0) {
+                    jQuery('.tab-pane.active .datatable').DataTable().ajax.reload();
+                }
             });
         }
     });

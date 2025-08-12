@@ -7,6 +7,7 @@
 <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
     <i class="bi bi-arrow-up-circle-fill"></i>
 </button>
+<script type="text/javascript" src="js/chart.js"></script>
 <script src="js/popper.min.js"></script>
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.bundle.min.js"></script>

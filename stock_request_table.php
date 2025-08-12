@@ -8,6 +8,7 @@
                 <th style="min-width:100px;">Bill Date</th>
                 <th style="min-width:100px;">Request No</th>
                 <th style="min-width:200px;">Godown</th>
+                <th style="min-width:75px;">Pending Qty</th>
                 <th style="min-width:75px;">Reel Count</th>
                 <th style="min-width:75px;">View</th>
                 <th style="min-width:75px;">Action</th>

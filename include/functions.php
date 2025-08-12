@@ -108,13 +108,6 @@
 			$create_obj = new Creation_functions();
 			return $create_obj;
 		}
-		public function GetRoleLinkedCount($role_id) {
-			$result = "";
-			$create_obj = "";
-			$create_obj = $this->creation_function_object();
-			$result = $create_obj->GetRoleLinkedCount($role_id);
-			return $result;
-		}
 		public function CheckUnitAlreadyExists($company_id, $unit_name) {
 			$create_obj = "";
 			$create_obj = $this->creation_function_object();
@@ -136,11 +129,11 @@
 			$result = $create_obj->CheckGodownAlreadyExists($company_id, $godown_name);
 			return $result;
 		}
-		public function GetLinkedCount($delete_id, $table, $column) {
+		public function GetLinkedCount($table, $creation_id) {
 			$create_obj = "";
 			$create_obj = $this->creation_function_object();
 			$count = 0;
-			$count = $create_obj->GetLinkedCount($delete_id, $table, $column);
+			$count = $create_obj->GetLinkedCount($table, $creation_id);
 			return $count;
 		}	
 		public function CheckSizeAlreadyExists($company_id, $size) {
@@ -162,13 +155,6 @@
 			$create_obj = $this->creation_function_object();
 			$result = "";
 			$result = $create_obj->CheckGodownAlreadyExist($lowercase_name_location);
-			return $result;
-		}
-		public function GetGodownLinkedCount($godown_id) {
-          $create_obj = "";
-			$create_obj = $this->creation_function_object();
-			$result = "";
-			$result = $create_obj->GetGodownLinkedCount($godown_id);
 			return $result;
 		}
 		public function getInwardMaterialList($row, $rowperpage, $searchValue, $from_date, $to_date, $supplier_id, $cancelled, $order_column, $order_direction) {
@@ -225,6 +211,20 @@
 			$create_obj = $this->creation_function_object();
 			$result = "";
 			$result = $create_obj->getInwardApprovalList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $order_column, $order_direction);
+			return $result;
+		}
+		public function MonthwiseChart() {
+			$create_obj = "";
+			$create_obj = $this->creation_function_object();
+			$result = "";
+			$result = $create_obj->MonthwiseChart();
+			return $result;
+		}
+		public function LocationVariationChart() {
+			$create_obj = "";
+			$create_obj = $this->creation_function_object();
+			$result = "";
+			$result = $create_obj->LocationVariationChart();
 			return $result;
 		}
 
@@ -351,6 +351,27 @@
 			$conversion_obj = $this->conversion_function_object();
 			$conversion_update = "";
 			$conversion_update = $conversion_obj->CheckRequestDeliveried($stock_request_id);
+			return $conversion_update;
+		}
+		public function GetPrevDeliveryQty($bill_id, $godown_id, $factory_id, $size_id, $gsm_id, $bf_id) {
+			$conversion_obj = "";
+			$conversion_obj = $this->conversion_function_object();
+			$conversion_update = "";
+			$conversion_update = $conversion_obj->GetPrevDeliveryQty($bill_id, $godown_id, $factory_id, $size_id, $gsm_id, $bf_id);
+			return $conversion_update;
+		}
+		public function GetOtherInwardQty($bill_id, $conversion_id, $godown_id, $factory_id, $size_id, $gsm_id, $bf_id) {
+			$conversion_obj = "";
+			$conversion_obj = $this->conversion_function_object();
+			$conversion_update = "";
+			$conversion_update = $conversion_obj->GetOtherInwardQty($bill_id, $conversion_id, $godown_id, $factory_id, $size_id, $gsm_id, $bf_id);
+			return $conversion_update;
+		}
+		public function CheckDeliveryApproved($delivery_slip_id) {
+			$conversion_obj = "";
+			$conversion_obj = $this->conversion_function_object();
+			$conversion_update = "";
+			$conversion_update = $conversion_obj->CheckDeliveryApproved($delivery_slip_id);
 			return $conversion_update;
 		}
 

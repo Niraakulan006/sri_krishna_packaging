@@ -2,22 +2,23 @@
 	$page_title = "Supplier";
 	include("include_user_check_and_files.php");
 	$page_number = $GLOBALS['page_number']; $page_limit = $GLOBALS['page_limit'];
-            $login_staff_id = "";
+
+    $login_staff_id = "";
     if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'])) {
-        $company_count = $obj->CompanyCount();
-        if(empty($company_count)) {
-            header("Location:dashboard.php");
-            exit;
-        }
         if(!empty($GLOBALS['user_type']) && $GLOBALS['user_type'] != $GLOBALS['admin_user_type']) {
             $login_staff_id = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'];
             $permission_module = $GLOBALS['supplier_module'];
             include("permission_check.php");
         }
     }
+    $add_access_error = "";
+    if(!empty($login_staff_id)) {
+        $permission_actions = array($add_action);
+        include('permission_action.php');
+    }
 
     $supplier_list = array(); $supplier_count = 0;
-    $supplier_list = $obj->getTableRecords($GLOBALS['supplier_table'], '', '', '');
+    $supplier_list = $obj->getTableRecords($GLOBALS['supplier_table'], '', '');
     if(!empty($supplier_list)){
         $supplier_count = count($supplier_list);
     }
@@ -49,18 +50,12 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-4 col-md-2 col-4">
-                                                         <?php
-                                                    $add_access_error = "";
-                                                    if(!empty($login_staff_id)) {
-                                                        $permission_action = $add_action;
-                                                        include('permission_action.php');
-                                                    }
-                                                    if(empty($add_access_error)) { 
-                                                        ?>
-                                                         <button class="btn btn-danger float-end" style="font-size:11px;" type="button" onclick="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '');"> <i class="fa fa-plus-circle"></i> Add </button>
-                                                          <?php 
+                                                    <?php
+                                                        if(empty($add_access_error)) { 
+                                                            ?>
+                                                            <button class="btn btn-danger float-end" style="font-size:11px;" type="button" onclick="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '');"> <i class="fa fa-plus-circle"></i> Add </button>
+                                                            <?php 
                                                         }
-
                                                         if($supplier_count > 0) { ?>
                                                             <button class="btn btn-primary float-right" style="font-size:11px;" type="button" onclick="Javascript:PrintSupplier();"> <i class="fa fa-print"></i> PDF </button>
                                                             <button class="btn btn-success float-right mx-lg-1" style="font-size:11px;" type="button" id="download_supplier" onClick="ExcelDownload();"> <i class="fa fa-download"></i> Download </button>

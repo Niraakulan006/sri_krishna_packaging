@@ -1,12 +1,8 @@
 <?php
-include("include_files.php");
-$login_staff_id = "";
-if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'])) {
-    if(!empty($GLOBALS['user_type']) && $GLOBALS['user_type'] != $GLOBALS['admin_user_type']) {
-        $login_staff_id = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'];
-        $permission_module = $GLOBALS['bf_module'];
-    }
-}
+    include("include_files.php");
+    $permission_module = $GLOBALS['bf_module'];
+    include("include_module_action.php");
+
 	if(isset($_REQUEST['show_bf_id'])) { 
         $show_bf_id = "";
         $show_bf_id = $_REQUEST['show_bf_id'];
@@ -201,20 +197,25 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                         $action = array();
                         for ($p = 0; $p < count($bf_name); $p++) {
                             if(empty($prev_bf_id)) {
-                                if(!empty($bf_name[$p])) {
-                                    $action[$p] = "New BF Created. Name - " . $obj->encode_decode('decrypt', $bf_name[$p]);
-                                }
-    
-                                $null_value = $GLOBALS['null_value'];
-                                $columns = array('created_date_time', 'creator', 'creator_name', 'bill_company_id', 'bf_id', 'bf_name', 'deleted');
-                                $values = array("'".$created_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$null_value."'", "'".$bf_name[$p]."'",  "'0'");
-    
-                                $bf_insert_id = $obj->InsertSQL($GLOBALS['bf_table'], $columns, $values, 'bf_id', '', $action[$p]);		
-                                if(preg_match("/^\d+$/", $bf_insert_id)) {								
-                                    $result = array('number' => '1', 'msg' => 'BF Successfully Created');						
+                                if(empty($add_access_error)) {
+                                    if(!empty($bf_name[$p])) {
+                                        $action[$p] = "New BF Created. Name - " . $obj->encode_decode('decrypt', $bf_name[$p]);
+                                    }
+        
+                                    $null_value = $GLOBALS['null_value'];
+                                    $columns = array('created_date_time', 'creator', 'creator_name', 'bill_company_id', 'bf_id', 'bf_name', 'deleted');
+                                    $values = array("'".$created_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$null_value."'", "'".$bf_name[$p]."'",  "'0'");
+        
+                                    $bf_insert_id = $obj->InsertSQL($GLOBALS['bf_table'], $columns, $values, 'bf_id', '', $action[$p]);		
+                                    if(preg_match("/^\d+$/", $bf_insert_id)) {								
+                                        $result = array('number' => '1', 'msg' => 'BF Successfully Created');						
+                                    }
+                                    else {
+                                        $result = array('number' => '2', 'msg' => $bf_insert_id);
+                                    }
                                 }
                                 else {
-                                    $result = array('number' => '2', 'msg' => $bf_insert_id);
+                                    $result = array('number' => '2', 'msg' => $add_access_error);
                                 }
                             } 
                             else {
@@ -226,20 +227,25 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                         $getUniqueID = "";
                         $getUniqueID = $obj->getTableColumnValue($GLOBALS['bf_table'], 'bf_id', $edit_id, 'id');
                         if(preg_match("/^\d+$/", $getUniqueID)) {
-                            $action = "";
-                            if(!empty($single_bf_name)) {
-                                $action = "BF Updated. Name - " . $obj->encode_decode('decrypt', $single_bf_name);
+                            if(empty($edit_access_error)) {
+                                $action = "";
+                                if(!empty($single_bf_name)) {
+                                    $action = "BF Updated. Name - " . $obj->encode_decode('decrypt', $single_bf_name);
+                                }
+        
+                                $columns = array(); $values = array();
+                                $columns = array('creator_name', 'bf_name');
+                                $values = array("'".$creator_name."'", "'".$single_bf_name."'");
+                                $bf_update_id = $obj->UpdateSQL($GLOBALS['bf_table'], $getUniqueID, $columns, $values, $action);
+                                if(preg_match("/^\d+$/", $bf_update_id)) {
+                                    $result = array('number' => '1', 'msg' => 'Updated Successfully');
+                                } 
+                                else {
+                                    $result = array('number' => '2', 'msg' => $bf_update_id);
+                                }
                             }
-    
-                            $columns = array(); $values = array();
-                            $columns = array('creator_name', 'bf_name');
-                            $values = array("'".$creator_name."'", "'".$single_bf_name."'");
-                            $bf_update_id = $obj->UpdateSQL($GLOBALS['bf_table'], $getUniqueID, $columns, $values, $action);
-                            if(preg_match("/^\d+$/", $bf_update_id)) {
-                                $result = array('number' => '1', 'msg' => 'Updated Successfully');
-                            } 
                             else {
-                                $result = array('number' => '2', 'msg' => $bf_update_id);
+                                $result = array('number' => '2', 'msg' => $edit_access_error);
                             }
                         }
                     }
@@ -332,12 +338,7 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
             </div>
             <?php 
         } 
-        $access_error = "";
-        if(!empty($login_staff_id)) {
-            $permission_action = $view_action;
-            include('permission_action.php');
-        }
-        if(empty($access_error)) { 
+        if(empty($view_access_error)) { 
             ?>
            
             <table class="table nowrap cursor text-center smallfnt">
@@ -372,43 +373,32 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                                             }
                                         ?>
                                     </td>
-                        <td>
-                            <?php $edit_access_error = "";
-                                    if(!empty($login_staff_id)) {
-                                        $permission_action = $edit_action;
-                                        include('permission_action.php');
-                                    }
-                                    $delete_access_error = "";
-                                    if(!empty($login_staff_id)) {
-                                        $permission_action = $delete_action;
-                                        include('permission_action.php');
-                                    }
-                            ?>
-                        <?php if (empty($edit_access_error) || empty($delete_access_error)) { ?>
-                            <div class="dropdown">
-                                <a href="#" role="button" id="dropdownMenuLink1" class="btn btn-dark show-button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink1">
-                                <?php if(empty($edit_access_error)) { 
-                                        ?>
-                                    <li><a class="dropdown-item" href="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '<?php if(!empty($list['bf_id'])) { echo $list['bf_id']; } ?>');"><i class="fa fa-pencil"></i> &ensp; Edit</a></li>
-                                    <?php } 
-                                    
-                                    if(empty($delete_access_error)) {
-                                        $linked_count = 0;
-                                        // $linked_count = $obj->GetLinkedCount($list['bf_id'], $GLOBALS['inward_material_table'], 'bf_id');
-                                        if(!empty($linked_count)) { ?>
-                                            <li><a class="dropdown-item text-secondary"><i class="fa fa-trash"></i> &ensp; Delete</a></li>
+                                    <td>
                                         <?php 
-                                        } else {  ?>
-                                            <li><a class="dropdown-item" onclick="Javascript:DeleteModalContent('<?php if(!empty($page_title)) { echo $page_title;} ?>', '<?php if(!empty($list['bf_id'])) { echo $list['bf_id']; } ?>');"><i class="fa fa-trash"></i> &ensp; Delete</a></li>
-                                        <?php } 
-                                            } ?>
-                                        </ul>
-                                    </div>
-                                    <?php } ?>
+                                        $linked_count = 0;
+                                        $linked_count = $obj->GetLinkedCount($GLOBALS['bf_table'], $list['bf_id']);
+                                        if (empty($edit_access_error) || (empty($delete_access_error) && empty($linked_count))) { ?>
+                                            <div class="dropdown">
+                                                <a href="#" role="button" id="dropdownMenuLink1" class="btn btn-dark show-button"
+                                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                </a>
+                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink1">
+                                                    <?php 
+                                                        if(empty($edit_access_error)) { 
+                                                            ?>
+                                                            <li><a class="dropdown-item" href="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '<?php if(!empty($list['bf_id'])) { echo $list['bf_id']; } ?>');"><i class="fa fa-pencil"></i> &ensp; Edit</a></li>
+                                                            <?php 
+                                                        } 
+                                                        if(empty($delete_access_error) && empty($linked_count)) {
+                                                            ?>
+                                                            <li><a class="dropdown-item" onclick="Javascript:DeleteModalContent('<?php if(!empty($page_title)) { echo $page_title;} ?>', '<?php if(!empty($list['bf_id'])) { echo $list['bf_id']; } ?>');"><i class="fa fa-trash"></i> &ensp; Delete</a></li>
+                                                            <?php 
+                                                        } 
+                                                    ?>
+                                                </ul>
+                                            </div>
+                                        <?php } ?>
                                     </td>
                                 </tr>
                                 <?php
@@ -462,18 +452,16 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                 if(!empty($bf_name)) {
                     $action = "BF Deleted. Value - " . $obj->encode_decode('decrypt', $bf_name);
                 }
-                $linked_count = 0;
-                // $linked_count = $obj->GetbfLinkedCount($delete_bf_id);
-                // if(empty($linked_count)) {
+                if(empty($delete_access_error)) {
                     $columns = array();
                     $values = array();
                     $columns = array('deleted');
                     $values = array("'1'");
                     $msg = $obj->UpdateSQL($GLOBALS['bf_table'], $bf_unique_id, $columns, $values, $action);
-                // }
-                // else {
-                //     $msg = "This bf is associated with other screens";
-                // }
+                }
+                else {
+                    $msg = $delete_access_error;
+                }
             }
         }
         echo $msg;

@@ -3,6 +3,19 @@
 	include("include_user_check_and_files.php");
 	$page_number = $GLOBALS['page_number']; $page_limit = $GLOBALS['page_limit'];
 
+    $login_staff_id = "";
+    if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'])) {
+        if(!empty($GLOBALS['user_type']) && $GLOBALS['user_type'] != $GLOBALS['admin_user_type']) {
+            $login_staff_id = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'];
+            $permission_module = $GLOBALS['delivery_slip_module'];
+            include("permission_check.php");
+        }
+    }
+    $view_access_error = "";
+    if(!empty($login_staff_id)) {
+        $permission_actions = array($view_action, $edit_action, $delete_action);
+        include('permission_action.php');
+    }
     $from_date = date('Y-m-d', strtotime('-30 days')); $to_date = date('Y-m-d');
     $factory_list = array();
     $factory_list = $obj->getTableRecords($GLOBALS['factory_table'], '', '');
@@ -122,43 +135,45 @@
                                 </div>
                             </div>
                             <div id="table_listing_records">
-                                <input type="hidden" name="page_title" value="<?php if(!empty($page_title)) { echo $page_title; } ?>">
-                                <div class="new">
-                                    <ul class="new nav nav-pills my-3 justify-content-center" id="pills-tab" role="tablist">
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link active" id="pills-active-tab" data-bs-toggle="pill" data-bs-target="#pills-active" type="button" role="tab" aria-controls="pills-active" aria-selected="true">Active Bill</button>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link" id="pills-approved-tab" data-bs-toggle="pill" data-bs-target="#pills-approved" type="button" role="tab" aria-controls="pills-approved" aria-selected="true">Approved Bill</button>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link" id="pills-cancel-tab" data-bs-toggle="pill" data-bs-target="#pills-cancel" type="button" role="tab" aria-controls="pills-cancel" aria-selected="false">Cancelled Bill</button>
-                                        </li>
-                                    </ul>
-                                    <div class="tab-content" id="pills-tabContent">
-                                        <div class="tab-pane fade show active" id="pills-active" role="tabpanel" aria-labelledby="pills-active-tab" tabindex="0">
-                                            <?php 
-                                                $cancelled = 0; $is_approved = 0;
-                                                $id = "table-active";
-                                                include("delivery_slip_table.php"); 
-                                            ?>
-                                        </div>
-                                        <div class="tab-pane fade" id="pills-approved" role="tabpanel" aria-labelledby="pills-approved-tab" tabindex="0">
-                                            <?php 
-                                                $cancelled = 0; $is_approved = 1;
-                                                $id = "table-approved";
-                                                include("delivery_slip_table.php"); 
-                                            ?>
-                                        </div>
-                                        <div class="tab-pane fade" id="pills-cancel" role="tabpanel" aria-labelledby="pills-cancel-tab" tabindex="0">
-                                            <?php 
-                                                $cancelled = 1; $is_approved = 0;
-                                                $id = "table-cancel";
-                                                include("delivery_slip_table.php"); 
-                                            ?>
+                                <?php if(empty($view_access_error)) { ?>
+                                    <input type="hidden" name="page_title" value="<?php if(!empty($page_title)) { echo $page_title; } ?>">
+                                    <div class="new">
+                                        <ul class="new nav nav-pills my-3 justify-content-center" id="pills-tab" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="pills-active-tab" data-bs-toggle="pill" data-bs-target="#pills-active" type="button" role="tab" aria-controls="pills-active" aria-selected="true">Active Bill</button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="pills-approved-tab" data-bs-toggle="pill" data-bs-target="#pills-approved" type="button" role="tab" aria-controls="pills-approved" aria-selected="true">Approved Bill</button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="pills-cancel-tab" data-bs-toggle="pill" data-bs-target="#pills-cancel" type="button" role="tab" aria-controls="pills-cancel" aria-selected="false">Cancelled Bill</button>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content" id="pills-tabContent">
+                                            <div class="tab-pane fade show active" id="pills-active" role="tabpanel" aria-labelledby="pills-active-tab" tabindex="0">
+                                                <?php 
+                                                    $cancelled = 0; $is_approved = 0;
+                                                    $id = "table-active";
+                                                    include("delivery_slip_table.php"); 
+                                                ?>
+                                            </div>
+                                            <div class="tab-pane fade" id="pills-approved" role="tabpanel" aria-labelledby="pills-approved-tab" tabindex="0">
+                                                <?php 
+                                                    $cancelled = 0; $is_approved = 1;
+                                                    $id = "table-approved";
+                                                    include("delivery_slip_table.php"); 
+                                                ?>
+                                            </div>
+                                            <div class="tab-pane fade" id="pills-cancel" role="tabpanel" aria-labelledby="pills-cancel-tab" tabindex="0">
+                                                <?php 
+                                                    $cancelled = 1; $is_approved = 0;
+                                                    $id = "table-cancel";
+                                                    include("delivery_slip_table.php"); 
+                                                ?>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                <?php } ?>
                             </div>
                         </div>
                     </div>   
@@ -185,7 +200,7 @@
                 "ordering" : true,
                 "searching" : false,
                 "columnDefs": [
-                    { "orderable": false, "targets": [0,6,7] }
+                    { "orderable": false, "targets": [0,4,7,8] }
                 ],
                 "ajax": {
                     "url": "delivery_slip_changes.php",
@@ -220,6 +235,7 @@
                     { "data": "delivery_slip_number", "className": "text-center" },
                     { "data": "stock_request_number", "className": "text-center" },
                     { "data": "godown_name", "className": "text-center" },
+                    { "data": "pending_qty", "className": "text-center" },
                     { "data": "total_quantity", "className": "text-center" },
                     { "data": "view", "className": "text-center" },
                     { "data": "action", "className": "text-center" }
@@ -230,39 +246,53 @@
 
     // Initial load for active tab
     jQuery(document).ready(function() {
-        var initialTableId = jQuery('.tab-pane.active .datatable').attr('id');
-        initializeDataTableIfNeeded(initialTableId);
+        if(jQuery('.tab-pane.active .datatable').length > 0) {
+            var initialTableId = jQuery('.tab-pane.active .datatable').attr('id');
+            initializeDataTableIfNeeded(initialTableId);
+        }
 
         // On tab change
-        jQuery('button[data-bs-toggle="pill"]').on('shown.bs.tab', function (e) {
-            var targetPaneId = jQuery(e.target).attr('data-bs-target'); // e.g., "#pills-draft"
-            var tableId = jQuery(targetPaneId).find('.datatable').attr('id');
-            initializeDataTableIfNeeded(tableId);
-        });
+        if(jQuery('button[data-bs-toggle="pill"]').length > 0) {
+            jQuery('button[data-bs-toggle="pill"]').on('shown.bs.tab', function (e) {
+                var targetPaneId = jQuery(e.target).attr('data-bs-target'); // e.g., "#pills-draft"
+                var tableId = jQuery(targetPaneId).find('.datatable').attr('id');
+                initializeDataTableIfNeeded(tableId);
+            });
+        }
 
         if(jQuery('#search_text').length > 0) {
             jQuery('#search_text').on('keyup', function() {
-                jQuery('.tab-pane.active .datatable').DataTable().ajax.reload();
+                if(jQuery('.tab-pane.active .datatable').length > 0) {
+                    jQuery('.tab-pane.active .datatable').DataTable().ajax.reload();
+                }
             });
         }
         if(jQuery('input[name="filter_from_date"]').length > 0) {
             jQuery('input[name="filter_from_date"]').on('change', function() {
-                jQuery('.tab-pane.active .datatable').DataTable().ajax.reload();
+                if(jQuery('.tab-pane.active .datatable').length > 0) {
+                    jQuery('.tab-pane.active .datatable').DataTable().ajax.reload();
+                }
             });
         }
         if(jQuery('input[name="filter_to_date"]').length > 0) {
             jQuery('input[name="filter_to_date"]').on('change', function() {
-                jQuery('.tab-pane.active .datatable').DataTable().ajax.reload();
+                if(jQuery('.tab-pane.active .datatable').length > 0) {
+                    jQuery('.tab-pane.active .datatable').DataTable().ajax.reload();
+                }
             });
         }
         if(jQuery('select[name="filter_godown_id"]').length > 0) {
             jQuery('select[name="filter_godown_id"]').on('change', function() {
-                jQuery('.tab-pane.active .datatable').DataTable().ajax.reload();
+                if(jQuery('.tab-pane.active .datatable').length > 0) {
+                    jQuery('.tab-pane.active .datatable').DataTable().ajax.reload();
+                }
             });
         }
         if(jQuery('select[name="filter_factory_id"]').length > 0) {
             jQuery('select[name="filter_factory_id"]').on('change', function() {
-                jQuery('.tab-pane.active .datatable').DataTable().ajax.reload();
+                if(jQuery('.tab-pane.active .datatable').length > 0) {
+                    jQuery('.tab-pane.active .datatable').DataTable().ajax.reload();
+                }
             });
         }
     });

@@ -6,7 +6,7 @@
         $name = ""; $mobile_number = ""; $username = ""; $password = ""; $type = ""; $access_pages = ""; $access_page_actions = ""; $admin = 0; $role_id = "";
         if(!empty($show_user_id)) {
             $user_list = array();
-            $user_list = $obj->getTableRecords($GLOBALS['user_table'], 'user_id', $show_user_id,'');
+            $user_list = $obj->getTableRecords($GLOBALS['user_table'], 'user_id', $show_user_id);
             if(!empty($user_list)) {
                 foreach($user_list as $data) {
                     if(!empty($data['name']) && $data['name'] != $GLOBALS['null_value']) {
@@ -43,7 +43,7 @@
             }
         }
         $role_list = array();
-        $role_list = $obj->getTableRecords($GLOBALS['role_table'], '', '', '');
+        $role_list = $obj->getTableRecords($GLOBALS['role_table'], '', '');
 ?>
         <form class="poppins pd-20 redirection_form" name="user_form" method="POST">
 			<div class="card-header">
@@ -213,7 +213,7 @@
         }
         if(empty($name_error) && empty($edit_id)) {
             $user_list = array(); $user_count = 0;
-            $user_list = $obj->getTableRecords($GLOBALS['user_table'], '', '','');
+            $user_list = $obj->getTableRecords($GLOBALS['user_table'], '', '');
             if(!empty($user_list)) {
                 $user_count = count($user_list);
             }
@@ -546,7 +546,7 @@
             $search_text = $_POST['search_text'];
         }
         $total_records_list = array();
-        $total_records_list = $obj->getTableRecords($GLOBALS['user_table'], '', '', '');
+        $total_records_list = $obj->getTableRecords($GLOBALS['user_table'], '', '');
         
         if(!empty($search_text)) {
             $search_text = strtolower($search_text);

@@ -1,12 +1,8 @@
 <?php
 	include("include_files.php");
-    $login_staff_id = "";
-    if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'])) {
-        if(!empty($GLOBALS['user_type']) && $GLOBALS['user_type'] != $GLOBALS['admin_user_type']) {
-            $login_staff_id = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'];
-            $permission_module = $GLOBALS['consumption_entry_module'];
-        }
-    }
+    $permission_module = $GLOBALS['consumption_entry_module'];
+    include("include_module_action.php");
+
 	if(isset($_REQUEST['show_consumption_entry_id'])) { 
         $show_consumption_entry_id = trim($_REQUEST['show_consumption_entry_id']);
 
@@ -231,162 +227,168 @@
                             </button>
                         </div> 
                     </div>
+                    <div class="row px-3 py-1">
+                        <div class="col-12 px-lg-1 text-center align-content-center" id="total_reels_div">
+                            <div class="form-group mb-0">
+                                <span class="h4 text-center fw-bold mb-0">Total Reels : <span class="total_reels_span text-success"><?php echo $total_quantity; ?></span></span>
+                            </div>
+                        </div>
+                    </div>
                     <div class="row justify-content-center"> 
                         <div class="col-lg-9 text-center">
-                    <span class="table-infos infos text-danger text-center mb-3" style="font-size: 15px;"></span>
-                    <div class="table-responsive text-center tableheight">
-                        <input type="hidden" name="product_count" value="<?php echo $product_count; ?>">
-                        <table class="table table-nowrap nowrap cursor smallfnt w-100 table-bordered product_table">
-                            <thead class="bg-dark smallfnt" style="position:sticky; top:0; left:0; z-index:1000!important;">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Reel Size</th>
-                                    <th>GSM</th>
-                                    <th>BF</th>
-                                    <th style="width:90px;">QTY</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php 
-                                    if(empty($show_consumption_entry_id)) { 
-                                        ?>
-                                        <tr class="no_data_row py-2">
-                                            <th class="text-center px-2 py-2" colspan="7">No Data Found!</th>
+                            <span class="table-infos infos text-danger text-center mb-3" style="font-size: 15px;"></span>
+                            <div class="table-responsive text-center tableheight">
+                                <input type="hidden" name="product_count" value="<?php echo $product_count; ?>">
+                                <table class="table table-nowrap nowrap cursor smallfnt w-100 table-bordered product_table">
+                                    <thead class="bg-dark smallfnt" style="position:sticky; top:0; left:0; z-index:1000!important;">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Reel Size</th>
+                                            <th>GSM</th>
+                                            <th>BF</th>
+                                            <th style="width:90px;">QTY</th>
+                                            <th>Action</th>
                                         </tr>
+                                    </thead>
+                                    <tbody>
                                         <?php 
-                                    } 
-                                    else { 
-                                        if(!empty($size_ids)) {
-                                            for($i=0; $i < count($size_ids); $i++) {
+                                            if(empty($show_consumption_entry_id)) { 
                                                 ?>
-                                                <tr class="product_row py-2" id="product_row<?php echo $i+1; ?>">
-                                                    <th class="sno text-center px-2 py-2"><?php echo $i+1; ?></th>
-                                                    <th class="size_element text-center px-2 py-2">
-                                                        <div class="form-group">
-                                                            <div class="form-label-group in-border">
-                                                                <select name="size_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
-                                                                    <?php
-                                                                        if(empty($size_ids[$i])) {
-                                                                            ?>
-                                                                            <option value="">Select Size</option>
-                                                                            <?php
-                                                                        }
-                                                                        if(!empty($size_list)) {
-                                                                            foreach($size_list as $data) {
-                                                                                if(!empty($data['size_id']) && $data['size_id'] != $GLOBALS['null_value']) {
-                                                                                    ?>
-                                                                                    <option value="<?php echo $data['size_id']; ?>" <?php if(!empty($size_ids[$i]) && $size_ids[$i] == $data['size_id']) { ?>selected<?php } ?>>
-                                                                                        <?php
-                                                                                            if(!empty($data['size_name']) && $data['size_name'] != $GLOBALS['null_value']) {
-                                                                                                echo $obj->encode_decode('decrypt', $data['size_name']);
-                                                                                            }
-                                                                                        ?>
-                                                                                    </option>
-                                                                                    <?php
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    ?>
-                                                                </select>
-                                                                <label>Reels Size <span class="text-danger">*</span></label>
-                                                            </div>
-                                                        </div>
-                                                    </th>
-                                                    <th class="gsm_element text-center px-2 py-2">
-                                                        <div class="form-group">
-                                                            <div class="form-label-group in-border">
-                                                                <select name="gsm_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
-                                                                    <?php
-                                                                        if(empty($gsm_ids[$i])) {
-                                                                            ?>
-                                                                            <option value="">Select GSM</option>
-                                                                            <?php
-                                                                        }
-                                                                        if(!empty($gsm_list)) {
-                                                                            foreach($gsm_list as $data) {
-                                                                                if(!empty($data['gsm_id']) && $data['gsm_id'] != $GLOBALS['null_value']) {
-                                                                                    ?>
-                                                                                    <option value="<?php echo $data['gsm_id']; ?>" <?php if(!empty($gsm_ids[$i]) && $gsm_ids[$i] == $data['gsm_id']) { ?>selected<?php } ?>>
-                                                                                        <?php
-                                                                                            if(!empty($data['gsm_name']) && $data['gsm_name'] != $GLOBALS['null_value']) {
-                                                                                                echo $obj->encode_decode('decrypt', $data['gsm_name']);
-                                                                                            }
-                                                                                        ?>
-                                                                                    </option>
-                                                                                    <?php
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    ?>
-                                                                </select>
-                                                                <label>GSM <span class="text-danger">*</span></label>
-                                                            </div>
-                                                        </div>
-                                                    </th>
-                                                    <th class="bf_element text-center px-2 py-2">
-                                                        <div class="form-group">
-                                                            <div class="form-label-group in-border">
-                                                                <select name="bf_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
-                                                                    <?php   
-                                                                        if(empty($bf_ids[$i])) {
-                                                                            ?>
-                                                                            <option value="">Select BF</option>
-                                                                            <?php
-                                                                        }
-                                                                        if(!empty($bf_list)) {
-                                                                            foreach($bf_list as $data) {
-                                                                                if(!empty($data['bf_id']) && $data['bf_id'] != $GLOBALS['null_value']) {
-                                                                                    ?>
-                                                                                    <option value="<?php echo $data['bf_id']; ?>" <?php if(!empty($bf_ids[$i]) && $bf_ids[$i] == $data['bf_id']) { ?>selected<?php } ?>>
-                                                                                        <?php
-                                                                                            if(!empty($data['bf_name']) && $data['bf_name'] != $GLOBALS['null_value']) {
-                                                                                                echo $obj->encode_decode('decrypt', $data['bf_name']);
-                                                                                            }
-                                                                                        ?>
-                                                                                    </option>
-                                                                                    <?php
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    ?>
-                                                                </select>
-                                                                <label>BF <span class="text-danger">*</span></label>
-                                                            </div>
-                                                        </div>
-                                                    </th>
-                                                    <th class="quantity_element text-center px-2 py-2">
-                                                        <div class="form-group">
-                                                            <div class="form-label-group in-border">
-                                                                <input type="text" name="quantity[]" class="form-control shadow-none" style="width:90px;" onfocus="Javascript:KeyboardControls(this,'number',8,'');" value="<?php if(!empty($quantity[$i])) { echo $quantity[$i]; } ?>">
-                                                            </div>
-                                                        </div> 
-                                                    </th>
-                                                    <th class="delete_element text-center px-2 py-2">
-                                                        <a class="pe-2" onclick="Javascript:DeleteProductRow('product_row', '<?php echo $i+1; ?>');" style="cursor:pointer;"><i class="fa fa-trash text-white bg-danger p-2 rounded"></i></a>  
-                                                    </th>
+                                                <tr class="no_data_row py-2">
+                                                    <th class="text-center px-2 py-2" colspan="7">No Data Found!</th>
                                                 </tr>
-                                                <?php
-                                            }
-                                        }
-                                    } 
-                                ?>
-                            </tbody> 
-                        </table>
-                    </div>
-                </div>
-                <div class="col-md-12 py-3 text-center">
-                    <button class="btn btn-primary" type="button" onclick="Javascript:SaveModalContent('consumption_entry_form', 'consumption_entry_changes.php', 'consumption_entry.php');"> Submit </button>
-                </div>
+                                                <?php 
+                                            } 
+                                            else { 
+                                                if(!empty($size_ids)) {
+                                                    for($i=0; $i < count($size_ids); $i++) {
+                                                        ?>
+                                                        <tr class="product_row py-2" id="product_row<?php echo $i+1; ?>">
+                                                            <th class="sno text-center px-2 py-2"><?php echo $i+1; ?></th>
+                                                            <th class="size_element text-center px-2 py-2">
+                                                                <div class="form-group">
+                                                                    <div class="form-label-group in-border">
+                                                                        <select name="size_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                                                                            <?php
+                                                                                if(empty($size_ids[$i])) {
+                                                                                    ?>
+                                                                                    <option value="">Select Size</option>
+                                                                                    <?php
+                                                                                }
+                                                                                if(!empty($size_list)) {
+                                                                                    foreach($size_list as $data) {
+                                                                                        if(!empty($data['size_id']) && $data['size_id'] != $GLOBALS['null_value']) {
+                                                                                            ?>
+                                                                                            <option value="<?php echo $data['size_id']; ?>" <?php if(!empty($size_ids[$i]) && $size_ids[$i] == $data['size_id']) { ?>selected<?php } ?>>
+                                                                                                <?php
+                                                                                                    if(!empty($data['size_name']) && $data['size_name'] != $GLOBALS['null_value']) {
+                                                                                                        echo $obj->encode_decode('decrypt', $data['size_name']);
+                                                                                                    }
+                                                                                                ?>
+                                                                                            </option>
+                                                                                            <?php
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            ?>
+                                                                        </select>
+                                                                        <label>Reels Size <span class="text-danger">*</span></label>
+                                                                    </div>
+                                                                </div>
+                                                            </th>
+                                                            <th class="gsm_element text-center px-2 py-2">
+                                                                <div class="form-group">
+                                                                    <div class="form-label-group in-border">
+                                                                        <select name="gsm_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                                                                            <?php
+                                                                                if(empty($gsm_ids[$i])) {
+                                                                                    ?>
+                                                                                    <option value="">Select GSM</option>
+                                                                                    <?php
+                                                                                }
+                                                                                if(!empty($gsm_list)) {
+                                                                                    foreach($gsm_list as $data) {
+                                                                                        if(!empty($data['gsm_id']) && $data['gsm_id'] != $GLOBALS['null_value']) {
+                                                                                            ?>
+                                                                                            <option value="<?php echo $data['gsm_id']; ?>" <?php if(!empty($gsm_ids[$i]) && $gsm_ids[$i] == $data['gsm_id']) { ?>selected<?php } ?>>
+                                                                                                <?php
+                                                                                                    if(!empty($data['gsm_name']) && $data['gsm_name'] != $GLOBALS['null_value']) {
+                                                                                                        echo $obj->encode_decode('decrypt', $data['gsm_name']);
+                                                                                                    }
+                                                                                                ?>
+                                                                                            </option>
+                                                                                            <?php
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            ?>
+                                                                        </select>
+                                                                        <label>GSM <span class="text-danger">*</span></label>
+                                                                    </div>
+                                                                </div>
+                                                            </th>
+                                                            <th class="bf_element text-center px-2 py-2">
+                                                                <div class="form-group">
+                                                                    <div class="form-label-group in-border">
+                                                                        <select name="bf_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                                                                            <?php   
+                                                                                if(empty($bf_ids[$i])) {
+                                                                                    ?>
+                                                                                    <option value="">Select BF</option>
+                                                                                    <?php
+                                                                                }
+                                                                                if(!empty($bf_list)) {
+                                                                                    foreach($bf_list as $data) {
+                                                                                        if(!empty($data['bf_id']) && $data['bf_id'] != $GLOBALS['null_value']) {
+                                                                                            ?>
+                                                                                            <option value="<?php echo $data['bf_id']; ?>" <?php if(!empty($bf_ids[$i]) && $bf_ids[$i] == $data['bf_id']) { ?>selected<?php } ?>>
+                                                                                                <?php
+                                                                                                    if(!empty($data['bf_name']) && $data['bf_name'] != $GLOBALS['null_value']) {
+                                                                                                        echo $obj->encode_decode('decrypt', $data['bf_name']);
+                                                                                                    }
+                                                                                                ?>
+                                                                                            </option>
+                                                                                            <?php
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            ?>
+                                                                        </select>
+                                                                        <label>BF <span class="text-danger">*</span></label>
+                                                                    </div>
+                                                                </div>
+                                                            </th>
+                                                            <th class="quantity_element text-center px-2 py-2">
+                                                                <div class="form-group">
+                                                                    <div class="form-label-group in-border">
+                                                                        <input type="text" name="quantity[]" class="form-control shadow-none" style="width:90px;" onfocus="Javascript:KeyboardControls(this,'number',8,'');" value="<?php if(!empty($quantity[$i])) { echo $quantity[$i]; } ?>">
+                                                                    </div>
+                                                                </div> 
+                                                            </th>
+                                                            <th class="delete_element text-center px-2 py-2">
+                                                                <a class="pe-2" onclick="Javascript:DeleteProductRow('product_row', '<?php echo $i+1; ?>');" style="cursor:pointer;"><i class="fa fa-trash text-white bg-danger p-2 rounded"></i></a>  
+                                                            </th>
+                                                        </tr>
+                                                        <?php
+                                                    }
+                                                }
+                                            } 
+                                        ?>
+                                    </tbody> 
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-12 py-3 text-center">
+                            <button class="btn btn-primary" type="button" onclick="Javascript:SaveModalContent('consumption_entry_form', 'consumption_entry_changes.php', 'consumption_entry.php');"> Submit </button>
+                        </div>
                     </div>
                 </div>     
             </div>
             <script src="include/select2/js/select2.min.js"></script>
             <script src="include/select2/js/select.js"></script>
         </form>
-	<?php
+        <?php
     } 
-
 
     if(isset($_POST['edit_id'])) {
         $consumption_entry_date = ""; $consumption_entry_date_error = "";$factory_id = ""; $factory_id_error = "";$remarks = ""; $remarks_error = ""; $size_ids = array();$size_names = array(); $gsm_ids = array(); $gsm_names = array(); $bf_ids = array(); $bf_names = array();$quantity = array(); $total_quantity = 0; $stock_unique_ids = array();
@@ -647,48 +649,57 @@
                 }
                 $update_stock = 0; $consumption_entry_id = "";
                 if(empty($edit_id)) {
-                    $action = "";
-                    
-                    $action = "New Consumption Created";
-                    
-                    $null_value = $GLOBALS['null_value'];
-                    $columns = array(); $values = array();
-                    $columns = array('created_date_time', 'updated_date_time', 'creator', 'creator_name', 'bill_company_id', 'bill_company_name', 'bill_company_details', 'consumption_entry_id', 'consumption_entry_number', 'consumption_entry_date', 'factory_id', 'factory_name','remarks', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity', 'cancelled', 'deleted');
-                    $values = array("'".$created_date_time."'", "'".$updated_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$null_value."'", "'".$null_value."'", "'".$consumption_entry_date."'", "'".$selected_factory_id."'", "'".$factory_name."'", "'".$remarks."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'", "'0'", "'0'");
+                    if(empty($add_access_error)) {
+                        $action = "";
+                        $action = "New Consumption Created";
+                        
+                        $null_value = $GLOBALS['null_value'];
+                        $columns = array(); $values = array();
+                        $columns = array('created_date_time', 'updated_date_time', 'creator', 'creator_name', 'bill_company_id', 'bill_company_name', 'bill_company_details', 'consumption_entry_id', 'consumption_entry_number', 'consumption_entry_date', 'factory_id', 'factory_name','remarks', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity', 'cancelled', 'deleted');
+                        $values = array("'".$created_date_time."'", "'".$updated_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$null_value."'", "'".$null_value."'", "'".$consumption_entry_date."'", "'".$selected_factory_id."'", "'".$factory_name."'", "'".$remarks."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'", "'0'", "'0'");
 
-                    $consumption_insert_id = $obj->InsertSQL($GLOBALS['consumption_entry_table'], $columns, $values,'consumption_entry_id', 'consumption_entry_number', $action);
+                        $consumption_insert_id = $obj->InsertSQL($GLOBALS['consumption_entry_table'], $columns, $values,'consumption_entry_id', 'consumption_entry_number', $action);
 
-                    if(preg_match("/^\d+$/", $consumption_insert_id)) {
-                        $update_stock = 1;
-                        $consumption_entry_id = $obj->getTableColumnValue($GLOBALS['consumption_entry_table'], 'id', $consumption_insert_id, 'consumption_entry_id');
-                        $consumption_entry_number = $obj->getTableColumnValue($GLOBALS['consumption_entry_table'], 'id', $consumption_insert_id, 'consumption_entry_number');
-                        $result = array('number' => '1', 'msg' => 'Consumption Entry Successfully Created');
+                        if(preg_match("/^\d+$/", $consumption_insert_id)) {
+                            $update_stock = 1;
+                            $consumption_entry_id = $obj->getTableColumnValue($GLOBALS['consumption_entry_table'], 'id', $consumption_insert_id, 'consumption_entry_id');
+                            $consumption_entry_number = $obj->getTableColumnValue($GLOBALS['consumption_entry_table'], 'id', $consumption_insert_id, 'consumption_entry_number');
+                            $result = array('number' => '1', 'msg' => 'Consumption Entry Successfully Created');
+                        }
+                        else {
+                            $result = array('number' => '2', 'msg' => $consumption_insert_id);
+                        }
                     }
                     else {
-                        $result = array('number' => '2', 'msg' => $consumption_insert_id);
+                        $result = array('number' => '2', 'msg' => $add_access_error);
                     }
                 }
                 else {
                     $getUniqueID = "";
                     $getUniqueID = $obj->getTableColumnValue($GLOBALS['consumption_entry_table'], 'consumption_entry_id', $edit_id, 'id');
                     if(preg_match("/^\d+$/", $getUniqueID)) {
-                        $action = "";
-                        $action = "Consumption Entry Updated";
+                        if(empty($edit_access_error)) {
+                            $action = "";
+                            $action = "Consumption Entry Updated";
 
-                        $columns = array(); $values = array();		
-                        $columns = array('updated_date_time', 'creator_name', 'bill_company_name', 'bill_company_details', 'consumption_entry_date', 'factory_id', 'factory_name', 'remarks', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity');
-                        $values = array("'".$updated_date_time."'", "'".$creator_name."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$consumption_entry_date."'","'".$selected_factory_id."'", "'".$factory_name."'", "'".$remarks."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'");
+                            $columns = array(); $values = array();		
+                            $columns = array('updated_date_time', 'creator_name', 'bill_company_name', 'bill_company_details', 'consumption_entry_date', 'factory_id', 'factory_name', 'remarks', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity');
+                            $values = array("'".$updated_date_time."'", "'".$creator_name."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$consumption_entry_date."'","'".$selected_factory_id."'", "'".$factory_name."'", "'".$remarks."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'");
 
-                        $consumption_update_id = $obj->UpdateSQL($GLOBALS['consumption_entry_table'], $getUniqueID, $columns, $values, $action);
+                            $consumption_update_id = $obj->UpdateSQL($GLOBALS['consumption_entry_table'], $getUniqueID, $columns, $values, $action);
 
-                        if(preg_match("/^\d+$/", $consumption_update_id)) {
-                            $update_stock = 1;
-                            $consumption_entry_id = $edit_id;
-                            $consumption_entry_number = $obj->getTableColumnValue($GLOBALS['consumption_entry_table'], 'consumption_entry_id', $consumption_entry_id, 'consumption_entry_number');
-                            $result = array('number' => '1', 'msg' => 'Updated Successfully');
+                            if(preg_match("/^\d+$/", $consumption_update_id)) {
+                                $update_stock = 1;
+                                $consumption_entry_id = $edit_id;
+                                $consumption_entry_number = $obj->getTableColumnValue($GLOBALS['consumption_entry_table'], 'consumption_entry_id', $consumption_entry_id, 'consumption_entry_number');
+                                $result = array('number' => '1', 'msg' => 'Updated Successfully');
+                            }
+                            else {
+                                $result = array('number' => '2', 'msg' => $consumption_update_id);
+                            }	
                         }
                         else {
-                            $result = array('number' => '2', 'msg' => $consumption_update_id);
+                            $result = array('number' => '2', 'msg' => $edit_access_error);
                         }							
                     }
                 }
@@ -812,20 +823,11 @@
             }
             $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['stock_adjustment_table'].'\''.', '.'\''.$val['consumption_entry_id'].'\''.');"><i class="fa fa-eye"></i></a>';
             $action = ""; $edit_option = ""; $delete_option = ""; $print_option = ""; $a5_print_option = "";
-            $access_error = "";
-            if(!empty($login_staff_id)) {
-                $permission_action = $edit_action;
-                include('permission_action.php');
-            }
-            if(empty($access_error) && empty($val['cancelled'])) {
+
+            if(empty($edit_access_error) && empty($val['cancelled'])) {
                 $edit_option = '<li><a class="dropdown-item" href="Javascript:ShowModalContent('.'\''.$page_title.'\''.', '.'\''.$val['consumption_entry_id'].'\''.');"><i class="fa fa-pencil"></i>&nbsp; Edit</a></li>';
             }
-            $access_error = "";
-            if(!empty($login_staff_id)) {
-                $permission_action = $delete_action;
-                include('permission_action.php');
-            }
-            if(empty($access_error) && empty($val['cancelled'])) {
+            if(empty($delete_access_error) && empty($val['cancelled'])) {
                 $delete_option = '<li><a class="dropdown-item" href="Javascript:DeleteModalContent('.'\''.$page_title.'\''.', '.'\''.$val['consumption_entry_id'].'\''.');"><i class="fa fa-ban"></i>&nbsp; Cancel</a></li>';
             }
             $print_option = '<li><a class="dropdown-item" target="_blank" href="reports/rpt_consumption_entry_a4.php?view_consumption_entry_id=' . $val['consumption_entry_id'] . '"><i class="fa fa-print"></i>&nbsp; A4 Print</a></li>';
@@ -878,10 +880,15 @@
                 }
                 $stock_delete = 0;
                 $stock_delete = $obj->DeletePrevList($delete_consumption_entry_id, '');
-                $columns = array(); $values = array();
-                $columns = array('cancelled');
-                $values = array("'1'");
-                $msg = $obj->UpdateSQL($GLOBALS['consumption_entry_table'], $consumption_entry_unique_id, $columns, $values, $action);
+                if(empty($delete_access_error)) {
+                    $columns = array(); $values = array();
+                    $columns = array('cancelled');
+                    $values = array("'1'");
+                    $msg = $obj->UpdateSQL($GLOBALS['consumption_entry_table'], $consumption_entry_unique_id, $columns, $values, $action);
+                }
+                else {
+                    $msg = $delete_access_error;
+                }
             }
             else {
                 $msg = "Invalid Consumption Entry";

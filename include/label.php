@@ -5,7 +5,7 @@
 	date_default_timezone_set('Asia/Calcutta');
 	$GLOBALS['create_date_time_label'] = date('Y-m-d H:i:s');
 	$GLOBALS['site_name_user_prefix'] = "skp_".date("d-m-Y"); $GLOBALS['user_id'] = ""; $GLOBALS['creator'] = "";
-	$GLOBALS['creator_name'] = ""; $GLOBALS['bill_company_id'] = ""; $GLOBALS['null_value'] = "NULL";
+	$GLOBALS['creator_name'] = ""; $GLOBALS['bill_company_id'] = ""; $GLOBALS['null_value'] = "NULL"; $GLOBALS['user_type'] = "";
 
 	$GLOBALS['page_number'] = 1; $GLOBALS['page_limit'] = 10; $GLOBALS['page_limit_list'] = array("10", "25", "50", "100");
 
@@ -47,7 +47,6 @@
 	$GLOBALS['bf_module'] = "BF";
 	$GLOBALS['gsm_module'] = "GSM";
 	$GLOBALS['unit_module'] = "Unit";
-	$GLOBALS['brand_module'] = "Brand";
 	$GLOBALS['godown_module'] = "Godown";
 	$GLOBALS['supplier_module'] = "Supplier";
 	$GLOBALS['inward_material_module'] = "Inward Material";
@@ -59,23 +58,23 @@
 	$GLOBALS['inward_approval_module'] = "Inward Approval";
 	$GLOBALS['reports_module'] = "Reports";
 
-	$access_pages_list = array();
-	$access_pages_list[] = $GLOBALS['size_module'];
-	$access_pages_list[] = $GLOBALS['bf_module'];
-	$access_pages_list[] = $GLOBALS['gsm_module'];
-	$access_pages_list[] = $GLOBALS['unit_module'];
-	$access_pages_list[] = $GLOBALS['godown_module'];
-	$access_pages_list[] = $GLOBALS['supplier_module'];
-	$access_pages_list[] = $GLOBALS['inward_material_module'];
-	$access_pages_list[] = $GLOBALS['material_transfer_module'];
-	$access_pages_list[] = $GLOBALS['stock_request_module'];
-	$access_pages_list[] = $GLOBALS['delivery_slip_module'];
-	$access_pages_list[] = $GLOBALS['inward_approval_module'];
-	$access_pages_list[] = $GLOBALS['consumption_entry_module'];
-	$access_pages_list[] = $GLOBALS['stock_adjustment_module'];
-	$access_pages_list[] = $GLOBALS['reports_module'];
+	$user_access_pages = array();
+	$user_access_pages[] = $GLOBALS['size_module'];
+	$user_access_pages[] = $GLOBALS['bf_module'];
+	$user_access_pages[] = $GLOBALS['gsm_module'];
+	$user_access_pages[] = $GLOBALS['unit_module'];
+	$user_access_pages[] = $GLOBALS['godown_module'];
+	$user_access_pages[] = $GLOBALS['supplier_module'];
+	$user_access_pages[] = $GLOBALS['inward_material_module'];
+	$user_access_pages[] = $GLOBALS['material_transfer_module'];
+	$user_access_pages[] = $GLOBALS['stock_request_module'];
+	$user_access_pages[] = $GLOBALS['delivery_slip_module'];
+	$user_access_pages[] = $GLOBALS['inward_approval_module'];
+	$user_access_pages[] = $GLOBALS['consumption_entry_module'];
+	$user_access_pages[] = $GLOBALS['stock_adjustment_module'];
+	$user_access_pages[] = $GLOBALS['reports_module'];
 
-	$GLOBALS['user_access_pages'] = $access_pages_list;
+	$GLOBALS['access_pages_list'] = $user_access_pages;
 
 	$GLOBALS['Reset_to_one'] = "Reset To 1"; $GLOBALS['continue_last_number'] = "Continue from last number"; $GLOBALS['custom_number'] = "Custom Number";
 	
@@ -86,6 +85,9 @@
 	}
 	if(!empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_name']) && isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_name'])) {
 		$GLOBALS['creator_name'] = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_name'];
+	}
+	if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type']) && !empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type'])) {
+		$GLOBALS['user_type'] = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type'];
 	}
 	if(!empty($_SESSION['bill_company_id']) && isset($_SESSION['bill_company_id'])) {
 		$GLOBALS['bill_company_id'] = $_SESSION['bill_company_id'];

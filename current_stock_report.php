@@ -277,7 +277,6 @@
                                             <?php } ?>
                                             <button class="btn btn-success float-end mx-2" style="font-size:11px;" type="button" onclick="ExportToExcel();"> <i class="fa fa-download"></i> Excel</button>
                                             
-
                                             <button class="btn btn-success float-end mx-2" style="font-size:11px;" type="button" onClick="window.open('reports/rpt_current_stock_report.php?from_date=<?php echo $from_date; ?>&to_date=<?php echo $to_date; ?>&location_type=<?php echo $location_type; ?>&factory_id=<?php echo $factory_id; ?>&godown_id=<?php echo $godown_id; ?>&size_id=<?php echo $size_id; ?>&gsm_id=<?php echo $gsm_id; ?>&bf_id=<?php echo $bf_id; ?>&from=')"> <i class="fa fa-print"></i> Print </button>
                                          
                                         
@@ -366,7 +365,7 @@
                                                 <thead style="font-size:13px!important;font-weight:bold!important;">     
                                                     <tr class="bg-success">
                                                         <th colspan="7" class="text-center" style="border: 1px solid #dee2e6;font-weight: bold; font-size: 16px;">
-                                                            Current Stock Report 
+                                                            Current Stock Report - <?php if(!empty($from_date)){ echo " ( " .date('d-m-Y',strtotime($from_date )) ." to ". date('d-m-Y',strtotime($to_date )). " )"; }?>
                                                         </th>
                                                     </tr>
                                                     <tr class="bg-success">
@@ -464,7 +463,7 @@
                                                                 <th class="fw-bold"><?php echo $total_inward; ?></th>
                                                                 <th class="fw-bold"><?php echo $total_outward; ?></th>
                                                             </tr>
-                                                            <tr>
+                                                            <tr class="bg-light">
                                                                 <th colspan="5" class="text-end fw-bold">Current Stock &ensp;</th>
                                                                 <th colspan="4" class="fw-bold"><?php echo $total_inward - $total_outward; ?></th>
                                                                 

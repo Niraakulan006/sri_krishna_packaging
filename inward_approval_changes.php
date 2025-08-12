@@ -1,12 +1,8 @@
 <?php
 	include("include_files.php");
-    $login_staff_id = "";
-    if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'])) {
-        if(!empty($GLOBALS['user_type']) && $GLOBALS['user_type'] != $GLOBALS['admin_user_type']) {
-            $login_staff_id = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'];
-            $permission_module = $GLOBALS['inward_approval_module'];
-        }
-    }
+    $permission_module = $GLOBALS['inward_approval_module'];
+    include("include_module_action.php");
+
 	if(isset($_REQUEST['show_inward_approval_id'])) { 
         $show_inward_approval_id = trim($_REQUEST['show_inward_approval_id']); 
 
@@ -36,6 +32,9 @@
                 }
                 if(!empty($data['godown_id']) && $data['godown_id'] != $GLOBALS['null_value']) {
                     $godown_id = $data['godown_id'];
+                }
+                if(!empty($data['delivery_slip_id']) && $data['delivery_slip_id'] != $GLOBALS['null_value']) {
+                    $delivery_slip_id = $data['delivery_slip_id'];
                 }
                 if(!empty($data['size_id']) && $data['size_id'] != $GLOBALS['null_value']) {
                     $size_ids = explode(",", $data['size_id']);
@@ -186,12 +185,7 @@
                 </div>
             </div>
             <div class="row px-3 py-1">
-                <div class="col-lg-6 col-md-6 col-12 px-lg-1 text-center align-content-center" id="current_stock_div">
-                    <div class="form-group mb-0">
-                        <span class="h4 d-none text-center fw-bold mb-0">Current Stock : <span class="current_stock_span text-danger">0</span></span>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-6 col-12 px-lg-1 text-center align-content-center" id="total_reels_div">
+                <div class="col-12 px-lg-1 text-center align-content-center" id="total_reels_div">
                     <div class="form-group mb-0">
                         <span class="h4 text-center fw-bold mb-0">Total Reels : <span class="total_reels_span text-success"><?php echo $total_quantity; ?></span></span>
                     </div>
@@ -225,8 +219,17 @@
                                     else { 
                                         if(!empty($size_ids)) {
                                             for($i=0; $i < count($size_ids); $i++) {
-                                                $inward_quantity = 0; $outward_quantity = 0; $disable = 0;
-                                                /*
+                                                $inward_quantity = 0; $outward_quantity = 0; $disable = 0; $show_product = 1;
+                                                if(empty($show_inward_approval_id) && !empty($delivery_slip_id)) {
+                                                    $inward_qty = 0;
+                                                    $inward_qty = $obj->GetOtherInwardQty($show_inward_approval_id, $delivery_slip_id, $godown_id, $factory_id, $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                                                    if($quantity[$i] > $inward_qty) {
+                                                        $quantity[$i] = $quantity[$i] - $inward_qty;
+                                                    }
+                                                    else {
+                                                        $show_product = 0;
+                                                    }
+                                                }
                                                 if(!empty($godown_id)) {
                                                     $inward_quantity = $obj->getInwardUnitQty('', '', $show_inward_approval_id, '', '', $godown_id, $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
                                                     $outward_quantity = $obj->getOutwardUnitQty('', '', $show_inward_approval_id, '', '', $godown_id, $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
@@ -234,126 +237,127 @@
                                                 if($inward_quantity < $outward_quantity) {
                                                     $disable = 1;
                                                 }
-                                                */
-                                                ?>
-                                                <tr class="product_row py-2" id="product_row<?php echo $i+1; ?>">
-                                                    <th class="sno text-center px-2 py-2"><?php echo $i+1; ?></th>
-                                                    <th class="size_element text-center px-2 py-2">
-                                                        <div class="form-group">
-                                                            <div class="form-label-group in-border" style="pointer-events:none;">
-                                                                <select name="size_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:RequestRowCheck(this);" tabindex="1">
+                                                if($show_product == '1') {
+                                                    ?>
+                                                    <tr class="product_row py-2" id="product_row<?php echo $i+1; ?>">
+                                                        <th class="sno text-center px-2 py-2"><?php echo $i+1; ?></th>
+                                                        <th class="size_element text-center px-2 py-2">
+                                                            <div class="form-group">
+                                                                <div class="form-label-group in-border" style="pointer-events:none;">
+                                                                    <select name="size_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:RequestRowCheck(this);" tabindex="1">
+                                                                        <?php
+                                                                            if(empty($size_ids[$i])) {
+                                                                                ?>
+                                                                                <option value="">Select Size</option>
+                                                                                <?php
+                                                                            }
+                                                                            if(!empty($size_list)) {
+                                                                                foreach($size_list as $data) {
+                                                                                    if(!empty($data['size_id']) && $data['size_id'] != $GLOBALS['null_value']) {
+                                                                                        ?>
+                                                                                        <option value="<?php echo $data['size_id']; ?>" <?php if(!empty($size_ids[$i]) && $size_ids[$i] == $data['size_id']) { ?>selected<?php } ?>>
+                                                                                            <?php
+                                                                                                if(!empty($data['size_name']) && $data['size_name'] != $GLOBALS['null_value']) {
+                                                                                                    echo $obj->encode_decode('decrypt', $data['size_name']);
+                                                                                                }
+                                                                                            ?>
+                                                                                        </option>
+                                                                                        <?php
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        ?>
+                                                                    </select>
+                                                                    <label>Reels Size <span class="text-danger">*</span></label>
+                                                                </div>
+                                                            </div>
+                                                        </th>
+                                                        <th class="gsm_element text-center px-2 py-2">
+                                                            <div class="form-group">
+                                                                <div class="form-label-group in-border" style="pointer-events:none;">
+                                                                    <select name="gsm_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:RequestRowCheck(this);" tabindex="1">
+                                                                        <?php
+                                                                            if(empty($gsm_ids[$i])) {
+                                                                                ?>
+                                                                                <option value="">Select GSM</option>
+                                                                                <?php
+                                                                            }
+                                                                            if(!empty($gsm_list)) {
+                                                                                foreach($gsm_list as $data) {
+                                                                                    if(!empty($data['gsm_id']) && $data['gsm_id'] != $GLOBALS['null_value']) {
+                                                                                        ?>
+                                                                                        <option value="<?php echo $data['gsm_id']; ?>" <?php if(!empty($gsm_ids[$i]) && $gsm_ids[$i] == $data['gsm_id']) { ?>selected<?php } ?>>
+                                                                                            <?php
+                                                                                                if(!empty($data['gsm_name']) && $data['gsm_name'] != $GLOBALS['null_value']) {
+                                                                                                    echo $obj->encode_decode('decrypt', $data['gsm_name']);
+                                                                                                }
+                                                                                            ?>
+                                                                                        </option>
+                                                                                        <?php
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        ?>
+                                                                    </select>
+                                                                    <label>GSM <span class="text-danger">*</span></label>
+                                                                </div>
+                                                            </div>
+                                                        </th>
+                                                        <th class="bf_element text-center px-2 py-2">
+                                                            <div class="form-group">
+                                                                <div class="form-label-group in-border" style="pointer-events:none;">
+                                                                    <select name="bf_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:RequestRowCheck(this);" tabindex="1">
+                                                                        <?php   
+                                                                            if(empty($bf_ids[$i])) {
+                                                                                ?>
+                                                                                <option value="">Select BF</option>
+                                                                                <?php
+                                                                            }
+                                                                            if(!empty($bf_list)) {
+                                                                                foreach($bf_list as $data) {
+                                                                                    if(!empty($data['bf_id']) && $data['bf_id'] != $GLOBALS['null_value']) {
+                                                                                        ?>
+                                                                                        <option value="<?php echo $data['bf_id']; ?>" <?php if(!empty($bf_ids[$i]) && $bf_ids[$i] == $data['bf_id']) { ?>selected<?php } ?>>
+                                                                                            <?php
+                                                                                                if(!empty($data['bf_name']) && $data['bf_name'] != $GLOBALS['null_value']) {
+                                                                                                    echo $obj->encode_decode('decrypt', $data['bf_name']);
+                                                                                                }
+                                                                                            ?>
+                                                                                        </option>
+                                                                                        <?php
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        ?>
+                                                                    </select>
+                                                                    <label>BF <span class="text-danger">*</span></label>
+                                                                </div>
+                                                            </div>
+                                                        </th>
+                                                        <th class="quantity_element text-center px-2 py-2">
+                                                            <div class="form-group">
+                                                                <div class="form-label-group in-border">
+                                                                    <input type="text" name="quantity[]" class="form-control shadow-none" style="width:90px;" onfocus="Javascript:KeyboardControls(this,'number',8,'');" value="<?php if(!empty($quantity[$i])) { echo $quantity[$i]; } ?>" onkeyup="Javascript:RequestRowCheck(this);">
+                                                                </div>
+                                                            </div> 
+                                                        </th>
+                                                        <th class="delete_element text-center px-2 py-2">
+                                                            <?php
+                                                                if(empty($disable)) {
+                                                                    ?>
+                                                                    <a class="pe-2 delete_product <?php if($product_count == '1') { ?>d-none<?php } ?>" onclick="Javascript:DeleteDeliveryRow('product_row', '<?php echo $i+1; ?>');" style="cursor:pointer;"><i class="fa fa-trash text-danger"></i></a>
                                                                     <?php
-                                                                        if(empty($size_ids[$i])) {
-                                                                            ?>
-                                                                            <option value="">Select Size</option>
-                                                                            <?php
-                                                                        }
-                                                                        if(!empty($size_list)) {
-                                                                            foreach($size_list as $data) {
-                                                                                if(!empty($data['size_id']) && $data['size_id'] != $GLOBALS['null_value']) {
-                                                                                    ?>
-                                                                                    <option value="<?php echo $data['size_id']; ?>" <?php if(!empty($size_ids[$i]) && $size_ids[$i] == $data['size_id']) { ?>selected<?php } ?>>
-                                                                                        <?php
-                                                                                            if(!empty($data['size_name']) && $data['size_name'] != $GLOBALS['null_value']) {
-                                                                                                echo $obj->encode_decode('decrypt', $data['size_name']);
-                                                                                            }
-                                                                                        ?>
-                                                                                    </option>
-                                                                                    <?php
-                                                                                }
-                                                                            }
-                                                                        }
+                                                                }
+                                                                else {
                                                                     ?>
-                                                                </select>
-                                                                <label>Reels Size <span class="text-danger">*</span></label>
-                                                            </div>
-                                                        </div>
-                                                    </th>
-                                                    <th class="gsm_element text-center px-2 py-2">
-                                                        <div class="form-group">
-                                                            <div class="form-label-group in-border" style="pointer-events:none;">
-                                                                <select name="gsm_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:RequestRowCheck(this);" tabindex="1">
+                                                                    <a class="fw-bold text-danger" style="pointer-events:none;"><i class="fa fa-exclamation-circle text-danger"></i> Can't Delete</a>
                                                                     <?php
-                                                                        if(empty($gsm_ids[$i])) {
-                                                                            ?>
-                                                                            <option value="">Select GSM</option>
-                                                                            <?php
-                                                                        }
-                                                                        if(!empty($gsm_list)) {
-                                                                            foreach($gsm_list as $data) {
-                                                                                if(!empty($data['gsm_id']) && $data['gsm_id'] != $GLOBALS['null_value']) {
-                                                                                    ?>
-                                                                                    <option value="<?php echo $data['gsm_id']; ?>" <?php if(!empty($gsm_ids[$i]) && $gsm_ids[$i] == $data['gsm_id']) { ?>selected<?php } ?>>
-                                                                                        <?php
-                                                                                            if(!empty($data['gsm_name']) && $data['gsm_name'] != $GLOBALS['null_value']) {
-                                                                                                echo $obj->encode_decode('decrypt', $data['gsm_name']);
-                                                                                            }
-                                                                                        ?>
-                                                                                    </option>
-                                                                                    <?php
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    ?>
-                                                                </select>
-                                                                <label>GSM <span class="text-danger">*</span></label>
-                                                            </div>
-                                                        </div>
-                                                    </th>
-                                                    <th class="bf_element text-center px-2 py-2">
-                                                        <div class="form-group">
-                                                            <div class="form-label-group in-border" style="pointer-events:none;">
-                                                                <select name="bf_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:RequestRowCheck(this);" tabindex="1">
-                                                                    <?php   
-                                                                        if(empty($bf_ids[$i])) {
-                                                                            ?>
-                                                                            <option value="">Select BF</option>
-                                                                            <?php
-                                                                        }
-                                                                        if(!empty($bf_list)) {
-                                                                            foreach($bf_list as $data) {
-                                                                                if(!empty($data['bf_id']) && $data['bf_id'] != $GLOBALS['null_value']) {
-                                                                                    ?>
-                                                                                    <option value="<?php echo $data['bf_id']; ?>" <?php if(!empty($bf_ids[$i]) && $bf_ids[$i] == $data['bf_id']) { ?>selected<?php } ?>>
-                                                                                        <?php
-                                                                                            if(!empty($data['bf_name']) && $data['bf_name'] != $GLOBALS['null_value']) {
-                                                                                                echo $obj->encode_decode('decrypt', $data['bf_name']);
-                                                                                            }
-                                                                                        ?>
-                                                                                    </option>
-                                                                                    <?php
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    ?>
-                                                                </select>
-                                                                <label>BF <span class="text-danger">*</span></label>
-                                                            </div>
-                                                        </div>
-                                                    </th>
-                                                    <th class="quantity_element text-center px-2 py-2">
-                                                        <div class="form-group">
-                                                            <div class="form-label-group in-border">
-                                                                <input type="text" name="quantity[]" class="form-control shadow-none" style="width:90px;" onfocus="Javascript:KeyboardControls(this,'number',8,'');" value="<?php if(!empty($quantity[$i])) { echo $quantity[$i]; } ?>" onkeyup="Javascript:RequestRowCheck(this);">
-                                                            </div>
-                                                        </div> 
-                                                    </th>
-                                                    <th class="delete_element text-center px-2 py-2">
-                                                        <?php
-                                                            if(empty($disable)) {
-                                                                ?>
-                                                                <a class="pe-2" onclick="Javascript:DeleteRequestRow('product_row', '<?php echo $i+1; ?>');" style="cursor:pointer;"><i class="fa fa-trash text-danger"></i></a>
-                                                                <?php
-                                                            }
-                                                            else {
-                                                                ?>
-                                                                <a class="fw-bold text-danger" style="pointer-events:none;"><i class="fa fa-exclamation-circle text-danger"></i> Can't Delete</a>
-                                                                <?php
-                                                            }
-                                                        ?>
-                                                    </th>
-                                                </tr>
-                                                <?php
+                                                                }
+                                                            ?>
+                                                        </th>
+                                                    </tr>
+                                                    <?php
+                                                }
                                             }
                                         }
                                     }
@@ -369,13 +373,23 @@
             
             <script src="include/select2/js/select2.min.js"></script>
             <script src="include/select2/js/select.js"></script>
+            <script type="text/javascript">
+                jQuery(document).ready(function() {
+                    TotalReelsCount();
+                    if(jQuery('tr.product_row').length == 1) {
+                        if(jQuery('.delete_product').length > 0) {
+                            jQuery('.delete_product').addClass('d-none');
+                        }
+                    }
+                });
+            </script>
         </form>
         <?php
     } 
     if(isset($_POST['edit_id'])) {
         $bill_date = ""; $bill_date_error = ""; $godown_id = ""; $godown_id_error = ""; $factory_id = ""; $factory_id_error = "";
         $size_ids = array(); $size_names = array(); $gsm_ids = array(); $gsm_names = array(); $bf_ids = array(); $bf_names = array();
-        $quantity = array(); $total_quantity = 0; $stock_unique_ids = array(); $remarks = ""; $remarks_error = "";
+        $quantity = array(); $total_quantity = 0; $stock_unique_ids = array(); $conversion_unique_ids = array(); $remarks = ""; $remarks_error = "";
         $delivery_slip_id = "";
         $edit_id = ""; $form_name = "inward_approval_form"; $valid_inward_approval = ""; $inward_approval_error = "";
         if(isset($_POST['edit_id'])) {
@@ -485,6 +499,50 @@
                 if(isset($quantity[$i])) {
                     $quantity_error = "";
                     $quantity_error = $valid->valid_number($quantity[$i], 'Qty', 1);
+                    if(empty($quantity_error)) {
+                        $delivery_qty = 0;
+                        $delivery_qty = $obj->GetPrevDeliveryQty($delivery_slip_id, $godown_id, $factory_id, $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+
+                        $inward_qty = 0;
+                        $inward_qty = $obj->GetOtherInwardQty($edit_id, $delivery_slip_id, $godown_id, $factory_id, $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+
+                        $balance_qty = 0;
+                        $balance_qty = $delivery_qty - $inward_qty;
+
+                        $inward_qty = $inward_qty + $quantity[$i];
+                        if($delivery_qty < $inward_qty) {
+                            $quantity_error = "Max Qty : ".$balance_qty;
+                        }
+                    }
+                    if(empty($quantity_error)) {
+                        if(!empty($godown_id)) {
+                            $inward_quantity = 0; $outward_quantity = 0; $current_stock = 0;
+                            $inward_quantity = $obj->getInwardUnitQty('', '', $edit_id, '', '', $godown_id, $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                            $outward_quantity = $obj->getOutwardUnitQty('', '', $edit_id, '', '', $godown_id, $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+
+                            $current_stock = $inward_quantity - $outward_quantity;
+                            if($current_stock < 0) {
+                                $current_stock = 0;
+                            }
+                            if($quantity[$i] > $current_stock) {
+                                $quantity_error = "Max Stock : ".$current_stock;
+                            }
+                        }
+                        if(empty($quantity_error) && !empty($factory_id)) {
+                            $inward_quantity = 0; $outward_quantity = 0;
+                            $inward_quantity = $obj->getInwardUnitQty('', '', $edit_id, '', $factory_id, '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                            $outward_quantity = $obj->getOutwardUnitQty('', '', $edit_id, '', $factory_id, '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+
+                            $comparable_qty = 0;
+                            $comparable_qty = $inward_quantity + $quantity[$i];
+
+                            if($comparable_qty < $outward_quantity) {
+                                $accurate_qty = 0;
+                                $accurate_qty = $outward_quantity - $inward_quantity;
+                                $quantity_error = "Min Value : " . $accurate_qty;
+                            }
+                        }
+                    }
                     if(!empty($quantity_error)) {
                         if(!empty($valid_inward_approval)) {
                             $valid_inward_approval = $valid_inward_approval." ".$valid->row_error_display($form_name, 'quantity[]', $quantity_error, 'text', 'product_row', ($i+1));
@@ -533,6 +591,15 @@
                         $bf_names[$i] = $bf_name;
 
                         $total_quantity += $quantity[$i];
+                        if(!empty($edit_id)) {
+                            $conversion_unique_ids[] = $obj->getConversionUniqueID($edit_id, $godown_id, $factory_id, $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                            if(!empty($godown_id)) {
+                                $stock_unique_ids[] = $obj->getStockUniqueID($edit_id, '', $godown_id, $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                            }
+                            if(!empty($factory_id)) {
+                                $stock_unique_ids[] = $obj->getStockUniqueID($edit_id, $factory_id, '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
+                            }
+                        }
                     }
                 }
             }
@@ -545,6 +612,10 @@
             $check_user_id_ip_address = 0;
             $check_user_id_ip_address = $obj->check_user_id_ip_address();	
             if(preg_match("/^\d+$/", $check_user_id_ip_address)) { 
+                if(!empty($edit_id)) {
+                    $conversion_delete_update = $obj->DeleteConversionList($edit_id, $conversion_unique_ids);
+                    $stock_delete_update = $obj->DeletePrevList($edit_id, $stock_unique_ids);
+                }
                 if(!empty($bill_date)) {
                     $bill_date = date('Y-m-d', strtotime($bill_date));
                 }
@@ -664,27 +735,31 @@
                     $getUniqueID = "";
                     $getUniqueID = $obj->getTableColumnValue($GLOBALS['inward_approval_table'], 'inward_approval_id', $edit_id, 'id');
                     if(preg_match("/^\d+$/", $getUniqueID)) {
-                        $action = "";
-                        $action = "Inward Approval Updated.";
+                        if(empty($edit_access_error)) {
+                            $action = "";
+                            $action = "Inward Approval Updated.";
 
-                        $columns = array(); $values = array();		
-                        $columns = array('updated_date_time', 'creator_name', 'bill_company_name', 'bill_company_details', 'bill_date', 'godown_id', 'godown_name', 'godown_name_location', 'factory_id', 'factory_name', 'factory_name_location', 'remarks', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity');
-                        $values = array("'".$updated_date_time."'", "'".$creator_name."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$bill_date."'", "'".$godown_id."'", "'".$godown_name."'", "'".$godown_name_location."'", "'".$factory_id."'", "'".$factory_name."'", "'".$factory_name_location."'", "'".$remarks."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'");
+                            $columns = array(); $values = array();		
+                            $columns = array('updated_date_time', 'creator_name', 'bill_company_name', 'bill_company_details', 'bill_date', 'godown_id', 'godown_name', 'godown_name_location', 'factory_id', 'factory_name', 'factory_name_location', 'remarks', 'size_id', 'size_name', 'gsm_id', 'gsm_name', 'bf_id', 'bf_name', 'quantity', 'total_quantity');
+                            $values = array("'".$updated_date_time."'", "'".$creator_name."'", "'".$bill_company_name."'", "'".$bill_company_details."'", "'".$bill_date."'", "'".$godown_id."'", "'".$godown_name."'", "'".$godown_name_location."'", "'".$factory_id."'", "'".$factory_name."'", "'".$factory_name_location."'", "'".$remarks."'", "'".$size_ids."'", "'".$size_names."'", "'".$gsm_ids."'", "'".$gsm_names."'", "'".$bf_ids."'", "'".$bf_names."'", "'".$quantity."'", "'".$total_quantity."'");
 
-                        $inward_approval_update_id = $obj->UpdateSQL($GLOBALS['inward_approval_table'], $getUniqueID, $columns, $values, $action);
+                            $inward_approval_update_id = $obj->UpdateSQL($GLOBALS['inward_approval_table'], $getUniqueID, $columns, $values, $action);
 
-                        if(preg_match("/^\d+$/", $inward_approval_update_id)) {
-                            $update_stock = 1;
-                            $inward_approval_id = $edit_id;
-                            $inward_approval_number = $obj->getTableColumnValue($GLOBALS['inward_approval_table'], 'inward_approval_id', $inward_approval_id, 'inward_approval_number');
-                            $result = array('number' => '1', 'msg' => 'Updated Successfully');
+                            if(preg_match("/^\d+$/", $inward_approval_update_id)) {
+                                $update_stock = 1;
+                                $inward_approval_id = $edit_id;
+                                $inward_approval_number = $obj->getTableColumnValue($GLOBALS['inward_approval_table'], 'inward_approval_id', $inward_approval_id, 'inward_approval_number');
+                                $result = array('number' => '1', 'msg' => 'Updated Successfully');
+                            }
+                            else {
+                                $result = array('number' => '2', 'msg' => $inward_approval_update_id);
+                            }
                         }
                         else {
-                            $result = array('number' => '2', 'msg' => $inward_approval_update_id);
+                            $result = array('number' => '2', 'msg' => $edit_access_error);
                         }							
                     }
                 }
-                /*
                 if($update_stock == '1' && !empty($inward_approval_id) && !empty($inward_approval_number)) {
                     if(!empty($size_ids) && $size_ids != $GLOBALS['null_value']) {
                         $size_ids = explode(",", $size_ids);
@@ -714,16 +789,19 @@
                         $remarks = "";
                         $remarks = $obj->encode_decode('encrypt', $inward_approval_number);
                         for($i=0; $i < count($size_ids); $i++) {
-                            if(!empty($factory_id)) {
-                                $stock_update = $obj->StockUpdate($GLOBALS['inward_approval_table'], 'Out', '', $inward_approval_id, $inward_approval_number, $remarks, $bill_date, $factory_id, '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
-                            }
                             if(!empty($godown_id)) {
-                                $stock_update = $obj->StockUpdate($GLOBALS['inward_approval_table'], 'In', '', $inward_approval_id, $inward_approval_number, $remarks, $bill_date, '', $godown_id, $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
+                                $stock_update = $obj->StockUpdate($GLOBALS['inward_approval_table'], 'Out', '', $inward_approval_id, $inward_approval_number, $remarks, $bill_date, '', $godown_id, $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
                             }
+                            if(!empty($factory_id)) {
+                                $stock_update = $obj->StockUpdate($GLOBALS['inward_approval_table'], 'In', '', $inward_approval_id, $inward_approval_number, $remarks, $bill_date, $factory_id, '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
+                            }
+                            $conversion_update = $obj->ConversionUpdate($GLOBALS['inward_approval_table'], $bill_date, $inward_approval_id, $inward_approval_number, $delivery_slip_id, $delivery_slip_number, $godown_id, $factory_id, $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], '', '', $quantity[$i]);
                         }
                     }
+                    if(!empty($delivery_slip_id) && $delivery_slip_id != $GLOBALS['null_value']) {
+                        $check_delivery = $obj->CheckDeliveryApproved($delivery_slip_id);
+                    }
                 }
-                */
             }
             else {
                 $result = array('number' => '2', 'msg' => 'Invalid IP');
@@ -824,20 +902,10 @@
             }
             $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['inward_approval_table'].'\''.', '.'\''.$val['inward_approval_id'].'\''.');"><i class="fa fa-eye"></i></a>';
             $action = ""; $edit_option = ""; $delete_option = ""; $print_option = ""; $a5_print_option = "";
-            $access_error = "";
-            if(!empty($login_staff_id)) {
-                $permission_action = $edit_action;
-                include('permission_action.php');
-            }
-            if(empty($access_error) && empty($val['cancelled'])) {
+            if(empty($edit_access_error) && empty($val['cancelled'])) {
                 $edit_option = '<li><a class="dropdown-item" href="Javascript:ShowModalContent('.'\''.$page_title.'\''.', '.'\''.$val['inward_approval_id'].'\''.');"><i class="fa fa-pencil"></i>&nbsp; Edit</a></li>';
             }
-            $access_error = "";
-            if(!empty($login_staff_id)) {
-                $permission_action = $delete_action;
-                include('permission_action.php');
-            }
-            if(empty($access_error) && empty($val['cancelled'])) {
+            if(empty($delete_access_error) && empty($val['cancelled'])) {
                 $delete_option = '<li><a class="dropdown-item" href="Javascript:DeleteModalContent('.'\''.$page_title.'\''.', '.'\''.$val['inward_approval_id'].'\''.');"><i class="fa fa-ban"></i>&nbsp; Cancel</a></li>';
             }
             $print_option = '<li><a class="dropdown-item" target="_blank" href="reports/rpt_inward_approval_a4.php?view_inward_approval_id=' . $val['inward_approval_id'] . '"><i class="fa fa-print"></i>&nbsp; A4 Print</a></li>';
@@ -883,22 +951,34 @@
             if(preg_match("/^\d+$/", $inward_approval_unique_id)) {
                 $inward_approval_number = "";
                 $inward_approval_number = $obj->getTableColumnValue($GLOBALS['inward_approval_table'], 'inward_approval_id', $delete_inward_approval_id, 'inward_approval_number');
+                $delivery_slip_id = "";
+                $delivery_slip_id = $obj->getTableColumnValue($GLOBALS['inward_approval_table'], 'inward_approval_id', $delete_inward_approval_id, 'delivery_slip_id');
             
                 $action = "";
                 if(!empty($inward_approval_number)) {
                     $action = "Inward Approval Cancelled. Bill No. - ".$inward_approval_number;
                 }
-                // $stock_delete = 0;
-                // $stock_delete = $obj->DeleteBillStock($GLOBALS['inward_approval_table'], $delete_inward_approval_id);
-                // if($stock_delete == '1') {
-                    $columns = array(); $values = array();
-                    $columns = array('cancelled');
-                    $values = array("'1'");
-                    $msg = $obj->UpdateSQL($GLOBALS['inward_approval_table'], $inward_approval_unique_id, $columns, $values, $action);
-                // }
-                // else {
-                //     $msg = "Can't Cancel. Stock goes to negative!";
-                // }
+                $conversion_delete = 0;
+                $conversion_delete = $obj->DeleteConversionList($delete_inward_approval_id, '');
+                if(!empty($delivery_slip_id) && $delivery_slip_id != $GLOBALS['null_value']) {
+                    $check_delivery = $obj->CheckDeliveryApproved($delivery_slip_id);
+                }
+                $stock_delete = 0;
+                $stock_delete = $obj->DeleteBillStock($GLOBALS['inward_approval_table'], $delete_inward_approval_id);
+                if($stock_delete == '1') {
+                    if(empty($delete_access_error)) {
+                        $columns = array(); $values = array();
+                        $columns = array('cancelled');
+                        $values = array("'1'");
+                        $msg = $obj->UpdateSQL($GLOBALS['inward_approval_table'], $inward_approval_unique_id, $columns, $values, $action);
+                    }
+                    else {
+                        $msg = $delete_access_error;
+                    }
+                }
+                else {
+                    $msg = "Can't Cancel. Stock goes to negative!";
+                }
             }
             else {
                 $msg = "Invalid Inward Approval";

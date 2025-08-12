@@ -6,13 +6,13 @@
     if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type']) && !empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type'])) {
         $company_count = $obj->CompanyCount();
         if($company_count == '0' || $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type'] != $GLOBALS['admin_user_type']) {
-            header("Location:company.php");
+            header("Location:factory.php");
             exit;
         }
     }
 
     $role_list = array(); $role_count = 0;
-    $role_list = $obj->getTableRecords($GLOBALS['role_table'], '', '','');
+    $role_list = $obj->getTableRecords($GLOBALS['role_table'], '', '');
     if(!empty($role_list)) {
         $role_count = count($role_list);
     }

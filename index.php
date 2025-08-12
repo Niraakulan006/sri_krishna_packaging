@@ -170,7 +170,16 @@
 							$_SESSION[$GLOBALS['site_name_user_prefix'].'_user_mobile_number'] =  $obj->encode_decode('decrypt', $data['mobile_number']);
 							$_SESSION[$GLOBALS['site_name_user_prefix'].'_user_name_mobile'] =  $obj->encode_decode('decrypt', $data['name_mobile']);
 							$_SESSION[$GLOBALS['site_name_user_prefix'].'_login_id'] = $obj->encode_decode('decrypt', $data['login_id']);
-                            $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type'] = $data['type'];
+                            if(!empty($data['role_id']) && $data['role_id'] != $GLOBALS['null_value']){
+                                $role_name = "";
+                                $role_name = $obj->getTableColumnValue($GLOBALS['role_table'], 'role_id', $data['role_id'], 'role_name');
+                                if(!empty($role_name)) {
+                                    $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type'] = $GLOBALS['staff_user_type'];
+                                }
+                            }
+                            else{
+                                $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type'] = $GLOBALS['admin_user_type'];
+                            }
                         }
 					}
 					

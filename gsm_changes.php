@@ -1,12 +1,8 @@
 <?php
-include("include_files.php");
-$login_staff_id = "";
-if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'])) {
-    if(!empty($GLOBALS['user_type']) && $GLOBALS['user_type'] != $GLOBALS['admin_user_type']) {
-        $login_staff_id = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'];
-        $permission_module = $GLOBALS['gsm_module'];
-    }
-}
+    include("include_files.php");
+    $permission_module = $GLOBALS['gsm_module'];
+    include("include_module_action.php");
+
 	if(isset($_REQUEST['show_gsm_id'])) { 
         $show_gsm_id = "";
         $show_gsm_id = $_REQUEST['show_gsm_id'];
@@ -23,7 +19,7 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                 }
             }
         } 
-    ?>
+        ?>
         <form class="poppins pd-20 redirection_form" name="gsm_form" method="POST">
 			<div class="card-header">
 				<div class="row p-2">
@@ -201,20 +197,25 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                         $action = array();
                         for ($p = 0; $p < count($gsm_name); $p++) {
                             if(empty($prev_gsm_id)) {
-                                if(!empty($gsm_name[$p])) {
-                                    $action[$p] = "New GSM Created. Name - " . $obj->encode_decode('decrypt', $gsm_name[$p]);
-                                }
-    
-                                $null_value = $GLOBALS['null_value'];
-                                $columns = array('created_date_time', 'creator', 'creator_name', 'bill_company_id', 'gsm_id', 'gsm_name', 'deleted');
-                                $values = array("'".$created_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$null_value."'", "'".$gsm_name[$p]."'",  "'0'");
-    
-                                $gsm_insert_id = $obj->InsertSQL($GLOBALS['gsm_table'], $columns, $values, 'gsm_id', '', $action[$p]);		
-                                if(preg_match("/^\d+$/", $gsm_insert_id)) {								
-                                    $result = array('number' => '1', 'msg' => 'GSM Successfully Created');						
+                                if(empty($add_access_error)) {
+                                    if(!empty($gsm_name[$p])) {
+                                        $action[$p] = "New GSM Created. Name - " . $obj->encode_decode('decrypt', $gsm_name[$p]);
+                                    }
+        
+                                    $null_value = $GLOBALS['null_value'];
+                                    $columns = array('created_date_time', 'creator', 'creator_name', 'bill_company_id', 'gsm_id', 'gsm_name', 'deleted');
+                                    $values = array("'".$created_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$null_value."'", "'".$gsm_name[$p]."'",  "'0'");
+        
+                                    $gsm_insert_id = $obj->InsertSQL($GLOBALS['gsm_table'], $columns, $values, 'gsm_id', '', $action[$p]);		
+                                    if(preg_match("/^\d+$/", $gsm_insert_id)) {								
+                                        $result = array('number' => '1', 'msg' => 'GSM Successfully Created');						
+                                    }
+                                    else {
+                                        $result = array('number' => '2', 'msg' => $gsm_insert_id);
+                                    }
                                 }
                                 else {
-                                    $result = array('number' => '2', 'msg' => $gsm_insert_id);
+                                    $result = array('number' => '2', 'msg' => $add_access_error);
                                 }
                             } 
                             else {
@@ -226,20 +227,25 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                         $getUniqueID = "";
                         $getUniqueID = $obj->getTableColumnValue($GLOBALS['gsm_table'], 'gsm_id', $edit_id, 'id');
                         if(preg_match("/^\d+$/", $getUniqueID)) {
-                            $action = "";
-                            if(!empty($single_gsm_name)) {
-                                $action = "GSM Updated. Name - " . $obj->encode_decode('decrypt', $single_gsm_name);
+                            if(empty($edit_access_error)) {
+                                $action = "";
+                                if(!empty($single_gsm_name)) {
+                                    $action = "GSM Updated. Name - " . $obj->encode_decode('decrypt', $single_gsm_name);
+                                }
+        
+                                $columns = array(); $values = array();
+                                $columns = array('creator_name', 'gsm_name');
+                                $values = array("'".$creator_name."'", "'".$single_gsm_name."'");
+                                $gsm_update_id = $obj->UpdateSQL($GLOBALS['gsm_table'], $getUniqueID, $columns, $values, $action);
+                                if(preg_match("/^\d+$/", $gsm_update_id)) {
+                                    $result = array('number' => '1', 'msg' => 'Updated Successfully');
+                                } 
+                                else {
+                                    $result = array('number' => '2', 'msg' => $gsm_update_id);
+                                }
                             }
-    
-                            $columns = array(); $values = array();
-                            $columns = array('creator_name', 'gsm_name');
-                            $values = array("'".$creator_name."'", "'".$single_gsm_name."'");
-                            $gsm_update_id = $obj->UpdateSQL($GLOBALS['gsm_table'], $getUniqueID, $columns, $values, $action);
-                            if(preg_match("/^\d+$/", $gsm_update_id)) {
-                                $result = array('number' => '1', 'msg' => 'Updated Successfully');
-                            } 
                             else {
-                                $result = array('number' => '2', 'msg' => $gsm_update_id);
+                                $result = array('number' => '2', 'msg' => $edit_access_error);
                             }
                         }
                     }
@@ -332,12 +338,7 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
             </div>
             <?php 
         } 
-        $access_error = "";
-        if(!empty($login_staff_id)) {
-            $permission_action = $view_action;
-            include('permission_action.php');
-        }
-        if(empty($access_error)) { 
+        if(empty($view_access_error)) { 
             ?>
            
             <table class="table nowrap cursor text-center smallfnt">
@@ -372,43 +373,32 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                                             }
                                         ?>
                                     </td>
-                        <td>
-                            <?php $edit_access_error = "";
-                                    if(!empty($login_staff_id)) {
-                                        $permission_action = $edit_action;
-                                        include('permission_action.php');
-                                    }
-                                    $delete_access_error = "";
-                                    if(!empty($login_staff_id)) {
-                                        $permission_action = $delete_action;
-                                        include('permission_action.php');
-                                    }
-                            ?>
-                        <?php if (empty($edit_access_error) || empty($delete_access_error)) { ?>
-                            <div class="dropdown">
-                                <a href="#" role="button" id="dropdownMenuLink1" class="btn btn-dark show-button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink1">
-                                <?php if(empty($edit_access_error)) { 
-                                        ?>
-                                    <li><a class="dropdown-item" href="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '<?php if(!empty($list['gsm_id'])) { echo $list['gsm_id']; } ?>');"><i class="fa fa-pencil"></i> &ensp; Edit</a></li>
-                                    <?php } 
-                                    
-                                    if(empty($delete_access_error)) {
-                                        $linked_count = 0;
-                                        // $linked_count = $obj->GetLinkedCount($list['gsm_id'], $GLOBALS['inward_material_table'], 'gsm_id');
-                                        if(!empty($linked_count)) { ?>
-                                            <li><a class="dropdown-item text-secondary"><i class="fa fa-trash"></i> &ensp; Delete</a></li>
+                                    <td>
                                         <?php 
-                                        } else {  ?>
-                                            <li><a class="dropdown-item" onclick="Javascript:DeleteModalContent('<?php if(!empty($page_title)) { echo $page_title;} ?>', '<?php if(!empty($list['gsm_id'])) { echo $list['gsm_id']; } ?>');"><i class="fa fa-trash"></i> &ensp; Delete</a></li>
-                                        <?php } 
-                                            } ?>
-                                        </ul>
-                                    </div>
-                                    <?php } ?>
+                                        $linked_count = 0;
+                                        $linked_count = $obj->GetLinkedCount($GLOBALS['gsm_table'], $list['gsm_id']);
+                                        if (empty($edit_access_error) || (empty($delete_access_error) && empty($linked_count))) { ?>
+                                            <div class="dropdown">
+                                                <a href="#" role="button" id="dropdownMenuLink1" class="btn btn-dark show-button"
+                                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                </a>
+                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink1">
+                                                    <?php 
+                                                        if(empty($edit_access_error)) { 
+                                                            ?>
+                                                            <li><a class="dropdown-item" href="Javascript:ShowModalContent('<?php if(!empty($page_title)) { echo $page_title; } ?>', '<?php if(!empty($list['gsm_id'])) { echo $list['gsm_id']; } ?>');"><i class="fa fa-pencil"></i> &ensp; Edit</a></li>
+                                                            <?php 
+                                                        } 
+                                                        if(empty($delete_access_error) && empty($linked_count)) {
+                                                            ?>
+                                                            <li><a class="dropdown-item" onclick="Javascript:DeleteModalContent('<?php if(!empty($page_title)) { echo $page_title;} ?>', '<?php if(!empty($list['gsm_id'])) { echo $list['gsm_id']; } ?>');"><i class="fa fa-trash"></i> &ensp; Delete</a></li>
+                                                            <?php 
+                                                        } 
+                                                    ?>
+                                                </ul>
+                                            </div>
+                                        <?php } ?>
                                     </td>
                                 </tr>
                                 <?php
@@ -462,18 +452,16 @@ if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && !empty($_SE
                 if(!empty($gsm_name)) {
                     $action = "GSM Deleted. Value - " . $obj->encode_decode('decrypt', $gsm_name);
                 }
-                $linked_count = 0;
-                // $linked_count = $obj->GetgsmLinkedCount($delete_gsm_id);
-                // if(empty($linked_count)) {
+                if(empty($delete_access_error)) {
                     $columns = array();
                     $values = array();
                     $columns = array('deleted');
                     $values = array("'1'");
                     $msg = $obj->UpdateSQL($GLOBALS['gsm_table'], $gsm_unique_id, $columns, $values, $action);
-                // }
-                // else {
-                //     $msg = "This gsm is associated with other screens";
-                // }
+                }
+                else {
+                    $msg = $delete_access_error;
+                }
             }
         }
         echo $msg;

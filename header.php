@@ -17,14 +17,15 @@
     <link rel="stylesheet" href="css/datatables/datatables.min.css">
 </head>
 <body>
-      <?php
+    <?php
         $company_count = 0;
         $company_count = $obj->CompanyCount();
 
         $sidebar_admin_user = 0;
         $login_user_name = ""; $login_user_type = ""; $login_role_id = ""; $login_role_name = "";
-        $sidebar_godown = 0; $sidebar_unit = 0; $sidebar_supplier = 0;  $sidebar_inward_material = 0; $sidebar_consumption_entry = 0; $sidebar_stock_request = 0; $sidebar_stock_adjustment = 0; $sidebar_delivery_slip = 0; $sidebar_material_transfer = 0; $sidebar_proforma_invoice = 0; $sidebar_delivery_slip = 0; $sidebar_estimate = 0; $sidebar_inward_approval = 0; 
-
+        $sidebar_size = 0; $sidebar_gsm = 0; $sidebar_bf = 0; $sidebar_godown = 0; $sidebar_unit = 0; $sidebar_supplier = 0; 
+        $sidebar_inward_material = 0; $sidebar_material_transfer = 0; $sidebar_stock_adjustment = 0; $sidebar_stock_request = 0;
+        $sidebar_delivery_slip = 0; $sidebar_inward_approval = 0; $sidebar_reports = 0;
         if(!empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'])) {
             $login_user_name = $obj->getTableColumnValue($GLOBALS['user_table'], 'user_id', $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'], 'name');
             if(!empty($login_user_name) && $login_user_name != $GLOBALS['null_value']) {
@@ -49,26 +50,25 @@
                 if($login_user_type == $GLOBALS['admin_user_type']) {
                     $sidebar_admin_user = 1;
                 }
-                else if($login_user_type == $GLOBALS['staff_user_type'] || $login_user_type == $GLOBALS['factory_user_type'] || $login_user_type == $GLOBALS['godown_user_type'] || $login_user_type == $GLOBALS['magazine_user_type']) {
+                else if($login_user_type == $GLOBALS['staff_user_type']) {
                     $staff_id = "";
                     if(!empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'])) {
                         $staff_id = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'];
                     }
                     if(!empty($staff_id)) {
-                        $sidebar_godown = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['godown_module']);
-                        $sidebar_bf = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['bf_module']);
-                        $sidebar_gsm = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['gsm_module']);
-                        $sidebar_unit = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['unit_module']);
                         $sidebar_size = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['size_module']);
-                        // $sidebar_inward_material = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['inward_material_module']);
-                        // $sidebar_supplier = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['supplier_module']);
-                        // $sidebar_consumption_entry = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['consumption_entry_module']);
-                        // $sidebar_stock_request = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['stock_request_module']);
-                        // $sidebar_stock_adjustment = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['stock_adjustment_module']);
-                        // $sidebar_inward_approval = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['inward_approval_module']);
-                        // $sidebar_material_transfer = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['material_transfer_module']);
-                        // $sidebar_delivery_slip = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['delivery_slip_module']);
-                        // $sidebar_reports = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['reports_module']);
+                        $sidebar_gsm = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['gsm_module']);
+                        $sidebar_bf = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['bf_module']);
+                        $sidebar_godown = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['godown_module']);
+                        $sidebar_unit = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['unit_module']);
+                        $sidebar_supplier = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['supplier_module']);
+                        $sidebar_inward_material = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['inward_material_module']);
+                        $sidebar_material_transfer = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['material_transfer_module']);
+                        $sidebar_stock_adjustment = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['stock_adjustment_module']);
+                        $sidebar_stock_request = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['stock_request_module']);
+                        $sidebar_delivery_slip = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['delivery_slip_module']);
+                        $sidebar_inward_approval = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['inward_approval_module']);
+                        $sidebar_reports = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['reports_module']);
                     }
                 }
             }
@@ -266,15 +266,24 @@
                             <span class="d-flex align-items-center">
                                 <img class="rounded-circle header-profile-user" src="images/avatar-1.jpg" alt="Header Avatar">
                                 <span class="text-start ms-xl-2">
-                                    <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">Sri Krishna Packaging </span>
-                                    <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">Admin</span>
+                                    <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">
+                                        <?php
+                                            if(!empty($login_user_name) && $login_user_name != $GLOBALS['null_value']) {
+                                                echo $login_user_name;
+                                            }
+                                        ?>
+                                    </span>
+                                    <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">
+                                        <?php
+                                            if(!empty($login_role_name) && $login_role_name != $GLOBALS['null_value']) {
+                                                echo $login_role_name;
+                                            }
+                                        ?>
+                                    </span>
                                 </span>
                             </span>
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
-                            <!-- item-->
-                            <!-- <h6 class="dropdown-header">Welcome Sri Krishna Packaging !</h6> -->
-                            <!-- <a class="dropdown-item" href="#"><i class="bi bi-person-circle text-muted fs-14 align-middle me-1"></i> <span class="align-middle">Profile</span></a> -->
                             <a class="dropdown-item" href="index.php"><i class="bi bi-box-arrow-right text-muted fs-14 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Logout</span></a>
                         </div>
                     </div>
@@ -341,25 +350,31 @@
                             <i class="bi bi-speedometer"></i> <span>Dashboard</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link menu-link" href="#admin" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="creation">
-                            <i class="bi bi-person-circle"></i> <span>Admin</span>
-                        </a>
-                        <div class="collapse menu-dropdown" id="admin">
-                            <ul class="nav nav-lg flex-column">
-                                <li class="nav-item" id="factory">
-                                    <a href="factory.php" class="nav-link"><i class="bi bi-dash"></i> Factory </a>
-                                </li>
-                                <li class="nav-item" id="user">
-                                    <a href="user.php" class="nav-link"><i class="bi bi-dash"></i> User </a>
-                                </li>
-                                <li class="nav-item" id="role">
-                                    <a href="role.php" class="nav-link"><i class="bi bi-dash"></i> Role </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_size) && $sidebar_size == '1') || (!empty($sidebar_bf) && $sidebar_bf == '1') || (!empty($sidebar_gsm) && $sidebar_gsm == '1') || (!empty($sidebar_unit) && $sidebar_unit == '1')  || (!empty($sidebar_godown) && $sidebar_godown == '1') || (!empty($sidebar_supplier) && $sidebar_supplier == '1')) { ?>
+                    <?php if($login_user_type == $GLOBALS['admin_user_type']) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#admin" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="admin">
+                                <i class="bi bi-person-circle"></i> <span>Admin</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="admin">
+                                <ul class="nav nav-sm flex-column">
+                                    <?php if($login_user_type == $GLOBALS['admin_user_type']) { ?>
+                                        <li class="nav-item" id="factory">
+                                            <a href="factory.php" class="nav-link"><i class="bi bi-dash"></i> Factory </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1')){ ?>
+                                        <li class="nav-item" id="role">
+                                            <a href="role.php" class="nav-link"><i class="bi bi-dash"></i> Role </a>
+                                        </li>
+                                        <li class="nav-item" id="user">
+                                            <a href="user.php" class="nav-link"><i class="bi bi-dash"></i> User </a>
+                                        </li>
+                                    <?php } ?>
+                                </ul>
+                            </div>
+                        </li>
+                    <?php } ?>
+                    <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_size) && $sidebar_size == '1') || (!empty($sidebar_bf) && $sidebar_bf == '1') || (!empty($sidebar_gsm) && $sidebar_gsm == '1') || (!empty($sidebar_unit) && $sidebar_unit == '1') || (!empty($sidebar_godown) && $sidebar_godown == '1') || (!empty($sidebar_supplier) && $sidebar_supplier == '1')) { ?>
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#creation" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="creation">
                                 <i class="bi bi-folder-plus"></i> <span>Creation</span>
@@ -371,22 +386,22 @@
                                             <a href="size.php" class="nav-link"><i class="bi bi-dash"></i> Size </a>
                                         </li>
                                     <?php } ?>
-                                    <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_bf) && $sidebar_bf == '1')) { ?>
-                                        <li class="nav-item" id="bf">
-                                            <a href="bf.php" class="nav-link"><i class="bi bi-dash"></i> BF</a>
-                                        </li>
-                                    <?php } ?>
                                     <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_gsm) && $sidebar_gsm == '1')) { ?>
                                         <li class="nav-item" id="gsm">
                                             <a href="gsm.php" class="nav-link"><i class="bi bi-dash"></i> GSM </a>
                                         </li>
                                     <?php } ?>
-                                     <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_godown) && $sidebar_godown == '1')) { ?>
+                                    <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_bf) && $sidebar_bf == '1')) { ?>
+                                        <li class="nav-item" id="bf">
+                                            <a href="bf.php" class="nav-link"><i class="bi bi-dash"></i> BF </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_godown) && $sidebar_godown == '1')) { ?>
                                         <li class="nav-item" id="godown">
                                             <a href="godown.php" class="nav-link"><i class="bi bi-dash"></i> Godown </a>
                                         </li>
                                     <?php } ?>
-                                     <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_unit) && $sidebar_unit == '1')) { ?>
+                                    <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_unit) && $sidebar_unit == '1')) { ?>
                                         <li class="nav-item" id="unit">
                                             <a href="unit.php" class="nav-link"><i class="bi bi-dash"></i> Unit </a>
                                         </li>
@@ -400,47 +415,55 @@
                             </div>
                         </li>
                     <?php } ?>
-                    <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_material_transfer) && $sidebar_material_transfer == '1') || (!empty($sidebar_inward_material) && $sidebar_inward_material == '1') || (!empty($sidebar_stock_adjustment) && $sidebar_stock_adjustment == '1')) { ?>
-                        <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_material_transfer) && $sidebar_material_transfer == '1')) { ?>
-                            <li class="nav-item" id="inwardmaterial">
-                                <a class="nav-link menu-link" href="inward_material.php">
+                    <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_inward_material) && $sidebar_inward_material == '1')) { ?>
+                        <li class="nav-item" id="inwardmaterial">
+                            <a class="nav-link menu-link" href="inward_material.php">
                                 <i class="bi bi-box-arrow-in-right"></i><span> Inward Material</span>
-                                </a>
-                            </li>
-                        <?php } ?>
-
-                            <li class="nav-item" id="materialtransfer">
-                                <a class="nav-link menu-link" href="material_transfer.php">
-                                    <i class="bi bi-arrow-left-right"></i><span> Material Transfer</span>
-                                </a>
-                            </li>
-                            <li class="nav-item" id="stockadjustment">
-                                <a class="nav-link menu-link" href="stock_adjustment.php">
-                                    <i class="bi bi-plus-slash-minus"></i><span> Stock Adjustment</span>
-                                </a>
-                            </li>
-                            <li class="nav-item" id="stockrequest">
-                                <a class="nav-link menu-link" href="stock_request.php">
-                                <i class="bi bi-basket2"></i><span>Stock Request</span>
-                                </a>
-                            </li>
-                            <li class="nav-item" id="deliveryslip">
-                                <a class="nav-link menu-link" href="delivery_slip.php">
-                                <i class="bi bi-card-checklist"></i><span>Delivery Slip</span>
-                                </a>
-                            </li>
-                            <li class="nav-item" id="inwardapproval">
-                                <a class="nav-link menu-link" href="inward_approval.php">
-                                <i class="bi bi-box-arrow-in-up"></i><span>Inward Approval</span>
-                                </a>
-                            </li>
-                            <li class="nav-item" id="consumptionentry">
-                                <a class="nav-link menu-link" href="consumption_entry.php">
-                                <i class="bi bi-box"></i><span>Consumption Entry</span>
-                                </a>
-                            </li>
+                            </a>
+                        </li>
                     <?php } ?>
-
+                    <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_material_transfer) && $sidebar_material_transfer == '1')) { ?>
+                        <li class="nav-item" id="materialtransfer">
+                            <a class="nav-link menu-link" href="material_transfer.php">
+                                <i class="bi bi-arrow-left-right"></i><span> Material Transfer</span>
+                            </a>
+                        </li>
+                    <?php } ?>
+                    <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_stock_adjustment) && $sidebar_stock_adjustment == '1')) { ?>
+                        <li class="nav-item" id="stockadjustment">
+                            <a class="nav-link menu-link" href="stock_adjustment.php">
+                                <i class="bi bi-plus-slash-minus"></i><span> Stock Adjustment</span>
+                            </a>
+                        </li>
+                    <?php } ?>
+                    <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_stock_request) && $sidebar_stock_request == '1')) { ?>
+                        <li class="nav-item" id="stockrequest">
+                            <a class="nav-link menu-link" href="stock_request.php">
+                                <i class="bi bi-basket2"></i><span>Stock Request</span>
+                            </a>
+                        </li>
+                    <?php } ?>
+                    <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_delivery_slip) && $sidebar_delivery_slip == '1')) { ?>
+                        <li class="nav-item" id="deliveryslip">
+                            <a class="nav-link menu-link" href="delivery_slip.php">
+                                <i class="bi bi-card-checklist"></i><span>Delivery Slip</span>
+                            </a>
+                        </li>
+                    <?php } ?>
+                    <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_inward_approval) && $sidebar_inward_approval == '1')) { ?>
+                        <li class="nav-item" id="inwardapproval">
+                            <a class="nav-link menu-link" href="inward_approval.php">
+                                <i class="bi bi-box-arrow-in-up"></i><span>Inward Approval</span>
+                            </a>
+                        </li>
+                    <?php } ?>
+                    <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_consumption_entry) && $sidebar_consumption_entry == '1')) { ?>
+                        <li class="nav-item" id="consumptionentry">
+                            <a class="nav-link menu-link" href="consumption_entry.php">
+                                <i class="bi bi-box"></i><span>Consumption Entry</span>
+                            </a>
+                        </li>
+                    <?php } ?>
                     <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_reports) && $sidebar_reports == '1')) { ?>
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#report" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="creation">

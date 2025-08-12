@@ -186,7 +186,7 @@
                                                 <thead class="bg-ligt" style="font-size:13px!important;font-weight:bold!important;">
                                                     <tr class="bg-primary">
                                                         <th colspan="5" class="text-center" style="border: 1px solid #dee2e6;font-weight: bold; font-size: 18px;">
-                                                            Consumption Report - <?php if(!empty($from_date)){ echo " ( " .date('d-m-Y',strtotime($from_date )) ." to ". date('d-m-Y',strtotime($to_date )). " )"; }?>
+                                                            Consumption Report - <?php if(!empty($from_date)){ echo " ( " .date('d-m-Y',strtotime($from_date )) ." to ". date('d-m-Y',strtotime($to_date )). " )"; } ?>
                                                         </th>
                                                     </tr>
                                                     <tr class="bg-primary" style="vertical-align:middle!important;">

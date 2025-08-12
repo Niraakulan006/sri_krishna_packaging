@@ -408,10 +408,10 @@
             
             if(!empty($total_inward)){
                 $pdf->SetX(160);
-                $pdf->cell(40, 8, $total_inward,1, 0, 'R', 0);
+                $pdf->cell(40, 8, $total_inward,1, 1, 'R', 0);
             } else {
                 $pdf->SetX(160);
-                $pdf->cell(40, 8,' - ',1, 0, 'C', 0);
+                $pdf->cell(40, 8,' - ',1, 1, 'C', 0);
             } 
         }
         $pdf->SetFont('Arial','I',7);
