@@ -395,6 +395,39 @@
 			}
 			return $msg;
 		}
+		public function barcode_directory() {
+			$target_dir = "include/barcode/upload/";
+			return $target_dir;
+		}
+		public function CreateBarcode($size_name, $gsm_name, $bf_name, $supplier_name, $size_id, $gsm_id, $bf_id) {
+			$barcode_name = "";
+			$target_dir = $this->barcode_directory();
+
+			if (!empty($size_name) && !empty($gsm_name) && !empty($bf_name) && !empty($supplier_name) && !empty($target_dir)) {
+				// Decode names (for display purposes only)
+				$supplier_id = $this->encode_decode('decrypt', $supplier_name);
+				$gsm_value   = str_replace("GSM ", "", $this->encode_decode('decrypt', $gsm_name));
+				$bf_value    = str_replace("BF ", "", $this->encode_decode('decrypt', $bf_name));
+				$size_value  = str_replace("SIZE ", "", $this->encode_decode('decrypt', $size_name));
+
+				// Store IDs in barcode for uniqueness
+				$barcode_code = "{$size_value}-{$gsm_value}-{$bf_value}";
+
+				// File name for image
+				$barcode_name = "{$size_value}_{$gsm_value}_{$bf_value}.png";
+
+				// Create barcode image
+				$Color = [0, 0, 0];
+				$generator = new Picqer\Barcode\BarcodeGeneratorPNG();
+				$scaling = 2;
+				$height = 60;
+
+				$barcodeData = $generator->getBarcode($barcode_code, $generator::TYPE_CODE_128, $scaling, $height, $Color);
+				file_put_contents($target_dir . $barcode_name, $barcodeData);
+			}
+
+			return $barcode_name;
+		}
 		public function image_directory() {
 			$target_dir = "include/images/upload/";
 			return $target_dir;

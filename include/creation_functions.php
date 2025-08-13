@@ -776,5 +776,28 @@
 						'datasets' => $datasets
 					]);
 		}
+
+		public function getStockPercentage() {
+			$select_query = ""; $list = array(); $inward_unit = 0; $outward_unit = 0; $total = 0; $percentage = "";
+			$select_query = "SELECT SUM(inward_unit) as total_inward, SUM(outward_unit) as total_outward FROM ".$GLOBALS['stock_table']." WHERE deleted = '0'";
+			$list = $this->getQueryRecords('', $select_query);
+			if(!empty($list)) {
+				foreach($list as $data) {
+					if(!empty($data['total_inward']) && $data['total_inward'] != $GLOBALS['null_value']) {
+						$inward_unit = (int)($data['total_inward'] ?? 0);
+					}
+					if(!empty($data['total_outward']) && $data['total_outward'] != $GLOBALS['null_value']) {
+						$outward_unit = (int)($data['total_outward'] ?? 0);
+					}
+				}
+			}
+			$total = $inward_unit + $outward_unit;
+			$percentage = ($total > 0) ? round(($inward_unit / $total) * 100, 1) : 0;
+			return [
+				"inward" => $inward_unit,
+				"outward" => $outward_unit,
+				"percentage" => $percentage
+			];
+		}
     }
 ?>

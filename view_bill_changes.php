@@ -30,8 +30,8 @@
         $bill_details = array();
         $bill_details = $obj->getTableRecords($table, $field_id, $bill_id);
 
-        $location_type = ""; $location_names = array(); $size_names = array(); $gsm_names = array(); $bf_names = array(); $quantity = array();
-        $total_quantity = 0; $bill_number = "";
+        $location_type = ""; $location_names = array(); $size_names = array(); $gsm_names = array(); $bf_names = array(); $quantity = array();$supplier_id ="";$supplier_name="";
+        $total_quantity = 0; $bill_number = ""; $size_id =array();$gsm_id=array();$bf_id=array();
         if(!empty($bill_details)) {
             foreach($bill_details as $data) {
                 if($table == $GLOBALS['inward_material_table'] || $table == $GLOBALS['stock_adjustment_table']) {
@@ -52,6 +52,12 @@
                 if($table == $GLOBALS['inward_material_table']) {
                     if(!empty($data['bill_number']) && $data['bill_number'] != $GLOBALS['null_value']) {
                         $bill_number = $obj->encode_decode('decrypt', $data['bill_number']);
+                    }
+                    if(!empty($data['supplier_id']) && $data['supplier_id'] != $GLOBALS['null_value']) {
+                        $supplier_id = $data['supplier_id'];
+                    }
+                    if(!empty($data['supplier_name']) && $data['supplier_name'] != $GLOBALS['null_value']) {
+                        $supplier_name = $obj->encode_decode('decrypt', $data['supplier_name']);
                     }
                 }
                 if($table == $GLOBALS['material_transfer_table']) {
@@ -83,6 +89,15 @@
                     if(!empty($data['consumption_entry_number']) && $data['consumption_entry_number'] != $GLOBALS['null_value']) {
                         $bill_number = $data['consumption_entry_number'];
                     }
+                }
+                if(!empty($data['size_id']) && $data['size_id'] != $GLOBALS['null_value']) {
+                    $size_id = explode(",", $data['size_id']);
+                }
+                if(!empty($data['gsm_id']) && $data['gsm_id'] != $GLOBALS['null_value']) {
+                    $gsm_id = explode(",", $data['gsm_id']);
+                }
+                if(!empty($data['bf_id']) && $data['bf_id'] != $GLOBALS['null_value']) {
+                    $bf_id = explode(",", $data['bf_id']);
                 }
                 if(!empty($data['size_name']) && $data['size_name'] != $GLOBALS['null_value']) {
                     $size_names = explode(",", $data['size_name']);
@@ -122,6 +137,10 @@
                             <th class="text-center px-2 py-2">GSM</th>
                             <th class="text-center px-2 py-2">BF</th>
                             <th class="text-center px-2 py-2">Quantity</th>
+                            <?php 
+                            if($table == $GLOBALS['inward_material_table']) { ?>
+                                <th class="text-center px-2 py-2">Barcode</th>
+                            <?php } ?>
                         </tr>
                     </thead>
                     <tbody>
@@ -177,7 +196,23 @@
                                                     }
                                                 ?>
                                             </th>
-                                        </tr>
+                                            <th class="text-center px-2 py-2">
+                                                <?php
+
+                                                $barcode_file = $obj->CreateBarcode(
+                                                    $size_names[$i],
+                                                    $gsm_names[$i],
+                                                    $bf_names[$i],
+                                                    $supplier_name,
+                                                    $size_id[$i],
+                                                    $gsm_id[$i],
+                                                    $bf_id[$i]
+                                                );
+                                                
+                                                    echo '<img src="' . $obj->barcode_directory() . $barcode_file . '" alt="Barcode" style="width:150px; height:40px;"><br>';
+                                        
+                                                ?>
+                                            </tr>
                                         <?php
                                     }
                                 }

@@ -3,7 +3,8 @@
 	include("creation_functions.php");
 	include("stock_functions.php");
 	include("conversion_functions.php");
-	// include("report_functions.php");
+	include("report_functions.php");
+	include("barcode/vendor/autoload.php");
 	
 	class billing extends Basic_Functions {
 		
@@ -45,6 +46,16 @@
 			$target_dir = "";		
 			$target_dir = parent::image_directory();
 			return $target_dir;
+		}
+		public function barcode_directory() {
+			$target_dir = "";		
+			$target_dir = parent::barcode_directory();
+			return $target_dir;
+		}
+		public function CreateBarcode($size_name, $gsm_name, $bf_name, $supplier_id,$size_id, $gsm_id, $bf_id) {
+			$res = "";		
+			$res = parent::CreateBarcode($size_name, $gsm_name, $bf_name, $supplier_id,$size_id, $gsm_id, $bf_id);
+			return $res;
 		}
 		public function temp_image_directory() {
 			$temp_dir = "";		
@@ -225,6 +236,13 @@
 			$create_obj = $this->creation_function_object();
 			$result = "";
 			$result = $create_obj->LocationVariationChart();
+			return $result;
+		}
+		public function getStockPercentage() {
+			$create_obj = "";
+			$create_obj = $this->creation_function_object();
+			$result = "";
+			$result = $create_obj->getStockPercentage();
 			return $result;
 		}
 

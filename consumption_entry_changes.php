@@ -821,7 +821,7 @@
             if(!empty($val['total_quantity']) && $val['total_quantity'] != $GLOBALS['null_value']){
                 $total_quantity = $val['total_quantity'];
             }
-            $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['stock_adjustment_table'].'\''.', '.'\''.$val['consumption_entry_id'].'\''.');"><i class="fa fa-eye"></i></a>';
+            $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['consumption_entry_table'].'\''.', '.'\''.$val['consumption_entry_id'].'\''.');"><i class="fa fa-eye"></i></a>';
             $action = ""; $edit_option = ""; $delete_option = ""; $print_option = ""; $a5_print_option = "";
 
             if(empty($edit_access_error) && empty($val['cancelled'])) {
