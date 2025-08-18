@@ -62,8 +62,10 @@ CREATE TABLE `sri_krishna_consumption_entry` (
   `cancelled` int(100) NOT NULL,
   `deleted` int(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+
+INSERT INTO sri_krishna_consumption_entry (id, created_date_time, updated_date_time, creator, creator_name, bill_company_id, bill_company_name, bill_company_details, consumption_entry_id, consumption_entry_date, consumption_entry_number, factory_id, factory_name, size_id, size_name, gsm_id, gsm_name, bf_id, bf_name, quantity, total_quantity, remarks, cancelled, deleted) VALUES ('1','2025-08-18 16:07:29','2025-08-18 16:07:29','4d5451774f4449774d6a55774d5445334e4464664d44453d','55334a706332396d64486468636d5636','4d5451774f4449774d6a55774d7a45354e4452664d44453d','55334a704945747961584e6f626d45675547466a6132466e6157356e','55334a704945747961584e6f626d45675547466a6132466e6157356e4a43516b55326c325957746863326b3d','4d5467774f4449774d6a55774e4441334d6a6c664d44453d','2025-08-18','CE001/25-26','4d5451774f4449774d6a55774d7a45354e4452664d44453d','55334a704945747961584e6f626d45675547466a6132466e6157356e4943685461585a686132467a61536b674c53425461585a686132467a61513d3d','4d5451774f4449774d6a55774d7a49314e545a664d54413d','4d544577','4d5451774f4449774d6a55774d7a49324e544a664d54413d','4d54413d','4d5451774f4449774d6a55774d7a49354d7a6c664d54413d','4d6a453d','5','5','.','0','0');
 
 
 CREATE TABLE `sri_krishna_conversion` (
@@ -318,7 +320,7 @@ CREATE TABLE `sri_krishna_login` (
   `user_id` mediumtext NOT NULL,
   `deleted` int(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 INSERT INTO sri_krishna_login (id, loginer_name, login_date_time, logout_date_time, ip_address, browser, os_detail, type, user_id, deleted) VALUES ('1','55334a706332396d64486468636d5636494367354e6a49354f5455774d4441784b513d3d','2025-08-14 13:17:52','2025-08-14 13:17:52','127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:141.0) Gecko/20100101 Firefox/141.0','Windows NT DESKTOP-CO15G4U 10.0 build 26100 (Windows 11) AMD64','Super Admin','4d5451774f4449774d6a55774d5445334e4464664d44453d','0');
@@ -337,7 +339,13 @@ INSERT INTO sri_krishna_login (id, loginer_name, login_date_time, logout_date_ti
 
 INSERT INTO sri_krishna_login (id, loginer_name, login_date_time, logout_date_time, ip_address, browser, os_detail, type, user_id, deleted) VALUES ('8','55334a706332396d64486468636d5636494367354e6a49354f5455774d4441784b513d3d','2025-08-18 15:09:51','2025-08-18 15:09:51','127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:141.0) Gecko/20100101 Firefox/141.0','Windows NT DESKTOP-CO15G4U 10.0 build 26100 (Windows 11) AMD64','Super Admin','4d5451774f4449774d6a55774d5445334e4464664d44453d','0');
 
-INSERT INTO sri_krishna_login (id, loginer_name, login_date_time, logout_date_time, ip_address, browser, os_detail, type, user_id, deleted) VALUES ('9','55334a706332396d64486468636d5636494367354e6a49354f5455774d4441784b513d3d','2025-08-18 15:11:56','2025-08-18 15:11:56','127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:141.0) Gecko/20100101 Firefox/141.0','Windows NT DESKTOP-CO15G4U 10.0 build 26100 (Windows 11) AMD64','Super Admin','4d5451774f4449774d6a55774d5445334e4464664d44453d','0');
+INSERT INTO sri_krishna_login (id, loginer_name, login_date_time, logout_date_time, ip_address, browser, os_detail, type, user_id, deleted) VALUES ('9','55334a706332396d64486468636d5636494367354e6a49354f5455774d4441784b513d3d','2025-08-18 15:11:56','2025-08-18 15:11:59','127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:141.0) Gecko/20100101 Firefox/141.0','Windows NT DESKTOP-CO15G4U 10.0 build 26100 (Windows 11) AMD64','Super Admin','4d5451774f4449774d6a55774d5445334e4464664d44453d','0');
+
+INSERT INTO sri_krishna_login (id, loginer_name, login_date_time, logout_date_time, ip_address, browser, os_detail, type, user_id, deleted) VALUES ('10','55334a706332396d64486468636d5636494367354e6a49354f5455774d4441784b513d3d','2025-08-18 15:52:10','2025-08-18 15:52:10','127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:141.0) Gecko/20100101 Firefox/141.0','Windows NT DESKTOP-CO15G4U 10.0 build 26100 (Windows 11) AMD64','Super Admin','4d5451774f4449774d6a55774d5445334e4464664d44453d','0');
+
+INSERT INTO sri_krishna_login (id, loginer_name, login_date_time, logout_date_time, ip_address, browser, os_detail, type, user_id, deleted) VALUES ('11','55334a706332396d64486468636d5636494367354e6a49354f5455774d4441784b513d3d','2025-08-18 17:25:01','2025-08-18 17:25:01','127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:141.0) Gecko/20100101 Firefox/141.0','Windows NT DESKTOP-CO15G4U 10.0 build 26100 (Windows 11) AMD64','Super Admin','4d5451774f4449774d6a55774d5445334e4464664d44453d','0');
+
+INSERT INTO sri_krishna_login (id, loginer_name, login_date_time, logout_date_time, ip_address, browser, os_detail, type, user_id, deleted) VALUES ('12','55334a706332396d64486468636d5636494367354e6a49354f5455774d4441784b513d3d','2025-08-18 18:32:49','2025-08-18 18:32:49','127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:141.0) Gecko/20100101 Firefox/141.0','Windows NT DESKTOP-CO15G4U 10.0 build 26100 (Windows 11) AMD64','Super Admin','4d5451774f4449774d6a55774d5445334e4464664d44453d','0');
 
 
 CREATE TABLE `sri_krishna_material_transfer` (
@@ -369,8 +377,10 @@ CREATE TABLE `sri_krishna_material_transfer` (
   `cancelled` int(100) NOT NULL,
   `deleted` int(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+
+INSERT INTO sri_krishna_material_transfer (id, created_date_time, updated_date_time, creator, creator_name, bill_company_id, bill_company_name, bill_company_details, material_transfer_id, material_transfer_number, bill_date, factory_id, factory_name, factory_name_location, godown_id, godown_name, godown_name_location, size_id, size_name, gsm_id, gsm_name, bf_id, bf_name, quantity, total_quantity, cancelled, deleted) VALUES ('1','2025-08-18 15:52:48','2025-08-18 15:52:48','4d5451774f4449774d6a55774d5445334e4464664d44453d','55334a706332396d64486468636d5636','4d5451774f4449774d6a55774d7a45354e4452664d44453d','55334a704945747961584e6f626d45675547466a6132466e6157356e','55334a704945747961584e6f626d45675547466a6132466e6157356e4a43516b55326c325957746863326b3d','4d5467774f4449774d6a55774d7a55794e4468664d44453d','MAT001/25-26','2025-08-18','4d5451774f4449774d6a55774d7a45354e4452664d44453d','55334a704945747961584e6f626d45675547466a6132466e6157356e','55334a704945747961584e6f626d45675547466a6132466e6157356e4943685461585a686132467a61536b674c53425461585a686132467a61513d3d','4d5451774f4449774d6a55774d7a51334e4442664d44593d','5548563061485567554856795958526a61476b675232396b62336475','5548563061485567554856795958526a61476b675232396b623364754943306755326c325957746863326b3d','4d5451774f4449774d6a55774d7a49314e545a664d54413d','4d544577','4d5451774f4449774d6a55774d7a49324e544a664d54413d','4d54413d','4d5451774f4449774d6a55774d7a49354d7a6c664d54413d','4d6a453d','10','10','0','0');
 
 
 CREATE TABLE `sri_krishna_role` (
@@ -457,10 +467,16 @@ CREATE TABLE `sri_krishna_stock` (
   `remarks` mediumtext NOT NULL,
   `deleted` int(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 INSERT INTO sri_krishna_stock (id, created_date_time, updated_date_time, creator, creator_name, bill_company_id, stock_date, supplier_id, supplier_name, factory_id, factory_name, godown_id, godown_name, size_id, size_name, gsm_id, gsm_name, bf_id, bf_name, inward_unit, outward_unit, stock_type, stock_action, bill_unique_id, bill_unique_number, remarks, deleted) VALUES ('1','2025-08-18 13:48:30','2025-08-18 13:48:30','4d5451774f4449774d6a55774d5445334e4464664d44453d','4e54557a4d7a52684e7a41324d7a4d794d7a6b325a4459304e4467324e4459344e6a4d325a4455324d7a593d','4d5451774f4449774d6a55774d7a45354e4452664d44453d','2025-08-18','4d5451774f4449774d6a55774e4441324d7a68664d44553d','54585630614856775957356b61513d3d','4d5451774f4449774d6a55774d7a45354e4452664d44453d','55334a704945747961584e6f626d45675547466a6132466e6157356e','NULL','NULL','4d5451774f4449774d6a55774d7a49314e545a664d54413d','4d544577','4d5451774f4449774d6a55774d7a49324e544a664d54413d','4d54413d','4d5451774f4449774d6a55774d7a49354d7a6c664d54413d','4d6a453d','20','0','Inward Material','Plus','4d5467774f4449774d6a55774d5451344d7a42664d44453d','INW001/25-26','4f5441344d446b34','0');
+
+INSERT INTO sri_krishna_stock (id, created_date_time, updated_date_time, creator, creator_name, bill_company_id, stock_date, supplier_id, supplier_name, factory_id, factory_name, godown_id, godown_name, size_id, size_name, gsm_id, gsm_name, bf_id, bf_name, inward_unit, outward_unit, stock_type, stock_action, bill_unique_id, bill_unique_number, remarks, deleted) VALUES ('2','2025-08-18 15:52:48','2025-08-18 15:52:48','4d5451774f4449774d6a55774d5445334e4464664d44453d','4e54557a4d7a52684e7a41324d7a4d794d7a6b325a4459304e4467324e4459344e6a4d325a4455324d7a593d','4d5451774f4449774d6a55774d7a45354e4452664d44453d','2025-08-18','NULL','NULL','4d5451774f4449774d6a55774d7a45354e4452664d44453d','55334a704945747961584e6f626d45675547466a6132466e6157356e','NULL','NULL','4d5451774f4449774d6a55774d7a49314e545a664d54413d','4d544577','4d5451774f4449774d6a55774d7a49324e544a664d54413d','4d54413d','4d5451774f4449774d6a55774d7a49354d7a6c664d54413d','4d6a453d','0','10','Material Transfer','Minus','4d5467774f4449774d6a55774d7a55794e4468664d44453d','MAT001/25-26','545546554d4441784c7a49314c544932','0');
+
+INSERT INTO sri_krishna_stock (id, created_date_time, updated_date_time, creator, creator_name, bill_company_id, stock_date, supplier_id, supplier_name, factory_id, factory_name, godown_id, godown_name, size_id, size_name, gsm_id, gsm_name, bf_id, bf_name, inward_unit, outward_unit, stock_type, stock_action, bill_unique_id, bill_unique_number, remarks, deleted) VALUES ('3','2025-08-18 15:52:48','2025-08-18 15:52:48','4d5451774f4449774d6a55774d5445334e4464664d44453d','4e54557a4d7a52684e7a41324d7a4d794d7a6b325a4459304e4467324e4459344e6a4d325a4455324d7a593d','4d5451774f4449774d6a55774d7a45354e4452664d44453d','2025-08-18','NULL','NULL','NULL','NULL','4d5451774f4449774d6a55774d7a51334e4442664d44593d','5548563061485567554856795958526a61476b675232396b62336475','4d5451774f4449774d6a55774d7a49314e545a664d54413d','4d544577','4d5451774f4449774d6a55774d7a49324e544a664d54413d','4d54413d','4d5451774f4449774d6a55774d7a49354d7a6c664d54413d','4d6a453d','10','0','Material Transfer','Plus','4d5467774f4449774d6a55774d7a55794e4468664d44453d','MAT001/25-26','545546554d4441784c7a49314c544932','0');
+
+INSERT INTO sri_krishna_stock (id, created_date_time, updated_date_time, creator, creator_name, bill_company_id, stock_date, supplier_id, supplier_name, factory_id, factory_name, godown_id, godown_name, size_id, size_name, gsm_id, gsm_name, bf_id, bf_name, inward_unit, outward_unit, stock_type, stock_action, bill_unique_id, bill_unique_number, remarks, deleted) VALUES ('4','2025-08-18 16:07:29','2025-08-18 16:07:29','4d5451774f4449774d6a55774d5445334e4464664d44453d','4e54557a4d7a52684e7a41324d7a4d794d7a6b325a4459304e4467324e4459344e6a4d325a4455324d7a593d','4d5451774f4449774d6a55774d7a45354e4452664d44453d','2025-08-18','NULL','NULL','4d5451774f4449774d6a55774d7a45354e4452664d44453d','55334a704945747961584e6f626d45675547466a6132466e6157356e','NULL','NULL','4d5451774f4449774d6a55774d7a49314e545a664d54413d','4d544577','4d5451774f4449774d6a55774d7a49324e544a664d54413d','4d54413d','4d5451774f4449774d6a55774d7a49354d7a6c664d54413d','4d6a453d','0','5','Consumption Entry','Minus','4d5467774f4449774d6a55774e4441334d6a6c664d44453d','CE001/25-26','513055774d4445764d6a55744d6a593d','0');
 
 
 CREATE TABLE `sri_krishna_stock_adjustment` (

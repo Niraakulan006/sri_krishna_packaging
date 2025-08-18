@@ -55,7 +55,7 @@
             $total_records_list = $obj->getCurrentStockList('2','','','','','','','');
         }
     }else{
-        $total_records_list = $obj->getCurrentStockList('','','','','','','','');
+        $total_records_list = $obj->getCurrentStockList('','',$login_godown_id,'','','','','');
     }
 
     require_once('../fpdf/AlphaPDF.php');

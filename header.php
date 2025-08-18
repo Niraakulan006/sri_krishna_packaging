@@ -68,6 +68,7 @@
                         $sidebar_stock_request = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['stock_request_module']);
                         $sidebar_delivery_slip = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['delivery_slip_module']);
                         $sidebar_inward_approval = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['inward_approval_module']);
+                        $sidebar_consumption_entry = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['consumption_entry_module']);
                         $sidebar_reports = $obj->CheckRoleAccessPage($login_role_id, $GLOBALS['reports_module']);
                     }
                 }
@@ -457,7 +458,7 @@
                             </a>
                         </li>
                     <?php } ?>
-                    <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_consumption_entry) && $sidebar_consumption_entry == '1')) { ?>
+                    <?php if(((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_consumption_entry) && $sidebar_consumption_entry == '1')) && empty($login_godown_id)) { ?>
                         <li class="nav-item" id="consumptionentry">
                             <a class="nav-link menu-link" href="consumption_entry.php">
                                 <i class="bi bi-box"></i><span>Consumption Entry</span>
@@ -477,9 +478,11 @@
                                     <li class="nav-item" id="supplierreport">
                                         <a href="supplier_report.php" class="nav-link"><i class="bi bi-dash"></i>Supplier Report </a>
                                     </li>
-                                    <li class="nav-item" id="consumptionreport">
-                                        <a href="consumption_report.php" class="nav-link"><i class="bi bi-dash"></i> Consumption Report </a>
-                                    </li>
+                                    <?php if(empty($login_godown_id)) { ?>
+                                        <li class="nav-item" id="consumptionreport">
+                                            <a href="consumption_report.php" class="nav-link"><i class="bi bi-dash"></i> Consumption Report </a>
+                                        </li>
+                                    <?php } ?>
                                 </ul>
                             </div>
                         </li>

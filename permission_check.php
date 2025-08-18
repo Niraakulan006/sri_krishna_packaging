@@ -8,11 +8,5 @@
             header("Location:dashboard.php");
             exit;
         }
-        // else if($GLOBALS['user_type'] == $GLOBALS['godown_user_type']) {
-        //     if( $permission_module == $GLOBALS['consumption_entry_module'] || $permission_module == $GLOBALS['delivery_slip_module']) {
-        //         header("Location:dashboard.php");
-        //         exit;
-        //     }
-        // }
     }
 ?>

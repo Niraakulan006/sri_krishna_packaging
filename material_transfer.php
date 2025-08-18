@@ -105,8 +105,10 @@
                                         <div class="form-group mb-0">
                                             <div class="form-label-group in-border pb-2">
                                                 <select name="filter_godown_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
-                                                    <option value="">Select</option>
+                                                    <?php if(empty($login_godown_id)) { ?>
+                                                        <option value="">Select</option>
                                                     <?php
+                                                        }
                                                         if(!empty($godown_list)) {
                                                             foreach($godown_list as $data) {
                                                                 if(!empty($data['godown_id']) && $data['godown_id'] != $GLOBALS['null_value']) {

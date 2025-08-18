@@ -18,7 +18,7 @@
     }
 
     $total_records_list = array();
-    $total_records_list = $obj->getSupplierReport($supplier_id,$from_date,$to_date);
+    $total_records_list = $obj->getSupplierReport($supplier_id, $from_date, $to_date, $login_godown_id);
 
     require_once('../fpdf/AlphaPDF.php');
     $pdf = new AlphaPDF('P','mm','A4');

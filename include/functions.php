@@ -168,11 +168,11 @@
 			$result = $create_obj->CheckGodownAlreadyExist($lowercase_name_location);
 			return $result;
 		}
-		public function getInwardMaterialList($row, $rowperpage, $searchValue, $from_date, $to_date, $supplier_id, $cancelled, $order_column, $order_direction) {
+		public function getInwardMaterialList($row, $rowperpage, $searchValue, $from_date, $to_date, $supplier_id, $cancelled, $login_godown_id, $order_column, $order_direction) {
 			$create_obj = "";
 			$create_obj = $this->creation_function_object();
 			$result = "";
-			$result = $create_obj->getInwardMaterialList($row, $rowperpage, $searchValue, $from_date, $to_date, $supplier_id, $cancelled, $order_column, $order_direction);
+			$result = $create_obj->getInwardMaterialList($row, $rowperpage, $searchValue, $from_date, $to_date, $supplier_id, $cancelled, $login_godown_id, $order_column, $order_direction);
 			return $result;
 		}
 		public function getMaterialTransferList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $order_column, $order_direction) {
@@ -189,11 +189,11 @@
 			$result = $create_obj->getConsumptionEntryList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $order_column, $order_direction);
 			return $result;
 		}
-		public function getStockAdjustmentList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $order_column, $order_direction) {
+		public function getStockAdjustmentList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $login_godown_id, $order_column, $order_direction) {
 			$create_obj = "";
 			$create_obj = $this->creation_function_object();
 			$result = "";
-			$result = $create_obj->getStockAdjustmentList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $order_column, $order_direction);
+			$result = $create_obj->getStockAdjustmentList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $login_godown_id, $order_column, $order_direction);
 			return $result;
 		}
 		public function CreateCustomMaterial($material, $material_id) {
@@ -413,11 +413,11 @@
 			$report_update = $report_obj->getConsumptionStockReport($from_date,$to_date,$size_id,$gsm_id,$bf_id);
 			return $report_update;
 		}
-		public function getSupplierReport($supplier_id,$from_date,$to_date) {
+		public function getSupplierReport($supplier_id, $from_date, $to_date, $login_godown_id) {
 			$report_obj = "";
 			$report_obj = $this->report_function_object();
 			$report_update = "";
-			$report_update = $report_obj->getSupplierReport($supplier_id,$from_date,$to_date);
+			$report_update = $report_obj->getSupplierReport($supplier_id, $from_date, $to_date, $login_godown_id);
 			return $report_update;
 		}
 	}

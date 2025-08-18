@@ -171,7 +171,7 @@
 			}
 			return $count;
 		}
-		public function getInwardMaterialList($row, $rowperpage, $searchValue, $from_date, $to_date, $supplier_id, $cancelled, $order_column, $order_direction) {
+		public function getInwardMaterialList($row, $rowperpage, $searchValue, $from_date, $to_date, $supplier_id, $cancelled, $login_godown_id, $order_column, $order_direction) {
 			$select_query = ""; $list = array(); $where = ""; $order_by_query = "";
 			if(!empty($from_date)) {
 				$from_date = date("Y-m-d", strtotime($from_date));
@@ -217,6 +217,14 @@
 			}
 			else {
 				$order_by_query = "ORDER BY id DESC";
+			}
+			if(!empty($login_godown_id)) {
+				if(!empty($where)) {
+					$where = $where." FIND_IN_SET('".$login_godown_id."', godown_id) AND ";
+				}
+				else {
+					$where = " FIND_IN_SET('".$login_godown_id."', godown_id) AND ";
+				}
 			}
 
 			if(!empty($rowperpage)) {
@@ -564,7 +572,7 @@
 			$list = $this->getQueryRecords($GLOBALS['consumption_entry_table'], $select_query);
 			return $list;
 		}
-		public function getStockAdjustmentList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $order_column, $order_direction) {
+		public function getStockAdjustmentList($row, $rowperpage, $searchValue, $from_date, $to_date, $cancelled, $login_godown_id, $order_column, $order_direction) {
 			$select_query = ""; $list = array(); $where = ""; $order_by_query = "";
 			if(!empty($from_date)) {
 				$from_date = date("Y-m-d", strtotime($from_date));
@@ -591,6 +599,14 @@
 				}
 				else {
 					$where = " ((stock_adjustment_number) LIKE '%".$searchValue."%') AND ";
+				}
+			}
+			if(!empty($login_godown_id)) {
+				if(!empty($where)) {
+					$where = $where." FIND_IN_SET('".$login_godown_id."', godown_id) AND ";
+				}
+				else {
+					$where = " FIND_IN_SET('".$login_godown_id."', godown_id) AND ";
 				}
 			}
 			if(!empty($order_column) && !empty($order_direction)) {

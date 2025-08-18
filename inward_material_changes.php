@@ -68,6 +68,8 @@
         }
         $godown_list = array();
         if(!empty($login_godown_id)) {
+            $location_type = '1';
+            $godown_type = '1';
             $godown_id = $login_godown_id;
             $godown_list = $obj->getTableRecords($GLOBALS['godown_table'], 'godown_id', $login_godown_id, '');
         }
@@ -171,11 +173,15 @@
                 </div>
                 <div class="col-lg-2 col-md-3 col-6 px-lg-1 py-2">
                     <div class="form-group">
-                        <div class="form-label-group in-border" <?php if(!empty($show_inward_material_id)) { ?>style="pointer-events:none;"<?php } ?>>
-                            <select name="location_type" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:GetLocation();" <?php if(!empty($show_inward_material_id)) { ?>tabindex="1"<?php } ?>>
-                                <option value="">Select Location</option>
+                        <div class="form-label-group in-border" <?php if(!empty($show_inward_material_id) || !empty($login_godown_id)) { ?>style="pointer-events:none;"<?php } ?>>
+                            <select name="location_type" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:GetLocation();" <?php if(!empty($show_inward_material_id) || !empty($login_godown_id)) { ?>tabindex="1"<?php } ?>>
+                                <?php if(empty($login_godown_id)) { ?>
+                                    <option value="">Select Location</option>
+                                <?php } ?>
                                 <option value="1" <?php if($location_type == '1') { ?>selected<?php } ?>>Godown</option>
-                                <option value="2" <?php if($location_type == '2') { ?>selected<?php } ?>>Factory</option>
+                                <?php if(empty($login_godown_id)) { ?>
+                                    <option value="2" <?php if($location_type == '2') { ?>selected<?php } ?>>Factory</option>
+                                <?php } ?>
                             </select>
                             <label>Location <span class="text-danger">*</span></label>
                         </div>
@@ -183,11 +189,15 @@
                 </div> 
                 <div class="col-lg-2 col-md-3 col-6 px-lg-1 py-2 <?php if($location_type != '1') { ?>d-none<?php } ?>" id="godown_type_div">
                     <div class="form-group">
-                        <div class="form-label-group in-border" <?php if(!empty($show_inward_material_id)) { ?>style="pointer-events:none;"<?php } ?>>
-                            <select name="godown_type" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if(!empty($show_inward_material_id)) { ?>tabindex="1"<?php } ?> onchange="Javascript:GetCurrentStock('inward_material');">
-                                <option value="">Select Type</option>
+                        <div class="form-label-group in-border" <?php if(!empty($show_inward_material_id) || !empty($login_godown_id)) { ?>style="pointer-events:none;"<?php } ?>>
+                            <select name="godown_type" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if(!empty($show_inward_material_id) || !empty($login_godown_id)) { ?>tabindex="1"<?php } ?> onchange="Javascript:GetCurrentStock('inward_material');">
+                                <?php if(empty($login_godown_id)) { ?>
+                                    <option value="">Select Type</option>
+                                <?php } ?>
                                 <option value="1" <?php if($godown_type == '1') { ?>selected<?php } ?>>Single Godown</option>
-                                <option value="2" <?php if($godown_type == '2') { ?>selected<?php } ?>>Multiple Godown</option>
+                                <?php if(empty($login_godown_id)) { ?>
+                                    <option value="2" <?php if($godown_type == '2') { ?>selected<?php } ?>>Multiple Godown</option>
+                                <?php } ?>
                             </select>
                             <label>Godown Type <span class="text-danger">*</span></label>
                         </div>
@@ -199,8 +209,10 @@
                     <div class="form-group <?php if($location_type == '2') { ?>d-none<?php } ?>" id="selected_godown_id_div">
                         <div class="form-label-group in-border" <?php if($godown_type == '1') { ?>style="pointer-events:none;"<?php } ?>>
                             <select name="selected_godown_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if($godown_type == '1') { ?>tabindex="1"<?php } ?> onchange="Javascript:GetCurrentStock('inward_material');">
-                                <option value="">Select Godown</option>
+                                <?php if(empty($login_godown_id)) { ?>
+                                    <option value="">Select Godown</option>
                                 <?php
+                                    }
                                     if(!empty($godown_list)) {
                                         foreach($godown_list as $data) {
                                             if(!empty($data['godown_id']) && $data['godown_id'] != $GLOBALS['null_value']) {
@@ -1191,12 +1203,12 @@
         }
 
         $totalRecords = 0;
-        $totalRecords = count($obj->getInwardMaterialList($row, $rowperpage, $searchValue, $filter_from_date, $filter_to_date, $filter_supplier_id, $cancelled, $order_column, $order_direction));
-        $filteredRecords = count($obj->getInwardMaterialList('', '', $searchValue, $filter_from_date, $filter_to_date, $filter_supplier_id, $cancelled, $order_column, $order_direction));
+        $totalRecords = count($obj->getInwardMaterialList($row, $rowperpage, $searchValue, $filter_from_date, $filter_to_date, $filter_supplier_id, $cancelled, $login_godown_id, $order_column, $order_direction));
+        $filteredRecords = count($obj->getInwardMaterialList('', '', $searchValue, $filter_from_date, $filter_to_date, $filter_supplier_id, $cancelled, $login_godown_id, $order_column, $order_direction));
 
         $data = [];
 
-        $InwardMaterialList = $obj->getInwardMaterialList($row, $rowperpage, $searchValue, $filter_from_date, $filter_to_date, $filter_supplier_id, $cancelled, $order_column, $order_direction);
+        $InwardMaterialList = $obj->getInwardMaterialList($row, $rowperpage, $searchValue, $filter_from_date, $filter_to_date, $filter_supplier_id, $cancelled, $login_godown_id, $order_column, $order_direction);
         
         $sno = $row + 1;
         foreach ($InwardMaterialList as $val) {

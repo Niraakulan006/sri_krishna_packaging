@@ -142,7 +142,7 @@
         
         } 
 
-        public function getSupplierReport($supplier_id,$from_date,$to_date){
+        public function getSupplierReport($supplier_id, $from_date, $to_date, $login_godown_id){
             $where = "";$select_query = "";$list = array();
             $current_stock = 0;$inward =0;$outward=0;
             
@@ -171,10 +171,19 @@
 					$where = "stock_date <= '".$to_date."' AND ";
 				}
 			}
+            if(!empty($login_godown_id) && $login_godown_id != $GLOBALS['null_value']) {
+                if (!empty($where)) {
+                    $where = $where." godown_id = '".$login_godown_id."' AND ";
+                } 
+                else {
+                    $where = " godown_id = '".$login_godown_id."' AND ";
+                }
+            }
             if (!empty($supplier_id)) {    
-               $select_query = "SELECT * FROM " . $GLOBALS['stock_table'] . " WHERE " . $where . " stock_type ='Inward Material' AND deleted = '0'";
-            }else{
-             $select_query = "SELECT *,SUM(inward_unit) AS inward_unit FROM " . $GLOBALS['stock_table'] . " WHERE  stock_type ='Inward Material' AND deleted = '0' GROUP BY supplier_id";
+                $select_query = "SELECT * FROM " . $GLOBALS['stock_table'] . " WHERE ".$where." stock_type = 'Inward Material' AND deleted = '0'";
+            } 
+            else{
+                $select_query = "SELECT *,SUM(inward_unit) AS inward_unit FROM ".$GLOBALS['stock_table']." WHERE ".$where." stock_type ='Inward Material' AND deleted = '0' GROUP BY supplier_id";
             }
             if (!empty($select_query)) {
                 $list = $this->getQueryRecords('', $select_query);

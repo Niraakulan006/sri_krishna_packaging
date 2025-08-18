@@ -26,7 +26,7 @@
     }
 
     $total_records_list = array();
-    $total_records_list = $obj->getSupplierReport($supplier_id,$from_date,$to_date);
+    $total_records_list = $obj->getSupplierReport($supplier_id, $from_date, $to_date, $login_godown_id);
     
     $supplier_list =array();
     $supplier_list = $obj->getTableRecords($GLOBALS['supplier_table'], '', '');

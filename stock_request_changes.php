@@ -111,10 +111,12 @@
                 </div>
                 <div class="col-lg-3 col-md-6 col-12 px-lg-1 py-2">
                     <div class="form-group">
-                        <div class="form-label-group in-border" <?php if(!empty($show_stock_request_id)) { ?>style="pointer-events:none;"<?php } ?>>
-                            <select name="godown_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if(!empty($show_stock_request_id)) { ?>tabindex="1"<?php } ?> onchange="Javascript:GetCurrentStock('stock_request');">
-                                <option value="">Select Godown</option>
+                        <div class="form-label-group in-border" <?php if(!empty($show_stock_request_id) || !empty($login_godown_id)) { ?>style="pointer-events:none;"<?php } ?>>
+                            <select name="godown_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if(!empty($show_stock_request_id) || !empty($login_godown_id)) { ?>tabindex="1"<?php } ?> onchange="Javascript:GetCurrentStock('stock_request');">
+                                <?php if(empty($login_godown_id)) { ?>
+                                    <option value="">Select Godown</option>
                                 <?php
+                                    }
                                     if(!empty($godown_list)) {
                                         foreach($godown_list as $data) {
                                             if(!empty($data['godown_id']) && $data['godown_id'] != $GLOBALS['null_value']) {
