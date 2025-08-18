@@ -81,7 +81,7 @@
             $pdf->SetX(10);
             $pdf->Cell(20,8,'S.No',1,0,'C',0);
             $pdf->Cell(130,8,'Location',1,0,'C',0);
-            $pdf->Cell(40,8,'Current Stock',1,1,'C',0);
+            $pdf->Cell(40,8,'Current Stock (Nos)',1,1,'C',0);
            
             $pdf->SetFont('Arial','',8);
             
@@ -117,7 +117,7 @@
                     $pdf->SetX(10);
                     $pdf->Cell(20,8,'S.No',1,0,'C',0);
                     $pdf->Cell(130,8,'Location',1,0,'C',0);
-                    $pdf->Cell(40,8,'Current Stock',1,1,'C',0);
+                    $pdf->Cell(40,8,'Current Stock (Nos)',1,1,'C',0);
                     $pdf->SetFont('Arial','',8);
                     $y_axis=$pdf->GetY();
                 }
@@ -172,7 +172,7 @@
                 $pdf->AddPage();
                 $pdf->SetAutoPageBreak(false);
 
-                $file_name="Consumption Report";
+                $file_name="Current Stock Report";
                 include("rpt_header.php");
                 
                 $pdf->SetY($header_end);
@@ -181,11 +181,11 @@
                 $pdf->SetFont('Arial','B',9);
                 $pdf->SetY($bill_to_y);
                 $pdf->SetX(10);
-                $pdf->Cell(190,7,'Consumption Report - ( '.date('d-m-Y',strtotime($from_date)) .' to '.date('d-m-Y',strtotime($to_date)).' )',1,1,'C',0);
+                $pdf->Cell(190,7,'Current Stock Report - ( '.date('d-m-Y',strtotime($from_date)) .' to '.date('d-m-Y',strtotime($to_date)).' )',1,1,'C',0);
                 $pdf->SetX(10);
                 $pdf->Cell(20,8,'S.No',1,0,'C',0);
                 $pdf->Cell(130,8,'Location',1,0,'C',0);
-                $pdf->Cell(40,8,'Current Stock',1,1,'C',0);
+                $pdf->Cell(40,8,'Current Stock (Nos)',1,1,'C',0);
                 $pdf->SetFont('Arial','',8);
                 
                 $y_axis=$pdf->GetY();
@@ -226,7 +226,7 @@
         $pdf->Cell(190,4,'Page No : '.$pdf->PageNo().' / {nb}',0,0,'R');
     }
 
-    if(!empty($size_id) || !empty($gsm_id) || !empty($bf_id) && !empty($location_type)) {
+    if((!empty($size_id) || !empty($gsm_id) || !empty($bf_id)) && !empty($location_type)) {
         $pdf->SetFont('Arial','B',9);
         if(!empty($total_records_list)) {
             $total_pages = array(1);
@@ -259,13 +259,16 @@
                 $bf_name = $obj->GetTableColumnValue($GLOBALS['bf_table'], 'bf_id', $bf_id, 'bf_name');
                 $bf_name = $obj->encode_decode('decrypt',$bf_name);
             }
-
-            if(!empty($factory_name) && $factory_name!=$GLOBALS['null_value']) {
+            if(!empty($factory_name) && $factory_name != $GLOBALS['null_value']) {
                 $pdf->Cell(190,7,'Factory - '.html_entity_decode($obj->encode_decode('decrypt', $factory_name)).'  - ( '.date('d-m-Y',strtotime($from_date)) .' to '.date('d-m-Y',strtotime($to_date)).' )',1,1,'C',0);
-            }else{
+            }
+            else {
                 $pdf->Cell(190,7,'Godown - '.html_entity_decode($obj->encode_decode('decrypt', $godown_name)).'  - ( '.date('d-m-Y',strtotime($from_date)) .' to '.date('d-m-Y',strtotime($to_date)).' )',1,1,'C',0);
             }
-            $pdf->Cell(190,7,'Size : '.$size_name.' / GSM : '.$gsm_name.' / BF : '.$bf_name,1,1,'C',0);
+            $pdf->Cell(190,7,'Size - '.$size_name.' / GSM - '.$gsm_name.' / BF - '.$bf_name,1,1,'C',0);
+            $current_stock = 0;
+            $current_stock = $obj->ShowCurrentStock($godown_id, $factory_id, $size_id, $gsm_id, $bf_id);
+            $pdf->Cell(190,7,' Current Stock : '.$current_stock.' Nos',1,1,'C',0);
             
             $product_start_y = $pdf->GetY();
             $pdf->SetX(10);
@@ -311,7 +314,8 @@
                     }else{
                         $pdf->Cell(190,7,'Godown - '.html_entity_decode($obj->encode_decode('decrypt', $godown_name)).' - ('.date('d-m-Y',strtotime($from_date)) .' to '.date('d-m-Y',strtotime($to_date)).')',1,1,'C',0);
                     }
-
+                    $pdf->Cell(190,7,'Size : '.$size_name.' / GSM : '.$gsm_name.' / BF : '.$bf_name,1,1,'C',0);
+                    $pdf->Cell(190,7,' Current Stock : '.$current_stock.' Nos',1,1,'C',0);
                     $pdf->SetX(10);
                     $pdf->Cell(10, 8, 'S.No', 1, 0, 'C', 0);
                     $pdf->Cell(25, 8, 'Bill Date', 1, 0, 'C', 0);
@@ -392,7 +396,7 @@
                     $type_y = $pdf->GetY();
                 }
                 $remarks_y = $pdf->GetY() - $start_y;
-
+                $inward = ""; $outward = "";
                 if(!empty($data['inward_unit'])) {
                     $total_inward += $data['inward_unit'];
                     $inward = $data['inward_unit'];
@@ -464,7 +468,7 @@
             
             if(!empty($total_inward) || !empty($total_outward)){
                 $pdf->SetX(150);
-                $pdf->cell(50, 8, $total_inward - $total_outward,1, 0, 'C', 0);
+                $pdf->cell(50, 8, ($total_inward - $total_outward).' Nos',1, 0, 'C', 0);
             } else {
                 $pdf->SetX(150);
                 $pdf->cell(50, 8,' - ',1, 0, 'C', 0);
@@ -476,7 +480,7 @@
         $pdf->SetX(10);
         $pdf->Cell(190,4,'Page No : '.$pdf->PageNo().' / {nb}',0,0,'R');
     }
-    else if(!empty($factory_id) || !empty($godown_id) && empty($size_id) && empty($gsm_id) && empty($bf_id) && !empty($location_type)) {
+    else if((!empty($factory_id) || !empty($godown_id)) && empty($size_id) && empty($gsm_id) && empty($bf_id) && !empty($location_type)) {
         if(!empty($total_records_list)) {
             $total_pages = array(1);
             $page_number = 1;
@@ -495,9 +499,9 @@
             }
 
             if(!empty($factory_name) && $factory_name!=$GLOBALS['null_value']) {
-                $pdf->Cell(190,7,'Factory - '.html_entity_decode($obj->encode_decode('decrypt', $factory_name)).'  - ( '.date('d-m-Y',strtotime($from_date)) .' to '.date('d-m-Y',strtotime($to_date)).' )',1,1,'C',0);
+                $pdf->Cell(190,7,'Factory - '.html_entity_decode($obj->encode_decode('decrypt', $factory_name)),1,1,'C',0);
             }else{
-                $pdf->Cell(190,7,'Godown - '.html_entity_decode($obj->encode_decode('decrypt', $godown_name)).'  - ( '.date('d-m-Y',strtotime($from_date)) .' to '.date('d-m-Y',strtotime($to_date)).' )',1,1,'C',0);
+                $pdf->Cell(190,7,'Godown - '.html_entity_decode($obj->encode_decode('decrypt', $godown_name)),1,1,'C',0);
             }
             
             $product_start_y = $pdf->GetY();
@@ -506,7 +510,7 @@
             $pdf->Cell(45, 8, 'Size', 1, 0, 'C', 0);
             $pdf->Cell(45, 8, 'GSM', 1, 0, 'C', 0);
             $pdf->Cell(45, 8, 'BF', 1, 0, 'C', 0);
-            $pdf->Cell(45, 8, 'Reel Count', 1, 1, 'C', 0);
+            $pdf->Cell(45, 8, 'Reel Count (Nos)', 1, 1, 'C', 0);
            
             $start_y = $pdf->GetY();
             $y_axis = $pdf->GetY();
@@ -538,16 +542,16 @@
                     $pdf->SetY($bill_to_y);
                     $pdf->SetX(10);
                     if(!empty($factory_name) && $factory_name!=$GLOBALS['null_value']) {
-                        $pdf->Cell(190,7,'Factory - '.html_entity_decode($obj->encode_decode('decrypt', $factory_name)).'  - ( '.date('d-m-Y',strtotime($from_date)) .' to '.date('d-m-Y',strtotime($to_date)).' )',1,1,'C',0);
+                        $pdf->Cell(190,7,'Factory - '.html_entity_decode($obj->encode_decode('decrypt', $factory_name)),1,1,'C',0);
                     }else{
-                        $pdf->Cell(190,7,'Godown - '.html_entity_decode($obj->encode_decode('decrypt', $godown_name)).'  - ( '.date('d-m-Y',strtotime($from_date)) .' to '.date('d-m-Y',strtotime($to_date)).' )',1,1,'C',0);
+                        $pdf->Cell(190,7,'Godown - '.html_entity_decode($obj->encode_decode('decrypt', $godown_name)),1,1,'C',0);
                     }
                     $pdf->SetX(10);
                     $pdf->Cell(10, 8, 'S.No', 1, 0, 'C', 0);
                     $pdf->Cell(45, 8, 'Size', 1, 0, 'C', 0);
                     $pdf->Cell(45, 8, 'GSM', 1, 0, 'C', 0);
                     $pdf->Cell(45, 8, 'BF', 1, 0, 'C', 0);
-                    $pdf->Cell(45, 8, 'Reel Count', 1, 1, 'C', 0);
+                    $pdf->Cell(45, 8, 'Reel Count (Nos)', 1, 1, 'C', 0);
                     $start_y = $pdf->GetY();
                     $pdf->SetFont('Arial','',8);
                     $y_axis=$pdf->GetY();
@@ -651,6 +655,6 @@
     }
    
 
-    $pdf_name = "Consumption Report.pdf";
+    $pdf_name = "Current Stock Report.pdf";
     $pdf->Output($from, $pdf_name);
 ?>

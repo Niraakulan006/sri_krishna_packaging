@@ -185,7 +185,7 @@
                                             <table class="table table-bordered nowrap text-center smallfnt" id="tbl_supplier_report">
                                                 <thead style="font-size:13px!important;font-weight:bold!important;">     
                                                     <tr>
-                                                        <th colspan="7" class="text-center" style="border: 1px solid #dee2e6;font-weight: bold; font-size: 16px;">
+                                                        <th colspan="8" class="text-center" style="border: 1px solid #dee2e6;font-weight: bold; font-size: 16px;">
                                                             Supplier Report - <?php if(!empty($from_date)){ echo " (" .date('d-m-Y',strtotime($from_date )) ." to ". date('d-m-Y',strtotime($to_date )). ")"; }?>
                                                         </th>
                                                     </tr>
@@ -194,12 +194,15 @@
                                                         <th class="fw-bold">Bill Date</th>
                                                         <th class="fw-bold">Bill No</th>
                                                         <th class="fw-bold">Location</th>
+                                                        <th class="fw-bold">Size</th>
+                                                        <th class="fw-bold">GSM</th>
+                                                        <th class="fw-bold">BF</th>
                                                         <th class="fw-bold">Inward Qty</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <?php
-                                                        $total_stock =0;$total_inward =0;
+                                                        $total_stock = 0; $total_inward = 0;
                                                         if(!empty($total_records_list)) { 
                                                             foreach($total_records_list as $key => $data) { ?>
                                                                 <tr >
@@ -213,8 +216,8 @@
                                                                     </th>
                                                                     <th>
                                                                         <?php 
-                                                                            if(!empty($data['bill_unique_number'])) {
-                                                                                echo $data['bill_unique_number'];
+                                                                            if(!empty($data['remarks']) && $data['remarks'] != $GLOBALS['null_value']) {
+                                                                                echo $obj->encode_decode('decrypt',$data['remarks']);
                                                                             }
                                                                         ?>
                                                                         &nbsp; <a href="Javascript:BillModalContent('<?php if(!empty($data['bill_unique_id']) && $data['bill_unique_id'] != $GLOBALS['null_value']) { echo $data['bill_unique_id']; } ?>');"><i class="fa fa-info-circle"></i></a>
@@ -223,19 +226,42 @@
                                                                         <?php 
                                                                             if(!empty($data['factory_name']) && $data['factory_name']!=$GLOBALS['null_value']) {
                                                                                 echo $obj->encode_decode('decrypt',$data['factory_name']);
-                                                                            }else{
-                                                                               if(!empty($data['godown_name']) && $data['godown_name']!=$GLOBALS['null_value']) {
-                                                                                echo $obj->encode_decode('decrypt',$data['godown_name']);
-                                                                            } 
+                                                                            }
+                                                                            else {
+                                                                               if(!empty($data['godown_name']) && $data['godown_name']!= $GLOBALS['null_value']) {
+                                                                                    echo $obj->encode_decode('decrypt',$data['godown_name']);
+                                                                                } 
                                                                             }
                                                                         ?>
-                                                                    </th>    
+                                                                    </th>  
+                                                                    <th>
+                                                                        <?php
+                                                                            if(!empty($data['size_name']) && $data['size_name'] != $GLOBALS['null_value']) {
+                                                                                echo $obj->encode_decode('decrypt',$data['size_name']);
+                                                                            }
+                                                                        ?>
+                                                                    </th>
+                                                                    <th>
+                                                                        <?php
+                                                                            if(!empty($data['gsm_name']) && $data['gsm_name'] != $GLOBALS['null_value']) {
+                                                                                echo $obj->encode_decode('decrypt',$data['gsm_name']);
+                                                                            }
+                                                                        ?>
+                                                                    </th>
+                                                                    <th>
+                                                                        <?php
+                                                                            if(!empty($data['bf_name']) && $data['bf_name'] != $GLOBALS['null_value']) {
+                                                                                echo $obj->encode_decode('decrypt',$data['bf_name']);
+                                                                            }
+                                                                        ?>
+                                                                    </th>  
                                                                     <th>
                                                                         <?php 
                                                                             if(!empty($data['inward_unit'])) {
                                                                                 echo $data['inward_unit'];
                                                                                 $total_inward += $data['inward_unit'];
-                                                                            }else{
+                                                                            }
+                                                                            else{
                                                                                 echo "-";
                                                                             }
                                                                         ?>
@@ -245,7 +271,7 @@
                                                             } 
                                                             ?>
                                                             <tr>
-                                                                <th colspan="4" class="text-end fw-bold">Total &ensp;</th>
+                                                                <th colspan="7" class="text-end fw-bold">Total &ensp;</th>
                                                                 <th class="fw-bold"><?php echo $total_inward; ?></th>
                                                             </tr>
                                                             
@@ -254,7 +280,7 @@
                                                         else {
                                                     ?>
                                                             <tr>
-                                                                <td colspan="5" class="text-center fw-bold">Sorry! No records found</td>
+                                                                <td colspan="8" class="text-center fw-bold">Sorry! No records found</td>
                                                             </tr>
                                                     <?php 
                                                         } 

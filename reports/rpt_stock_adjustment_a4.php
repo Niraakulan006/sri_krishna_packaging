@@ -164,7 +164,7 @@
         $pdf->Cell(25, 7, 'Reel Size', 1, 0, 'C', 1);
         $pdf->Cell(25, 7, 'GSM', 1, 0, 'C', 1);
         $pdf->Cell(25, 7, 'BF', 1, 0, 'C', 1);
-        $pdf->Cell(25, 7, 'QTY', 1, 0, 'C', 1);
+        $pdf->Cell(25, 7, 'QTY (Nos)', 1, 0, 'C', 1);
         $pdf->Cell(20, 7, 'Stock Type', 1, 1, 'C', 1);
         $pdf->SetTextColor(0,0,0);
         
@@ -280,7 +280,7 @@
                     $pdf->Cell(25, 7, 'Reel Size', 1, 0, 'C', 1);
                     $pdf->Cell(25, 7, 'GSM', 1, 0, 'C', 1);
                     $pdf->Cell(25, 7, 'BF', 1, 0, 'C', 1);
-                    $pdf->Cell(25, 7, 'QTY', 1, 0, 'C', 1);
+                    $pdf->Cell(25, 7, 'QTY (Nos)', 1, 0, 'C', 1);
                     $pdf->Cell(20, 7, 'Stock Type', 1, 1, 'C', 1);
                     $pdf->SetTextColor(0,0,0);
                     
@@ -502,7 +502,7 @@
             $pdf->Cell(25, 7, 'Reel Size', 1, 0, 'C', 1);
             $pdf->Cell(25, 7, 'GSM', 1, 0, 'C', 1);
             $pdf->Cell(25, 7, 'BF', 1, 0, 'C', 1);
-            $pdf->Cell(25, 7, 'QTY', 1, 0, 'C', 1);
+            $pdf->Cell(25, 7, 'QTY (Nos)', 1, 0, 'C', 1);
             $pdf->Cell(20, 7, 'Stock Type', 1, 1, 'C', 1);
             $pdf->SetTextColor(0,0,0);
             

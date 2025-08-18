@@ -43,7 +43,7 @@
             $pdf->SetX(10);
             $pdf->Cell(20,8,'S.No',1,0,'C',0);
             $pdf->Cell(90,8,'Supplier Name',1,0,'C',0);
-            $pdf->Cell(80,8,'Reel Count',1,1,'C',0);
+            $pdf->Cell(80,8,'Reel Count (Nos)',1,1,'C',0);
             $pdf->SetFont('Arial','',8);
             
             $y_axis=$pdf->GetY();
@@ -78,7 +78,7 @@
                     $pdf->SetX(10);
                     $pdf->Cell(20,8,'S.No',1,0,'C',0);
                     $pdf->Cell(90,8,'Supplier Name',1,0,'C',0);
-                    $pdf->Cell(80,8,'Reel Count',1,1,'C',0);
+                    $pdf->Cell(80,8,'Reel Count (Nos)',1,1,'C',0);
                     $pdf->SetFont('Arial','',8);
                     $y_axis=$pdf->GetY();
                 }
@@ -200,10 +200,13 @@
             $product_start_y = $pdf->GetY();
             $pdf->SetX(10);
             $pdf->Cell(10, 8, 'S.No', 1, 0, 'C', 0);
-            $pdf->Cell(30, 8, 'Bill Date', 1, 0, 'C', 0);
-            $pdf->Cell(30, 8, 'Bill No ', 1, 0, 'C', 0);
-            $pdf->Cell(80, 8, 'Location', 1, 0, 'C', 0);
-            $pdf->Cell(40, 8, 'Inward Qty', 1, 1, 'C', 0);
+            $pdf->Cell(25, 8, 'Bill Date', 1, 0, 'C', 0);
+            $pdf->Cell(25, 8, 'Bill No ', 1, 0, 'C', 0);
+            $pdf->Cell(50, 8, 'Location', 1, 0, 'C', 0);
+            $pdf->Cell(20, 8, 'Size', 1, 0, 'C', 0);
+            $pdf->Cell(20, 8, 'GSM', 1, 0, 'C', 0);
+            $pdf->Cell(20, 8, 'BF', 1, 0, 'C', 0);
+            $pdf->Cell(20, 8, 'Qty (Nos)', 1, 1, 'C', 0);
            
             $start_y = $pdf->GetY();
             $y_axis = $pdf->GetY();
@@ -237,15 +240,18 @@
                     $pdf->Cell(190,7,'Supplier Name - '.html_entity_decode($obj->encode_decode('decrypt', $supplier_name)).' - ( '.date('d-m-Y',strtotime($from_date)) .' to '.date('d-m-Y',strtotime($to_date)).' )',1,1,'C',0);
                     $pdf->SetX(10);
                     $pdf->Cell(10, 8, 'S.No', 1, 0, 'C', 0);
-                    $pdf->Cell(30, 8, 'Bill Date', 1, 0, 'C', 0);
-                    $pdf->Cell(30, 8, 'Bill No ', 1, 0, 'C', 0);
-                    $pdf->Cell(80, 8, 'Location', 1, 0, 'C', 0);
-                    $pdf->Cell(40, 8, 'Inward Qty', 1, 1, 'C', 0);
+                    $pdf->Cell(25, 8, 'Bill Date', 1, 0, 'C', 0);
+                    $pdf->Cell(25, 8, 'Bill No ', 1, 0, 'C', 0);
+                    $pdf->Cell(50, 8, 'Location', 1, 0, 'C', 0);
+                    $pdf->Cell(20, 8, 'Size', 1, 0, 'C', 0);
+                    $pdf->Cell(20, 8, 'GSM', 1, 0, 'C', 0);
+                    $pdf->Cell(20, 8, 'BF', 1, 0, 'C', 0);
+                    $pdf->Cell(20, 8, 'Qty (Nos)', 1, 1, 'C', 0);
                     $start_y = $pdf->GetY();
                     $pdf->SetFont('Arial','',8);
                     $y_axis=$pdf->GetY();
                 }
-                $date_y = ""; $type_y = ""; $remarks_y = "";  $inward_y = ""; $outward_y = "";  $y_array = array(); $max_y = ""; $outward = 0;
+                $date_y = ""; $type_y = ""; $remarks_y = ""; $inward_y = ""; $outward_y = ""; $y_array = array(); $max_y = ""; $outward = 0;
 
                 $pdf->SetY($start_y);
                 $pdf->SetX(10);
@@ -256,42 +262,70 @@
                     $stock_date = "";
                     $stock_date = date('d-m-Y', strtotime($data['stock_date']));
                     $pdf->SetX(20);
-                    $pdf->MultiCell(30, 7, $stock_date, 0, 'C', 0);
+                    $pdf->MultiCell(25, 7, $stock_date, 0, 'C', 0);
                 }
                 else{
                     $pdf->SetY($start_y);
                     $pdf->SetX(20);
-                    $pdf->MultiCell(30, 7,'-', 0, 'C', 0);
+                    $pdf->MultiCell(25, 7,'-', 0, 'C', 0);
                 }
                 $date_y = $pdf->GetY() - $start_y;
 
                 $pdf->SetY($start_y);
-                if(!empty($data['bill_unique_number'])) {
-                    $pdf->SetX(50);
-                    $pdf->MultiCell(30, 7, $data['bill_unique_number'], 0, 'C', 0);
-                    
+                if(!empty($data['remarks']) && $data['remarks'] != $GLOBALS['null_value']) {
+                    $pdf->SetX(45);
+                    $pdf->MultiCell(25, 7, $obj->encode_decode('decrypt', $data['remarks']), 0, 'C', 0);
                 }
                 else{
                     $pdf->SetY($start_y);
-                    $pdf->SetX(50);
-                    $pdf->MultiCell(30, 7, '-', 0, 'C', 0);
+                    $pdf->SetX(45);
+                    $pdf->MultiCell(25, 7, '-', 0, 'C', 0);
                     $type_y = $pdf->GetY();
                 }
                 $type_y = $pdf->GetY() - $start_y;
 
                 $pdf->SetY($start_y);
                 if(!empty($data['factory_name']) && $data['factory_name'] != $GLOBALS['null_value']) {
-                    $pdf->SetX(80);
-                    $pdf->MultiCell(80, 7, html_entity_decode($obj->encode_decode('decrypt',$data['factory_name'])), 0,  'C', 0);
+                    $pdf->SetX(70);
+                    $pdf->MultiCell(50, 7, html_entity_decode($obj->encode_decode('decrypt',$data['factory_name'])), 0,  'C', 0);
                 }
                 else if(!empty($data['godown_name']) && $data['godown_name'] != $GLOBALS['null_value']) {
-                    $pdf->SetX(80);
-                    $pdf->MultiCell(80, 7, html_entity_decode($obj->encode_decode('decrypt',$data['godown_name'])), 0,  'C', 0);
-                }else {
-                    $pdf->SetX(80);
-                    $pdf->MultiCell(30, 7, '-', 0,  'C', 0);
+                    $pdf->SetX(70);
+                    $pdf->MultiCell(50, 7, html_entity_decode($obj->encode_decode('decrypt',$data['godown_name'])), 0,  'C', 0);
+                }
+                else {
+                    $pdf->SetX(70);
+                    $pdf->MultiCell(50, 7, '-', 0,  'C', 0);
                 }
                 $remarks_y = $pdf->GetY() - $start_y;
+
+                $pdf->SetY($start_y);
+                if(!empty($data['size_name']) && $data['size_name'] != $GLOBALS['null_value']) {
+                    $pdf->SetX(120);
+                    $pdf->Cell(20, 7, html_entity_decode($obj->encode_decode('decrypt',$data['size_name'])), 0, 0, 'C', 0);
+                }
+                else {
+                    $pdf->SetX(120);
+                    $pdf->Cell(20,7,'-',0,0,'C', 0);
+                }
+                $pdf->SetY($start_y);
+                if(!empty($data['gsm_name']) && $data['gsm_name'] != $GLOBALS['null_value']) {
+                    $pdf->SetX(140);
+                    $pdf->Cell(20, 7, html_entity_decode($obj->encode_decode('decrypt',$data['gsm_name'])), 0, 0, 'C', 0);
+                }
+                else {
+                    $pdf->SetX(140);
+                    $pdf->Cell(20,7,'-',0,0,'C', 0);
+                }
+                $pdf->SetY($start_y);
+                if(!empty($data['bf_name']) && $data['bf_name'] != $GLOBALS['null_value']) {
+                    $pdf->SetX(160);
+                    $pdf->Cell(20, 7, html_entity_decode($obj->encode_decode('decrypt',$data['bf_name'])), 0, 0, 'C', 0);
+                }
+                else {
+                    $pdf->SetX(160);
+                    $pdf->Cell(20,7,'-',0,0,'C', 0);
+                }
 
                 if($data['inward_unit'] != $GLOBALS['null_value']) {
                     $total_inward += $data['inward_unit'];
@@ -300,11 +334,11 @@
 
                 $pdf->SetY($start_y);
                 if(!empty($inward)){
-                    $pdf->SetX(170);
-                    $pdf->MultiCell(30, 7, $inward, 0, 'R', 0);
+                    $pdf->SetX(180);
+                    $pdf->MultiCell(20, 7, $inward, 0, 'R', 0);
                 } else {
-                    $pdf->SetX(170);
-                    $pdf->MultiCell(30, 7,' - ', 0, 'C', 0);
+                    $pdf->SetX(180);
+                    $pdf->MultiCell(20, 7,' - ', 0, 'C', 0);
                 }
                 $inward_y = $pdf->GetY() - $start_y;
 
@@ -312,10 +346,13 @@
                 $pdf->SetY($start_y);
                 $pdf->SetX(10);
                 $pdf->Cell(10,$max_y,'',1,0,'C');
-                $pdf->Cell(30,$max_y,'',1,0,'C');
-                $pdf->Cell(30,$max_y,'',1,0,'C');
-                $pdf->Cell(80,$max_y,'',1,0,'C');
-                $pdf->Cell(40,$max_y,'',1,1,'C');
+                $pdf->Cell(25,$max_y,'',1,0,'C');
+                $pdf->Cell(25,$max_y,'',1,0,'C');
+                $pdf->Cell(50,$max_y,'',1,0,'C');
+                $pdf->Cell(20,$max_y,'',1,0,'C');
+                $pdf->Cell(20,$max_y,'',1,0,'C');
+                $pdf->Cell(20,$max_y,'',1,0,'C');
+                $pdf->Cell(20,$max_y,'',1,1,'C');
 
                 $start_y += $max_y;
                 $pdf->SetY($start_y);
@@ -327,14 +364,14 @@
             
             $pdf->SetFont('Arial','B',8);
             $pdf->SetX(10);
-            $pdf->Cell(150,8,'Total',1,0,'R',0);
+            $pdf->Cell(170,8,'Total',1,0,'R',0);
             
             if(!empty($total_inward)){
-                $pdf->SetX(160);
-                $pdf->cell(40, 8, $total_inward,1, 0, 'R', 0);
+                $pdf->SetX(180);
+                $pdf->cell(20, 8, $total_inward,1, 0, 'R', 0);
             } else {
-                $pdf->SetX(160);
-                $pdf->cell(40, 8,' - ',1, 0, 'C', 0);
+                $pdf->SetX(180);
+                $pdf->cell(20, 8,' - ',1, 0, 'C', 0);
             } 
         }
         $pdf->SetFont('Arial','I',7);

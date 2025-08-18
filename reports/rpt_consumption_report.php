@@ -51,7 +51,7 @@
             $pdf->Cell(40,8,'Size',1,0,'C',0);
             $pdf->Cell(40,8,'GSM',1,0,'C',0);
             $pdf->Cell(40,8,'BF',1,0,'C',0);
-            $pdf->Cell(50,8,'Consumption Qty',1,1,'C',0);
+            $pdf->Cell(50,8,'Qty (Nos)',1,1,'C',0);
             $pdf->SetFont('Arial','',8);
             
             $y_axis=$pdf->GetY();
@@ -88,7 +88,7 @@
                     $pdf->Cell(40,8,'Size',1,0,'C',0);
                     $pdf->Cell(40,8,'GSM',1,0,'C',0);
                     $pdf->Cell(40,8,'BF',1,0,'C',0);
-                    $pdf->Cell(50,8,'Consumption Qty',1,1,'C',0);
+                    $pdf->Cell(50,8,'Qty (Nos)',1,1,'C',0);
                     $pdf->SetFont('Arial','',8);
                     $y_axis=$pdf->GetY();
                 }
@@ -177,7 +177,7 @@
                 $pdf->Cell(40,8,'Size',1,0,'C',0);
                 $pdf->Cell(40,8,'GSM',1,0,'C',0);
                 $pdf->Cell(40,8,'BF',1,0,'C',0);
-                $pdf->Cell(50,8,'Consumption Qty',1,1,'C',0);
+                $pdf->Cell(50,8,'Qty (Nos)',1,1,'C',0);
                 $pdf->SetFont('Arial','',8);
                 
                 $y_axis=$pdf->GetY();
@@ -245,21 +245,20 @@
                 $bf_name = $obj->GetTableColumnValue($GLOBALS['bf_table'], 'bf_id', $bf_id, 'bf_name');
             }
             
-           
             $title = "";
             if (!empty($size_name)) {
-                $title .= ' ( Size - ' . html_entity_decode($obj->encode_decode('decrypt', $size_name)) . ' ) ';
+                $title .= 'Size - ' . html_entity_decode($obj->encode_decode('decrypt', $size_name)) . ' / ';
             }
 
             if (!empty($gsm_name)) {
-                $title .= ' ( GSM - ' . html_entity_decode($obj->encode_decode('decrypt', $gsm_name)) . ' ) ';
+                $title .= 'GSM - ' . html_entity_decode($obj->encode_decode('decrypt', $gsm_name)) . ' / ';
             }
 
             if (!empty($bf_name)) {
-                $title .= ' ( BF - ' . html_entity_decode($obj->encode_decode('decrypt', $bf_name)) . ' ) ';
+                $title .= 'BF - ' . html_entity_decode($obj->encode_decode('decrypt', $bf_name));
             }
 
-            $title .= ' - ( ' . date('d-m-Y', strtotime($from_date)) . ' to ' . date('d-m-Y', strtotime($to_date)) . ' )';
+            $title .= ' - ('.date('d-m-Y', strtotime($from_date)).' to '.date('d-m-Y', strtotime($to_date)).')';
 
             $pdf->Cell(190, 7, $title, 1, 1, 'C', 0);
 
@@ -269,7 +268,7 @@
             $pdf->Cell(30, 8, 'Bill Date', 1, 0, 'C', 0);
             $pdf->Cell(30, 8, 'Bill No ', 1, 0, 'C', 0);
             $pdf->Cell(80, 8, 'Location', 1, 0, 'C', 0);
-            $pdf->Cell(40, 8, 'Consumption Qty', 1, 1, 'C', 0);
+            $pdf->Cell(40, 8, 'Qty (Nos)', 1, 1, 'C', 0);
            
             $start_y = $pdf->GetY();
             $y_axis = $pdf->GetY();
@@ -300,28 +299,13 @@
                     $bill_to_y = $pdf->GetY();
                     $pdf->SetY($bill_to_y);
                     $pdf->SetX(10);
-                    $title = "";
-                    if (!empty($size_name)) {
-                        $title .= ' ( Size - ' . html_entity_decode($obj->encode_decode('decrypt', $size_name)) . ' ) ';
-                    }
-
-                    if (!empty($gsm_name)) {
-                        $title .= ' ( GSM - ' . html_entity_decode($obj->encode_decode('decrypt', $gsm_name)) . ' ) ';
-                    }
-
-                    if (!empty($bf_name)) {
-                        $title .= ' ( BF - ' . html_entity_decode($obj->encode_decode('decrypt', $bf_name)) . ' ) ';
-                    }
-
-                    $title .= ' - ( ' . date('d-m-Y', strtotime($from_date)) . ' to ' . date('d-m-Y', strtotime($to_date)) . ' )';
-
                     $pdf->Cell(190, 7, $title, 1, 1, 'C', 0);
                     $pdf->SetX(10);
                     $pdf->Cell(10, 8, 'S.No', 1, 0, 'C', 0);
                     $pdf->Cell(30, 8, 'Bill Date', 1, 0, 'C', 0);
                     $pdf->Cell(30, 8, 'Bill No ', 1, 0, 'C', 0);
                     $pdf->Cell(80, 8, 'Location', 1, 0, 'C', 0);
-                    $pdf->Cell(40, 8, 'Consumption Qty', 1, 1, 'C', 0);
+                    $pdf->Cell(40, 8, 'Qty (Nos)', 1, 1, 'C', 0);
                     $start_y = $pdf->GetY();
                     $pdf->SetFont('Arial','',8);
                     $y_axis=$pdf->GetY();
@@ -370,7 +354,7 @@
                 }
                 $remarks_y = $pdf->GetY() - $start_y;
 
-                if(!empty($data['outward_unit']) != $GLOBALS['null_value']) {
+                if(!empty($data['outward_unit']) && $data['outward_unit'] != $GLOBALS['null_value']) {
                     $total_inward += $data['outward_unit'];
                     $inward = $data['outward_unit'];
                 }

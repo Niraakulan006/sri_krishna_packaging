@@ -84,11 +84,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-2 col-md-4 col-6 py-2">
+                                        <div class="col-lg-2 col-md-4 col-6 py-2 <?php if(empty($size_id) || empty($gsm_id) || empty($bf_id)){ ?>d-none<?php } ?>">
                                             <div class="form-group">
                                                 <div class="form-label-group in-border">
                                                     <select name="size_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width:100%!important;" onchange="Javascript:getReport();">
-                                                        <option value="">Select</option>
                                                         <?php
                                                             if(!empty($size_list)) {
                                                                 foreach($size_list as $data) {
@@ -111,11 +110,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-2 col-md-4 col-6 py-2">
+                                        <div class="col-lg-2 col-md-4 col-6 py-2 <?php if(empty($size_id) || empty($gsm_id) || empty($bf_id)){ ?>d-none<?php } ?>">
                                             <div class="form-group">
                                                 <div class="form-label-group in-border">
                                                     <select name="gsm_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width:100%!important;" onchange="Javascript:getReport();">
-                                                        <option value="">Select</option>
                                                         <?php
                                                             if(!empty($gsm_list)) {
                                                                 foreach($gsm_list as $data) {
@@ -138,11 +136,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-2 col-md-4 col-6 py-2">
+                                        <div class="col-lg-2 col-md-4 col-6 py-2 <?php if(empty($size_id) || empty($gsm_id) || empty($bf_id)){ ?>d-none<?php } ?>">
                                             <div class="form-group">
                                                 <div class="form-label-group in-border">
                                                     <select name="bf_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width:100%!important;" onchange="Javascript:getReport();">
-                                                        <option value="">Select</option>
                                                         <?php
                                                             if(!empty($bf_list)) {
                                                                 foreach($bf_list as $data) {

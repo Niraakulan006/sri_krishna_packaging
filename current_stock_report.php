@@ -192,7 +192,6 @@
                                                 <div class="form-group">
                                                     <div class="form-label-group in-border">
                                                         <select name="size_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width:100%!important;" onchange="Javascript:getReport();">
-                                                            <option value="">Select</option>
                                                             <?php
                                                                 if(!empty($size_list)) {
                                                                     foreach($size_list as $data) {
@@ -219,7 +218,6 @@
                                                 <div class="form-group">
                                                     <div class="form-label-group in-border">
                                                         <select name="gsm_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width:100%!important;" onchange="Javascript:getReport();">
-                                                            <option value="">Select</option>
                                                             <?php
                                                                 if(!empty($gsm_list)) {
                                                                     foreach($gsm_list as $data) {
@@ -246,7 +244,6 @@
                                                 <div class="form-group">
                                                     <div class="form-label-group in-border">
                                                         <select name="bf_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width:100%!important;" onchange="Javascript:getReport();">
-                                                            <option value="">Select</option>
                                                             <?php
                                                                 if(!empty($bf_list)) {
                                                                     foreach($bf_list as $data) {
@@ -372,6 +369,33 @@
                                                                 $godown_name = $obj->getTableColumnValue($GLOBALS['godown_table'],'godown_id',$godown_id,'godown_name');
                                                                 echo " Godown - ".$obj->encode_decode('decrypt',$godown_name);
                                                             } ?>
+                                                        </th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th colspan="7" class="text-center" style="border: 1px solid #dee2e6;font-weight: bold; font-size: 14px;">
+                                                            <?php 
+                                                                if(!empty($size_id)) {
+                                                                    $size_name = $obj->getTableColumnValue($GLOBALS['size_table'],'size_id',$size_id,'size_name');
+                                                                    echo "Size - ".$obj->encode_decode('decrypt',$size_name)." / ";
+                                                                }
+                                                                if(!empty($gsm_id)) {
+                                                                    $gsm_name = $obj->getTableColumnValue($GLOBALS['gsm_table'],'gsm_id',$gsm_id,'gsm_name');
+                                                                    echo " GSM - ".$obj->encode_decode('decrypt',$gsm_name)." / ";
+                                                                }
+                                                                if(!empty($bf_id)) {
+                                                                    $bf_name = $obj->getTableColumnValue($GLOBALS['bf_table'],'bf_id',$bf_id,'bf_name');
+                                                                    echo " BF - ".$obj->encode_decode('decrypt',$bf_name);
+                                                                } 
+                                                            ?>
+                                                        </th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th colspan="7" class="text-center" style="border: 1px solid #dee2e6;font-weight: bold; font-size: 14px;">
+                                                            <?php 
+                                                                $current_stock = 0;
+                                                                $current_stock = $obj->ShowCurrentStock($godown_id, $factory_id, $size_id, $gsm_id, $bf_id);
+                                                                echo "Current Stock : ".$current_stock;
+                                                            ?>
                                                         </th>
                                                     </tr>
                                                     <tr class="text-white" style="vertical-align:middle!important;background-color:#254BDA!important;">

@@ -225,7 +225,7 @@
         $pdf->Cell(30, 7, 'Reel Size', 1, 0, 'C', 1);
         $pdf->Cell(30, 7, 'GSM', 1, 0, 'C', 1);
         $pdf->Cell(30, 7, 'BF', 1, 0, 'C', 1);
-        $pdf->Cell(0, 7, 'Qty', 1, 1, 'C', 1);
+        $pdf->Cell(0, 7, 'Qty (Nos)', 1, 1, 'C', 1);
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial', '', 8);
         $product_y = $pdf->GetY();
@@ -400,7 +400,7 @@
                     $pdf->Cell(30, 7, 'Reel Size', 1, 0, 'C', 1);
                     $pdf->Cell(30, 7, 'GSM', 1, 0, 'C', 1);
                     $pdf->Cell(30, 7, 'BF', 1, 0, 'C', 1);
-                    $pdf->Cell(0, 7, 'Qty', 1, 1, 'C', 1);
+                    $pdf->Cell(0, 7, 'Qty (Nos)', 1, 1, 'C', 1);
                     $pdf->SetTextColor(0,0,0);
                     $pdf->SetFont('Arial', '', 8);
                     $product_y = $pdf->GetY();
@@ -638,7 +638,7 @@
                     $pdf->Cell(30, 7, 'Reel Size', 1, 0, 'C', 1);
                     $pdf->Cell(30, 7, 'GSM', 1, 0, 'C', 1);
                     $pdf->Cell(30, 7, 'BF', 1, 0, 'C', 1);
-                    $pdf->Cell(0, 7, 'Qty', 1, 1, 'C', 1);
+                    $pdf->Cell(0, 7, 'Qty (Nos)', 1, 1, 'C', 1);
                     $pdf->SetTextColor(0,0,0);
                     $pdf->SetFont('Arial', '', 8);
 
