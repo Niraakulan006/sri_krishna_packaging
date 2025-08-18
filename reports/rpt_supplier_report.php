@@ -195,7 +195,7 @@
             $pdf->SetY($bill_to_y);
             $pdf->SetX(10);
             
-            $pdf->Cell(190,7,'Supplier Name - '.html_entity_decode($obj->encode_decode('decrypt', $supplier_name)).' - ( '.date('d-m-Y',strtotime($from_date)) .' to '.date('d-m-Y',strtotime($to_date)).' )',1,1,'C',0);
+            $pdf->Cell(190,7,'Supplier Name - '.html_entity_decode($obj->encode_decode('decrypt', $supplier_name)).' - ('.date('d-m-Y',strtotime($from_date)) .' to '.date('d-m-Y',strtotime($to_date)).')',1,1,'C',0);
             
             $product_start_y = $pdf->GetY();
             $pdf->SetX(10);

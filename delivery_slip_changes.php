@@ -124,7 +124,7 @@
                 <div class="col-lg-3 col-md-6 col-12 px-lg-1 py-2">
                     <div class="form-group">
                         <div class="form-label-group in-border" style="pointer-events:none;">
-                            <select name="godown_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" tabindex="1">
+                            <select name="godown_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" tabindex="1" onchange="Javascript:GetCurrentStock('delivery_slip');">
                                 <option value="">Select Godown</option>
                                 <?php
                                     if(!empty($godown_list)) {
@@ -151,7 +151,7 @@
                 <div class="col-lg-3 col-md-6 col-12 px-lg-1 py-2">
                     <div class="form-group">
                         <div class="form-label-group in-border" style="pointer-events:none;">
-                            <select name="factory_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" tabindex="1">
+                            <select name="factory_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" tabindex="1" onchange="Javascript:GetCurrentStock('delivery_slip');">
                                 <option value="">Select Factory</option>
                                 <?php
                                     if(!empty($factory_list)) {
@@ -184,11 +184,115 @@
                     </div>
                 </div>
             </div>
+            <div class="row justify-content-center p-2">
+                <div class="col-lg-2 col-md-4 col-12 px-lg-1 py-2">
+                    <div class="form-group">
+                        <div class="form-label-group in-border" id="selected_size_id_div">
+                            <select name="selected_size_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:GetCurrentStock('delivery_slip');">
+                                <option value="">Select Size</option>
+                                <?php
+                                    if(!empty($size_list)) {
+                                        foreach($size_list as $data) {
+                                            if(!empty($data['size_id']) && $data['size_id'] != $GLOBALS['null_value']) {
+                                                ?>
+                                                <option value="<?php echo $data['size_id']; ?>" <?php if($size_count == '1') { ?>selected<?php } ?>>
+                                                    <?php
+                                                        if(!empty($data['size_name']) && $data['size_name'] != $GLOBALS['null_value']) {
+                                                            echo $obj->encode_decode('decrypt', $data['size_name']);
+                                                        }
+                                                    ?>
+                                                </option>
+                                                <?php
+                                            }
+                                        }
+                                    }
+                                ?>
+                            </select>
+                            <label>Reel Size <span class="text-danger">*</span></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-12 px-lg-1 py-2">
+                    <div class="form-group">
+                        <div class="form-label-group in-border" id="selected_gsm_id_div">
+                            <select name="selected_gsm_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:GetCurrentStock('delivery_slip');">
+                                <option value="">Select GSM</option>
+                                <?php
+                                    if(!empty($gsm_list)) {
+                                        foreach($gsm_list as $data) {
+                                            if(!empty($data['gsm_id']) && $data['gsm_id'] != $GLOBALS['null_value']) {
+                                                ?>
+                                                <option value="<?php echo $data['gsm_id']; ?>" <?php if($gsm_count == '1') { ?>selected<?php } ?>>
+                                                    <?php
+                                                        if(!empty($data['gsm_name']) && $data['gsm_name'] != $GLOBALS['null_value']) {
+                                                            echo $obj->encode_decode('decrypt', $data['gsm_name']);
+                                                        }
+                                                    ?>
+                                                </option>
+                                                <?php
+                                            }
+                                        }
+                                    }
+                                ?>
+                            </select>
+                            <label>GSM <span class="text-danger">*</span></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-12 px-lg-1 py-2">
+                    <div class="form-group">
+                        <div class="form-label-group in-border" id="selected_bf_id_div">
+                            <select name="selected_bf_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:GetCurrentStock('delivery_slip');">
+                                <option value="">Select BF</option>
+                                <?php
+                                    if(!empty($bf_list)) {
+                                        foreach($bf_list as $data) {
+                                            if(!empty($data['bf_id']) && $data['bf_id'] != $GLOBALS['null_value']) {
+                                                ?>
+                                                <option value="<?php echo $data['bf_id']; ?>" <?php if($bf_count == '1') { ?>selected<?php } ?>>
+                                                    <?php
+                                                        if(!empty($data['bf_name']) && $data['bf_name'] != $GLOBALS['null_value']) {
+                                                            echo $obj->encode_decode('decrypt', $data['bf_name']);
+                                                        }
+                                                    ?>
+                                                </option>
+                                                <?php
+                                            }
+                                        }
+                                    }
+                                ?>
+                            </select>
+                            <label>BF <span class="text-danger">*</span></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-1 col-md-4 col-6 px-lg-1 py-2">
+                    <div class="form-group">
+                        <div class="form-label-group in-border">
+                            <input type="text" id="selected_quantity" name="selected_quantity" class="form-control shadow-none" onfocus="Javascript:KeyboardControls(this,'number',8,'');" onkeyup="Javascript:InputBoxColor(this,'text');" placeholder="">
+                            <label>QTY <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="smallfnt">
+                            <div class="current_stock_div fw-bold d-none" style="color:red!important;">
+                                Stock : <span class="current_stock_span"></span>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 px-lg-1 py-2">
+                    <div class="form-group">
+                        <button class="btn btn-success py-2 add_product_button" style="font-size:11px; width:120px;" type="button" onclick="Javascript:AddRequestRow();">Add To Table</button>
+                    </div>
+                </div>
+            </div>
             <div class="row px-3 py-1">
-                <div class="col-12 px-lg-1 text-center align-content-center" id="total_reels_div">
+                <div class="col-lg-10 col-md-9 col-12 px-lg-1 py-2 text-center align-content-center" id="total_reels_div">
                     <div class="form-group mb-0">
                         <span class="h4 text-center fw-bold mb-0">Total Reels : <span class="total_reels_span text-success"><?php echo $total_quantity; ?></span></span>
                     </div>
+                </div>
+                <div class="col-lg-2 col-md-3 col-12 py-2 text-center align-content-center" id="scan_btn_div">
+                    <button class="btn btn-primary py-2" type="button" style="font-size:11px;" id="scan_button" onclick="Javascript:ScanBarcode();"><i class="fa fa-barcode"></i>&nbsp; Scan</button>
                 </div>
             </div>
             <div class="row">    
@@ -481,6 +585,7 @@
                 if(isset($quantity[$i])) {
                     $quantity_error = "";
                     $quantity_error = $valid->valid_number($quantity[$i], 'Qty', 1);
+                    /*
                     if(empty($quantity_error)) {
                         $request_qty = 0;
                         $request_qty = $obj->GetPrevRequestQty($stock_request_id, $godown_id, $factory_id, $size_ids[$i], $gsm_ids[$i], $bf_ids[$i]);
@@ -496,6 +601,7 @@
                             $quantity_error = "Max Qty : ".$balance_qty;
                         }
                     }
+                    */
                     if(!empty($quantity_error)) {
                         if(!empty($valid_delivery_slip)) {
                             $valid_delivery_slip = $valid_delivery_slip." ".$valid->row_error_display($form_name, 'quantity[]', $quantity_error, 'text', 'product_row', ($i+1));
@@ -855,7 +961,13 @@
             }
             $delivery_slip_linked_id = "";
             $delivery_slip_linked_id = $obj->getTableColumnValue($GLOBALS['inward_approval_table'], 'delivery_slip_id', $val['delivery_slip_id'], 'id');
-            $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['delivery_slip_table'].'\''.', '.'\''.$val['delivery_slip_id'].'\''.');"><i class="fa fa-eye"></i></a>';
+            $material_view = "";
+            if(file_exists("images/pupil.gif")) {
+                $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['delivery_slip_table'].'\''.', '.'\''.$val['delivery_slip_id'].'\''.');"><img src="images/pupil.gif" alt="View" style="width:30px; height:30px;"></a>';
+            }
+            else {
+                $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['delivery_slip_table'].'\''.', '.'\''.$val['delivery_slip_id'].'\''.');"><i class="fa fa-eye"></i></a>';
+            }
             $action = ""; $edit_option = ""; $delete_option = ""; $print_option = ""; $a5_print_option = ""; $inward_approval = "";
 
             if(empty($edit_access_error) && empty($val['cancelled']) && empty($delivery_slip_linked_id) && empty($is_approved)) {
@@ -943,5 +1055,135 @@
         }
         echo $msg;
         exit;	
+    }
+    if(isset($_REQUEST['barcode_row_index'])) {
+        $product_row_index = trim($_REQUEST['barcode_row_index']);
+
+        $size_name = "";
+        if(isset($_REQUEST['barcode_size'])) {
+            $size_name = trim($_REQUEST['barcode_size']);
+        }
+        $gsm_name = "";
+        if(isset($_REQUEST['barcode_gsm'])) {
+            $gsm_name = trim($_REQUEST['barcode_gsm']);
+        }
+        $bf_name = "";
+        if(isset($_REQUEST['barcode_bf'])) {
+            $bf_name = trim($_REQUEST['barcode_bf']);
+        }
+        $size_id = ""; $gsm_id = ""; $bf_id = "";
+        if(!empty($size_name)) {
+            $size_id = $obj->getTableColumnValue($GLOBALS['size_table'], 'size_name', ($obj->encode_decode('encrypt', $size_name)), 'size_id');
+        }
+        if(!empty($gsm_name)) {
+            $gsm_id = $obj->getTableColumnValue($GLOBALS['gsm_table'], 'gsm_name', ($obj->encode_decode('encrypt', $gsm_name)), 'gsm_id');
+        }
+        if(!empty($bf_name)) {
+            $bf_id = $obj->getTableColumnValue($GLOBALS['bf_table'], 'bf_name', ($obj->encode_decode('encrypt', $bf_name)), 'bf_id');
+        }
+        $size_list = array();
+        $size_list = $obj->getTableRecords($GLOBALS['size_table'], '', '');
+        $gsm_list = array();
+        $gsm_list = $obj->getTableRecords($GLOBALS['gsm_table'], '', '');
+        $bf_list = array();
+        $bf_list = $obj->getTableRecords($GLOBALS['bf_table'], '', '');
+        ?>
+        <tr class="product_row py-2" id="product_row<?php if(!empty($product_row_index)) { echo $product_row_index; } ?>">
+            <th class="sno text-center px-2 py-2"><?php if(!empty($product_row_index)) { echo $product_row_index; } ?></th>
+            <th class="size_element text-center px-2 py-2">
+                <div class="form-group">
+                    <div class="form-label-group in-border">
+                        <select name="size_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:RequestRowCheck(this);">
+                            <?php
+                                if(!empty($size_list)) {
+                                    foreach($size_list as $data) {
+                                        if(!empty($data['size_id']) && $data['size_id'] != $GLOBALS['null_value']) {
+                                            ?>
+                                            <option value="<?php echo $data['size_id']; ?>" <?php if(!empty($size_id) && $size_id == $data['size_id']) { ?>selected<?php } ?>>
+                                                <?php
+                                                    if(!empty($data['size_name']) && $data['size_name'] != $GLOBALS['null_value']) {
+                                                        echo $obj->encode_decode('decrypt', $data['size_name']);
+                                                    }
+                                                ?>
+                                            </option>
+                                            <?php
+                                        }
+                                    }
+                                }
+                            ?>
+                        </select>
+                        <label>Reels Size <span class="text-danger">*</span></label>
+                    </div>
+                </div>
+            </th>
+            <th class="gsm_element text-center px-2 py-2">
+                <div class="form-group">
+                    <div class="form-label-group in-border">
+                        <select name="gsm_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:RequestRowCheck(this);">
+                            <?php
+                                if(!empty($gsm_list)) {
+                                    foreach($gsm_list as $data) {
+                                        if(!empty($data['gsm_id']) && $data['gsm_id'] != $GLOBALS['null_value']) {
+                                            ?>
+                                            <option value="<?php echo $data['gsm_id']; ?>" <?php if(!empty($gsm_id) && $gsm_id == $data['gsm_id']) { ?>selected<?php } ?>>
+                                                <?php
+                                                    if(!empty($data['gsm_name']) && $data['gsm_name'] != $GLOBALS['null_value']) {
+                                                        echo $obj->encode_decode('decrypt', $data['gsm_name']);
+                                                    }
+                                                ?>
+                                            </option>
+                                            <?php
+                                        }
+                                    }
+                                }
+                            ?>
+                        </select>
+                        <label>GSM <span class="text-danger">*</span></label>
+                    </div>
+                </div>
+            </th>
+            <th class="bf_element text-center px-2 py-2">
+                <div class="form-group">
+                    <div class="form-label-group in-border">
+                        <select name="bf_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:RequestRowCheck(this);">
+                            <?php   
+                                if(!empty($bf_list)) {
+                                    foreach($bf_list as $data) {
+                                        if(!empty($data['bf_id']) && $data['bf_id'] != $GLOBALS['null_value']) {
+                                            ?>
+                                            <option value="<?php echo $data['bf_id']; ?>" <?php if(!empty($bf_id) && $bf_id == $data['bf_id']) { ?>selected<?php } ?>>
+                                                <?php
+                                                    if(!empty($data['bf_name']) && $data['bf_name'] != $GLOBALS['null_value']) {
+                                                        echo $obj->encode_decode('decrypt', $data['bf_name']);
+                                                    }
+                                                ?>
+                                            </option>
+                                            <?php
+                                        }
+                                    }
+                                }
+                            ?>
+                        </select>
+                        <label>BF <span class="text-danger">*</span></label>
+                    </div>
+                </div>
+            </th>
+            <th class="quantity_element text-center px-2 py-2">
+                <div class="form-group">
+                    <div class="form-label-group in-border">
+                        <input type="text" name="quantity[]" class="form-control shadow-none" style="width:90px;" onfocus="Javascript:KeyboardControls(this,'number',8,'');" value="1" onkeyup="Javascript:RequestRowCheck(this);">
+                    </div>
+                </div> 
+            </th>
+            <th class="delete_element text-center px-2 py-2">
+                <a class="pe-2" onclick="Javascript:DeleteRequestRow('product_row', '<?php if(!empty($product_row_index)) { echo $product_row_index; } ?>');" style="cursor:pointer;"><i class="fa fa-trash text-danger"></i></a>
+            </th>
+            <script type="text/javascript">
+                if(jQuery('#product_row<?php if(!empty($product_row_index)) { echo $product_row_index; } ?>').find('select').length > 0) {
+                    jQuery('#product_row<?php if(!empty($product_row_index)) { echo $product_row_index; } ?>').find('select').select2();
+                }
+            </script>
+        </tr>
+        <?php
     }
 ?>

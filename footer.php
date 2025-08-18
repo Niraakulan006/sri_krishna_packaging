@@ -8,6 +8,7 @@
     <i class="bi bi-arrow-up-circle-fill"></i>
 </button>
 <script type="text/javascript" src="js/chart.js"></script>
+<script type="text/javascript" src="js/html5-qrcode.min.js"></script>
 <script src="js/popper.min.js"></script>
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.bundle.min.js"></script>

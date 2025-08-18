@@ -10,7 +10,7 @@
 	if(isset($_REQUEST['show_factory_id'])) { 
         $show_factory_id = $_REQUEST['show_factory_id'];
 
-     $location = "";$factory_name = "";
+        $location = "";$factory_name = "";
         if(!empty($show_factory_id)){
             $factory_list = array();
             $factory_list = $obj->getTableRecords($GLOBALS['factory_table'],'factory_id',$show_factory_id);
@@ -28,7 +28,7 @@
         }
    
         ?>
-        <form class="poppins pd-20" name="factory_form" method="POST">
+        <form class="poppins pd-20 redirection_form" name="factory_form" method="POST">
 			<div class="card-header ">
 				<div class="row p-2">
 					<div class="col-lg-8 col-md-8 col-8 align-self-center">
@@ -129,7 +129,6 @@
 			if(preg_match("/^\d+$/", $check_user_id_ip_address)) {
              $name_location = ""; $factory_details = "";
                 if(!empty($factory_name)) {
-					
                     $factory_name = htmlentities($factory_name, ENT_QUOTES);
                     $lower_case_name = strtolower($factory_name);
                     $lower_case_name = htmlentities($lower_case_name, ENT_QUOTES);
@@ -141,8 +140,6 @@
                     $factory_details = $factory_name;
                     $factory_name = $obj->encode_decode('encrypt', $factory_name);
                 }
-				$bill_company_id = $GLOBALS['bill_company_id'];
-				
 				if(!empty($location)) {
 					$location = htmlentities($location, ENT_QUOTES);
                     if(!empty($factory_details)) {
@@ -186,9 +183,7 @@
          
 				$created_date_time = $GLOBALS['create_date_time_label']; $creator = $GLOBALS['creator'];
 				$creator_name = $obj->encode_decode('encrypt', $GLOBALS['creator_name']);
-                $factory_id = '4d4451774f4449774d6a55774d5449774d6a5a664d44453d';
               
-                $update_payment = 0;
 				if(empty($edit_id)) {
 					if(empty($prev_factory_id)) {
 						if(empty($prev_name_location_id)){
@@ -196,16 +191,27 @@
 							if(!empty($factory_name)) {
 								$action = "New factory Created - ".$obj->encode_decode("decrypt",$factory_name);
 							}
+                            $check_factory = array(); $factory_count = 0;
+                            $check_factory = $obj->getTableRecords($GLOBALS['factory_table'], '','');
+                            if(!empty($check_factory)) {
+                                $factory_count = count($check_factory);
+                            }
+
+                            $primary_factory = 0;
+                            if(empty($factory_count)) {
+                                $primary_factory = 1;
+                            }
 							$null_value = $GLOBALS['null_value'];
-							$columns = array('created_date_time', 'creator', 'creator_name','bill_company_id', 'factory_id', 'factory_name','lower_case_name', 'location','name_location','factory_details','deleted');
-							$values = array("'".$created_date_time."'", "'".$creator."'", "'".$creator_name."'","'".$bill_company_id."'", "'".$factory_id."'", "'".$factory_name."'", "'".$lower_case_name."'","'".$location."'","'".$name_location."'","'".$factory_details."'","'0'");
+							$columns = array('created_date_time', 'creator', 'creator_name', 'factory_id', 'factory_name','lower_case_name', 'location','name_location','factory_details', 'primary_factory','deleted');
+							$values = array("'".$created_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$null_value."'", "'".$factory_name."'", "'".$lower_case_name."'","'".$location."'","'".$name_location."'","'".$factory_details."'","'".$primary_factory."'","'0'");
 							$factory_insert_id = $obj->InsertSQL($GLOBALS['factory_table'], $columns, $values, 'factory_id', '', $action);			
 							if(preg_match("/^\d+$/", $factory_insert_id)) {
 								$factory_id = "";
                                 $factory_id = $obj->getTableColumnValue($GLOBALS['factory_table'], 'id', $factory_insert_id, 'factory_id');	
-                                $update_payment =1;
-								$result = array('number' => '1', 'msg' => 'Factory Successfully Created','factory_id' => $factory_id);
-								
+                                if(empty($factory_count) && !empty($factory_id)) {
+                                    $_SESSION[$GLOBALS['site_name_user_prefix'].'_bill_company_id'] = $factory_id;
+                                }
+								$result = array('number' => '1', 'msg' => 'Factory Successfully Created', 'factory_id' => $factory_id);
 							}
 							else {
 								$result = array('number' => '2', 'msg' => $factory_insert_id);
@@ -236,9 +242,7 @@
 								$values = array( "'".$creator_name."'","'".$factory_name."'", "'".$lower_case_name."'", "'".$location."'","'".$name_location."'","'".$factory_details."'");
 								$factory_update_id = $obj->UpdateSQL($GLOBALS['factory_table'], $getUniqueID, $columns, $values, $action);
 								if(preg_match("/^\d+$/", $factory_update_id)) {
-                                         $update_payment =1;
-
-									$result = array('number' => '1', 'msg' => 'Updated Successfully');					
+									$result = array('number' => '1', 'msg' => 'Updated Successfully', 'factory_id' => $factory_id);					
 								}
 								else {
 									$result = array('number' => '2', 'msg' => $factory_update_id);
@@ -279,9 +283,7 @@
 		   $search_text = $_POST['search_text'];
 		}
         $total_records_list = array();
-		if(!empty($GLOBALS['bill_company_id'])) {
-			$total_records_list = $obj->getTableRecords($GLOBALS['factory_table'],'','');
-		}
+        $total_records_list = $obj->getTableRecords($GLOBALS['factory_table'],'','');
 
        if(!empty($search_text)) {
             $search_text = strtolower($search_text);

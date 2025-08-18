@@ -15686,3 +15686,44 @@ span.flatpickr-weekday {
 .ordr2{order:2;}
 .ordr3{order:3;}
 }
+/* #reader {
+  max-width: 350px; 
+  margin: auto;
+  border: 1px solid black !important;
+}
+
+#reader video {
+  max-height: 150px !important;
+  max-width: 348px; 
+  object-fit: cover;
+} */
+/* Container */
+#reader {
+  width: 90%;                 /* Take most of modal width */
+  max-width: 350px;           /* Limit on large screens */
+  margin: auto;
+  border: 1px solid black !important;
+  box-sizing: border-box;     /* Prevent border from messing width */
+}
+
+/* Video inside */
+#reader video {
+  width: 100% !important;     /* Fill container */
+  max-height: 150px !important;
+  max-width: 348px !important; 
+  object-fit: cover;
+}
+
+/* On small screens (<400px), shrink max-height */
+@media (max-width: 400px) {
+  #reader video {
+    max-height: 120px !important;
+  }
+}
+
+/* On very small screens (<320px), shrink even more */
+@media (max-width: 320px) {
+  #reader video {
+    max-height: 100px !important;
+  }
+}

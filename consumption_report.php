@@ -67,26 +67,26 @@
                         <div class="border card-box" id="table_records_cover">
                             <div class="card-header align-products-center">
                                 <form name="stock_report_form" method="post">
-                                    <div class="row justify-content py-2 px-2 mt-3">
-                                        <div class="col-lg-2 col-md-4 col-6">
-                                            <div class="form-group mb-1">
-                                                <div class="form-label-group in-border pb-2">
+                                    <div class="row mx-0">
+                                        <div class="col-lg-2 col-md-4 col-6 py-2">
+                                            <div class="form-group">
+                                                <div class="form-label-group in-border">
                                                     <input type="date" id="from_date" name="from_date" value="<?php if(!empty($from_date)) { echo $from_date; } ?>" onchange="Javascript:getReport();checkDateCheck();" class="form-control shadow-none" placeholder="" required max="<?php if(!empty($current_date)) { echo $current_date; } ?>">
                                                     <label>From Date</label>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-2 col-md-4 col-6">
-                                            <div class="form-group mb-1">
-                                                <div class="form-label-group in-border pb-2">
+                                        <div class="col-lg-2 col-md-4 col-6 py-2">
+                                            <div class="form-group">
+                                                <div class="form-label-group in-border">
                                                     <input type="date" id="to_date" name="to_date" value="<?php if(!empty($to_date)) { echo $to_date; } ?>" onchange="Javascript:getReport();checkDateCheck();" class="form-control shadow-none" placeholder="" required max="<?php if(!empty($current_date)) { echo $current_date; } ?>">
                                                     <label>To Date</label>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-2 col-md-4 col-6">
-                                            <div class="form-group mb-1">
-                                                <div class="form-label-group in-border pb-2">
+                                        <div class="col-lg-2 col-md-4 col-6 py-2">
+                                            <div class="form-group">
+                                                <div class="form-label-group in-border">
                                                     <select name="size_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width:100%!important;" onchange="Javascript:getReport();">
                                                         <option value="">Select</option>
                                                         <?php
@@ -111,9 +111,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-2 col-md-4 col-6">
-                                            <div class="form-group mb-1">
-                                                <div class="form-label-group in-border pb-2">
+                                        <div class="col-lg-2 col-md-4 col-6 py-2">
+                                            <div class="form-group">
+                                                <div class="form-label-group in-border">
                                                     <select name="gsm_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width:100%!important;" onchange="Javascript:getReport();">
                                                         <option value="">Select</option>
                                                         <?php
@@ -138,9 +138,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-2 col-md-4 col-6">
-                                            <div class="form-group mb-1">
-                                                <div class="form-label-group in-border pb-2">
+                                        <div class="col-lg-2 col-md-4 col-6 py-2">
+                                            <div class="form-group">
+                                                <div class="form-label-group in-border">
                                                     <select name="bf_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width:100%!important;" onchange="Javascript:getReport();">
                                                         <option value="">Select</option>
                                                         <?php
@@ -165,16 +165,15 @@
                                                 </div>
                                             </div>
                                         </div>
-                                            <?php if(!empty($size_id) || !empty($gsm_id) || !empty($bf_id)) { ?>
-                                            <div class="col-lg-2 col-md-3 col-3">
-                                                <button class="btn btn-danger float-end" style="font-size:11px;" type="button" onclick="window.open('consumption_report.php','_self')"> <i class="fa fa-arrow-circle-o-left"></i> Back </button>
-                                            </div>
-                                                <?php } ?>
-                                            
-                                        <div class="col-lg-12 col-md-3 col-9">
+                                        <div class="col-lg-2 col-md-4 col-8 <?php if(empty($size_id) && empty($gsm_id) && empty($bf_id)){ ?>ms-auto<?php } ?> py-2">
                                             <button class="btn btn-success float-end" style="font-size:11px;" type="button" onclick="ExportToExcel();"> <i class="fa fa-download"></i> Excel</button>
                                             <button class="btn btn-success float-end mx-2" style="font-size:11px;" type="button" onClick="window.open('reports/rpt_consumption_report.php?from_date=<?php echo $from_date; ?>&to_date=<?php echo $to_date; ?>&size_id=<?php echo $size_id; ?>&gsm_id=<?php echo $gsm_id; ?>&bf_id=<?php echo $bf_id; ?>&from=')"> <i class="fa fa-print"></i> Print </button>
                                         </div>
+                                        <?php if(!empty($size_id) || !empty($gsm_id) || !empty($bf_id)) { ?>
+                                            <div class="col-lg-1 col-md-2 col-4 py-2 ms-auto">
+                                                <button class="btn btn-danger float-end" style="font-size:11px;" type="button" onclick="window.open('consumption_report.php','_self')"> <i class="fa fa-arrow-circle-o-left"></i> Back </button>
+                                            </div>
+                                        <?php } ?>
                                     </div>
                                 </form>
                             </div>
@@ -183,18 +182,18 @@
                                     <div class="table-responsive">
                                         <?php if(empty($size_id) && empty($gsm_id) && empty($bf_id)) { ?>
                                             <table class="table table-bordered nowrap text-center smallfnt" id="tbl_stock_report">
-                                                <thead class="bg-ligt" style="font-size:13px!important;font-weight:bold!important;">
-                                                    <tr class="bg-primary">
+                                                <thead style="font-size:13px!important;font-weight:bold!important;">
+                                                    <tr>
                                                         <th colspan="5" class="text-center" style="border: 1px solid #dee2e6;font-weight: bold; font-size: 18px;">
-                                                            Consumption Report - <?php if(!empty($from_date)){ echo " ( " .date('d-m-Y',strtotime($from_date )) ." to ". date('d-m-Y',strtotime($to_date )). " )"; } ?>
+                                                            Consumption Report - <?php if(!empty($from_date)){ echo " (" .date('d-m-Y',strtotime($from_date )) ." to ". date('d-m-Y',strtotime($to_date )). ")"; } ?>
                                                         </th>
                                                     </tr>
-                                                    <tr class="bg-primary" style="vertical-align:middle!important;">
+                                                    <tr class="text-white" style="vertical-align:middle!important; background-color:#09811e!important;">
                                                         <th class="fw-bold">S.No</th>
-                                                        <th class="fw-bold" style="width:200px;">Size</th>
-                                                        <th class="fw-bold" style="width:200px;">GSM</th>
-                                                        <th class="fw-bold" style="width:200px;">BF</th>
-                                                        <th class="fw-bold" style="width:200px;">Consumption QTY</th>
+                                                        <th class="fw-bold">Size</th>
+                                                        <th class="fw-bold">GSM</th>
+                                                        <th class="fw-bold">BF</th>
+                                                        <th class="fw-bold">Consumption QTY</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -240,7 +239,7 @@
                                                             <?php 
                                                             } 
                                                             ?>
-                                                            <tr class="bg-light">
+                                                            <tr>
                                                                 <th colspan="4" class="text-end fw-bold ">Total</th>
                                                                 <th class="fw-bold"><?php echo $total_stock; ?></th>
                                                             </tr>
@@ -249,7 +248,7 @@
                                                         else {
                                                     ?>
                                                             <tr>
-                                                                <td colspan="3" class="text-center fw-bold">Sorry! No records found</td>
+                                                                <td colspan="5" class="text-center fw-bold">Sorry! No records found</td>
                                                             </tr>
                                                     <?php 
                                                         } 
@@ -260,17 +259,17 @@
                                         <?php if(!empty($size_id) || !empty($gsm_id) || !empty($bf_id)) { ?>
                                             <table class="table table-bordered nowrap text-center smallfnt" id="tbl_stock_report">
                                                 <thead style="font-size:13px!important;font-weight:bold!important;">     
-                                                    <tr class="bg-success">
+                                                    <tr>
                                                         <th colspan="7" class="text-center" style="border: 1px solid #dee2e6;font-weight: bold; font-size: 16px;">
-                                                            Consumption Report - <?php if(!empty($from_date)){ echo " ( " .date('d-m-Y',strtotime($from_date )) ." to ". date('d-m-Y',strtotime($to_date )). " )"; }?>
+                                                            Consumption Report - <?php if(!empty($from_date)){ echo " (" .date('d-m-Y',strtotime($from_date )) ." to ". date('d-m-Y',strtotime($to_date )). ")"; }?>
                                                         </th>
                                                     </tr>
-                                                    <tr class="bg-success" style="vertical-align:middle!important;">
+                                                    <tr class="text-white" style="vertical-align:middle!important; background-color:#09811e!important;">
                                                         <th class="fw-bold">S.No</th>
-                                                        <th class="fw-bold" style="width:200px;">Bill Date</th>
-                                                        <th class="fw-bold" style="width:200px;">Bill No</th>
-                                                        <th class="fw-bold" style="width:200px;">Location</th>
-                                                        <th class="fw-bold" style="width:200px;">Consumption Qty</th>
+                                                        <th class="fw-bold">Bill Date</th>
+                                                        <th class="fw-bold">Bill No</th>
+                                                        <th class="fw-bold">Location</th>
+                                                        <th class="fw-bold">Consumption Qty</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -293,6 +292,7 @@
                                                                                 echo $data['bill_unique_number'];
                                                                             }
                                                                         ?>
+                                                                        &nbsp; <a href="Javascript:BillModalContent('<?php if(!empty($data['bill_unique_id']) && $data['bill_unique_id'] != $GLOBALS['null_value']) { echo $data['bill_unique_id']; } ?>');"><i class="fa fa-info-circle"></i></a>
                                                                     </th>
                                                                     <th>
                                                                         <?php 
@@ -315,7 +315,7 @@
                                                                 <?php 
                                                             } 
                                                             ?>
-                                                            <tr class="bg-light">
+                                                            <tr>
                                                                 <th colspan="4" class="text-end fw-bold">Total &ensp;</th>
                                                                 <th class="fw-bold"><?php echo $total_outward; ?></th>
                                                             </tr>
@@ -372,9 +372,56 @@
         if(jQuery('select[name="bf_id"]').length > 0) {
             jQuery('select[name="bf_id"]').val(bf_id);
         }
-
         getReport();
-        
+    }
+    function BillModalContent(bill_id) {
+        bill_id = bill_id.trim();
+
+        var post_url = "dashboard_changes.php?check_login_session=1";
+        jQuery.ajax({
+            url: post_url,
+            success: function (check_login_session) {
+                if (check_login_session == 1) {
+                    jQuery('#BillModal .modal-header h1').html("Consumption Entry Preview");
+
+                    var a4_url = "reports/rpt_consumption_entry_a4.php?view_consumption_entry_id=" + bill_id;
+                    var a5_url = "reports/rpt_consumption_entry_a5.php?view_consumption_entry_id=" + bill_id;
+
+                    jQuery('.bill_modal_button').trigger("click");
+
+                    var iframe = '<iframe id="billPreviewIframe" src="' + a4_url + '" width="100%" height="500px" style="border:none;"></iframe>';
+                    var menu_html = `
+                        <ul class="nav nav-tabs mb-2">
+                            <li class="nav-item">
+                                <a class="nav-link active " href="#" id="btnA4">A4 Print</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" id="btnA5">A5 Print</a>
+                            </li>
+                        </ul>
+                    `;
+
+                    jQuery('#BillModal .modal-body').html(menu_html + iframe);
+
+                    jQuery('#btnA4').off('click').on('click', function (e) {
+                        e.preventDefault();
+                        jQuery('#btnA4').addClass('active');
+                        jQuery('#btnA5').removeClass('active');
+                        jQuery('#billPreviewIframe').attr('src', a4_url);
+                    });
+
+                    jQuery('#btnA5').off('click').on('click', function (e) {
+                        e.preventDefault();
+                        jQuery('#btnA5').addClass('active');
+                        jQuery('#btnA4').removeClass('active');
+                        jQuery('#billPreviewIframe').attr('src', a5_url);
+                    });
+
+                } else {
+                    window.location.reload();
+                }
+            }
+        });
     }
 </script>
 

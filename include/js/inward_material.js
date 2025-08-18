@@ -45,6 +45,7 @@ function GetLocation() {
             jQuery('#selected_godown_id_div').removeClass('d-none');
         }
     }
+    GetCurrentStock('inward_material');
 }
 function AddProductRow(empty_row) {
     var check_login_session = 1;

@@ -514,7 +514,8 @@
 
                 $created_date_time = $GLOBALS['create_date_time_label']; $creator = $GLOBALS['creator'];
                 $creator_name = $obj->encode_decode('encrypt', $GLOBALS['creator_name']);
-                $type = $GLOBALS['staff_user_type'];
+                $type = $GLOBALS['godown_user_type'];
+                $bill_company_id = $GLOBALS['bill_company_id'];
                 if(empty($edit_id)) {
                     if(empty($prev_godown_id)) {
                         if(empty($prev_user_id)) {
@@ -528,9 +529,9 @@
                                     $null_value = $GLOBALS['null_value'];
 
                                     $columns = array(); $values = array();
-                                    $columns = array('created_date_time', 'creator', 'creator_name', 'godown_id', 'godown_name', 'lower_case_name', 'location', 'name_location', 'lowercase_name_location', 'incharge_name', 'mobile_number', 'user_id', 'password', 'lowercase_incharge_name', 'godown_details', 'role_id','deleted');
+                                    $columns = array('created_date_time', 'creator', 'creator_name', 'bill_company_id', 'godown_id', 'godown_name', 'lower_case_name', 'location', 'name_location', 'lowercase_name_location', 'incharge_name', 'mobile_number', 'user_id', 'password', 'lowercase_incharge_name', 'godown_details', 'role_id','deleted');
 
-                                    $values = array("'".$created_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$null_value."'", "'".$godown_name."'", "'".$lower_case_name."'", "'".$location."'", "'".$name_location."'", "'".$lowercase_name_location."'", "'".$incharge_name."'", "'".$mobile_number."'", "'".$user_id."'", "'".$password."'", "'".$lowercase_incharge_name."'", "'".$godown_details."'","'".$role_id."'", "'0'");
+                                    $values = array("'".$created_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$null_value."'", "'".$godown_name."'", "'".$lower_case_name."'", "'".$location."'", "'".$name_location."'", "'".$lowercase_name_location."'", "'".$incharge_name."'", "'".$mobile_number."'", "'".$user_id."'", "'".$password."'", "'".$lowercase_incharge_name."'", "'".$godown_details."'","'".$role_id."'", "'0'");
 
                                     $godown_insert_id = $obj->InsertSQL($GLOBALS['godown_table'], $columns, $values,'godown_id', '', $action);
                 
@@ -599,32 +600,21 @@
                                         $godown_update_id = $obj->UpdateSQL($GLOBALS['godown_table'], $godown_unique_id, $columns, $values, $action);
 
                                         if(preg_match("/^\d+$/", $godown_update_id)) {
+                                            $user_unique_id = "";
+                                            $user_unique_id = $obj->getTableColumnValue($GLOBALS['user_table'], 'godown_id', $edit_id, 'id'); 
 
-                                            if(preg_match("/^\d+$/", $godown_update_id)) {
-                                                        // $result = array('number' => '1', 'msg' => 'Updated Successfully');	
-                                                    $user_unique_id = "";
-                                                    $user_unique_id = $obj->getTableColumnValue($GLOBALS['user_table'], 'godown_id', $edit_id, 'id'); 
+                                            $columns = array(); $values = array();
+                                            $columns = array('creator_name', 'name','role_id','login_id' ,'mobile_number', 'name_mobile', 'lower_case_login_id', 'password');
+                
+                                            $values = array("'".$creator_name."'", "'".$incharge_name."'", "'".$role_id."'", "'".$user_id."'","'".$mobile_number."'", "'".$incharge_name_mobile."'", "'".$lower_case_user_id."'", "'".$password."'");
+                                            $user_update_id = $obj->UpdateSQL($GLOBALS['user_table'], $user_unique_id, $columns, $values, $action);
 
-                                                    $columns = array(); $values = array();
-                                                    $columns = array('creator_name', 'name','role_id','login_id' ,'mobile_number', 'name_mobile', 'lower_case_login_id', 'password', 'admin', 'type', 'deleted');
-                        
-                                                    $values = array("'".$creator_name."'", "'".$incharge_name."'", "'".$role_id."'", "'".$user_id."'","'".$mobile_number."'", "'".$incharge_name_mobile."'", "'".$lower_case_user_id."'", "'".$password."'", "'".$admin."'", "'".$type."'", "'0'");
-                                                    // User Creation
-                                                $user_update_id = $obj->UpdateSQL($GLOBALS['user_table'], $user_unique_id, $columns, $values, $action);
-
-                                                    if(preg_match("/^\d+$/", $user_update_id)) {
-                                                        $result = array('number' => '1', 'msg' => 'Godown Successfully Updated');
-                                                    }
-                                                    else {
-                                                        $result = array('number' => '2', 'msg' => $user_update_id);
-                                                    }
-                                                        // $result = array('number' => '1', 'msg' => 'Godown Successfully Created');
-                                                
-                                            }else{
-                                                    $result = array('number' => '2', 'msg' => $godown_update_id);
+                                            if(preg_match("/^\d+$/", $user_update_id)) {
+                                                $result = array('number' => '1', 'msg' => 'Godown Successfully Updated');
                                             }
-
-                                            
+                                            else {
+                                                $result = array('number' => '2', 'msg' => $user_update_id);
+                                            }
                                         }
                                         else {
                                             $result = array('number' => '2', 'msg' => $godown_update_id);
@@ -684,7 +674,16 @@
         $total_records_list = array();
         $total_records_list = $obj->getTableRecords($GLOBALS['godown_table'], '', ''); 
 
-        
+        if(!empty($login_godown_id) && !empty($total_records_list)) {
+			$records_list = array();
+			foreach($total_records_list as $row) {
+				if(!empty($row['godown_id']) && $row['godown_id'] == $login_godown_id) {
+					$records_list[] = $row;
+				}
+			}
+			$total_records_list = $records_list;
+		}
+
         if(!empty($search_text)) {
             $search_text = strtolower($search_text);
             $list = array();
@@ -756,7 +755,7 @@
                             <tr>
                                 <td><?php echo $index; ?></td>
                                 <td>
-                                     <?php
+                                    <?php
                                         if(!empty($list['godown_name']) && $list['godown_name'] != $GLOBALS['null_value']) {
                                             echo $obj->encode_decode('decrypt', $list['godown_name']);
                                             if(!empty($list['location']) && $list['location'] != $GLOBALS['null_value']) {
@@ -764,15 +763,6 @@
                                             }
                                         }
                                     ?>
-                                    <div class="w-100 py-2">
-                                       
-                                        <?php
-                                            if(!empty($list['creator_name'])) {
-                                                $list['creator_name'] = $obj->encode_decode('decrypt', $list['creator_name']);
-                                                echo " Creator : ". $list['creator_name'];
-                                            }
-                                        ?>                                        
-                                    </div>
                                 </td>   
                                 <td>
                                     <?php
@@ -846,6 +836,14 @@ if(isset($_REQUEST['delete_godown_id'])) {
                 $action = "Godown Deleted. Name - ".($obj->encode_decode('decrypt', $name));
             }
             if(empty($delete_access_error)) {
+                $user_unique_id = "";
+                $user_unique_id = $obj->getTableColumnValue($GLOBALS['user_table'], 'godown_id', $delete_godown_id, 'id');
+                if(preg_match("/^\d+$/", $user_unique_id)) {
+                    $columns = array(); $values = array();			
+                    $columns = array('deleted');
+                    $values = array("'1'");
+                    $delete_user = $obj->UpdateSQL($GLOBALS['user_table'], $user_unique_id, $columns, $values, $action);
+                }
                 $columns = array(); $values = array();			
                 $columns = array('deleted');
                 $values = array("'1'");
@@ -866,4 +864,4 @@ if(isset($_REQUEST['delete_godown_id'])) {
     exit;	
 }
 
-    ?>
+?>

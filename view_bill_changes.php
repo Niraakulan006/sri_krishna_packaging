@@ -27,6 +27,9 @@
         else if($table == $GLOBALS['consumption_entry_table']) {
             $field_id = "consumption_entry_id";
         }
+        else if($table == $GLOBALS['stock_adjustment_table']) {
+            $field_id = "stock_adjustment_id";
+        }
         $bill_details = array();
         $bill_details = $obj->getTableRecords($table, $field_id, $bill_id);
 
@@ -137,8 +140,7 @@
                             <th class="text-center px-2 py-2">GSM</th>
                             <th class="text-center px-2 py-2">BF</th>
                             <th class="text-center px-2 py-2">Quantity</th>
-                            <?php 
-                            if($table == $GLOBALS['inward_material_table']) { ?>
+                            <?php if($table == $GLOBALS['inward_material_table']) { ?>
                                 <th class="text-center px-2 py-2">Barcode</th>
                             <?php } ?>
                         </tr>
@@ -196,23 +198,23 @@
                                                     }
                                                 ?>
                                             </th>
-                                            <th class="text-center px-2 py-2">
-                                                <?php
-
-                                                $barcode_file = $obj->CreateBarcode(
-                                                    $size_names[$i],
-                                                    $gsm_names[$i],
-                                                    $bf_names[$i],
-                                                    $supplier_name,
-                                                    $size_id[$i],
-                                                    $gsm_id[$i],
-                                                    $bf_id[$i]
-                                                );
-                                                
-                                                    echo '<img src="' . $obj->barcode_directory() . $barcode_file . '" alt="Barcode" style="width:150px; height:40px;"><br>';
-                                        
-                                                ?>
-                                            </tr>
+                                            <?php if($table == $GLOBALS['inward_material_table']) { ?>
+                                                <th class="text-center px-2 py-2">
+                                                    <?php
+                                                        $barcode_file = $obj->CreateBarcode(
+                                                            $size_names[$i],
+                                                            $gsm_names[$i],
+                                                            $bf_names[$i],
+                                                            $supplier_name,
+                                                            $size_id[$i],
+                                                            $gsm_id[$i],
+                                                            $bf_id[$i]
+                                                        );
+                                                        echo '<img src="' . $obj->barcode_directory() . $barcode_file . '" alt="Barcode" style="width:150px; height:40px;"><br>';
+                                                    ?>
+                                                </th>
+                                            <?php } ?>
+                                        </tr>
                                         <?php
                                     }
                                 }
@@ -357,5 +359,40 @@
             </div>
         </div>
         <?php
+    }
+    if(isset($_REQUEST['stock_location_type'])) {
+        $location_type = trim($_REQUEST['stock_location_type']);
+
+        $factory_id = "";
+        if(isset($_REQUEST['stock_factory_id'])) {
+            $factory_id = trim($_REQUEST['stock_factory_id']);
+        }
+        $godown_id = "";
+        if(isset($_REQUEST['stock_godown_id'])) {
+            $godown_id = trim($_REQUEST['stock_godown_id']);
+        }
+        $size_id = "";
+        if(isset($_REQUEST['stock_size_id'])) {
+            $size_id = trim($_REQUEST['stock_size_id']);
+        }
+        $gsm_id = "";
+        if(isset($_REQUEST['stock_gsm_id'])) {
+            $gsm_id = trim($_REQUEST['stock_gsm_id']);
+        }
+        $bf_id = "";
+        if(isset($_REQUEST['stock_bf_id'])) {
+            $bf_id = trim($_REQUEST['stock_bf_id']);
+        }
+        $current_stock = "";
+        if($location_type == '1') {
+            $current_stock = $obj->ShowCurrentStock($godown_id, '', $size_id, $gsm_id, $bf_id);
+        }
+        else if($location_type == '2') {
+            $current_stock = $obj->ShowCurrentStock('', $factory_id, $size_id, $gsm_id, $bf_id);
+        }
+        if(empty($current_stock)) {
+            $current_stock = "";
+        }
+        echo $current_stock;
     }
 ?>

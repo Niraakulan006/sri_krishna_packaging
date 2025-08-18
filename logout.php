@@ -1,7 +1,7 @@
 <?php 
 	session_start();
     $page = "Dashboard";
-    include("include_user_check_and_files.php");
+    include("include_files.php");
 
 	$backup = "";
 	$backup = $obj->daily_db_backup();

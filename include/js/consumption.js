@@ -106,65 +106,51 @@ function AddConsumptionRow(empty_row) {
                         });
                     }
                 }
-                var current_stock =0
-                if(jQuery('input[name="current_stock"]').length > 0) {
-                    current_stock = jQuery('input[name="current_stock"]').val().trim();
-                }
                 
-                if(selected_quantity > current_stock){
-                    stock= 0;
-                }
                 if(parseInt(all_errors_check) == 1) {
                     if(error == "") {
-                        if(parseInt(stock) == 1){
-                            var post_url = "consumption_entry_changes.php?product_row_index="+product_count+"&selected_size_id="+selected_size_id+"&selected_gsm_id="+selected_gsm_id+"&selected_bf_id="+selected_bf_id+"&selected_quantity="+selected_quantity;
-                            jQuery.ajax({
-                                url: post_url, success: function (result) {
-                                    if (jQuery('.product_table tbody').find('tr.product_row').length > 0) {
-                                        jQuery('.product_table tbody').find('tr.product_row:last').after(result);
-                                    }
-                                    else {
-                                        jQuery('.product_table tbody').html(result);
-                                    }
-                                    if(jQuery('input[name="product_count"]').length > 0) {
-                                        jQuery('input[name="product_count"]').val(product_count);
-                                    }
-                                    if (jQuery('.tableheight .product_table tbody tr.product_row').length > 0) {
-                                        var scroll_container = jQuery('.tableheight');
-                                        var last_row = jQuery('.tableheight .product_table tbody tr.product_row:last');
-
-                                        scroll_container.stop().animate({
-                                            scrollTop: scroll_container.scrollTop() + last_row.position().top
-                                        }, 300);
-                                    }
-                                    if(jQuery('select[name="selected_size_id"]').length > 0) {
-                                        jQuery('select[name="selected_size_id"]').val('').trigger('change');
-                                    }
-                                    if(jQuery('select[name="selected_gsm_id"]').length > 0) {
-                                        jQuery('select[name="selected_gsm_id"]').val('').trigger('change');
-                                    }
-                                    if(jQuery('select[name="selected_bf_id"]').length > 0) {
-                                        jQuery('select[name="selected_bf_id"]').val('').trigger('change');
-                                    }
-                                    if(jQuery('input[name="selected_quantity"]').length > 0) {
-                                        jQuery('input[name="selected_quantity"]').val('');
-                                    }
-                                    if (jQuery('.infos').length > 0) {
-                                        jQuery('.infos').html('');
-                                    }
-                                    if(jQuery('.add_product_button').length > 0) {
-                                        jQuery('.add_product_button').attr('disabled', false);
-                                    }
-                                    SnoCalcPlus();
-                                    TotalReelsCount();
+                        var post_url = "consumption_entry_changes.php?product_row_index="+product_count+"&selected_size_id="+selected_size_id+"&selected_gsm_id="+selected_gsm_id+"&selected_bf_id="+selected_bf_id+"&selected_quantity="+selected_quantity;
+                        jQuery.ajax({
+                            url: post_url, success: function (result) {
+                                if (jQuery('.product_table tbody').find('tr.product_row').length > 0) {
+                                    jQuery('.product_table tbody').find('tr.product_row:last').after(result);
                                 }
-                            });
-                        }else{
-                            jQuery('.product_table').before('<span class="infos w-100 text-center mb-1 fw-bold" style="font-size: 15px;">Quantity is Greater than Current Stock</span>');
-                            if(jQuery('.add_product_button').length > 0) {
-                                jQuery('.add_product_button').attr('disabled', false);
+                                else {
+                                    jQuery('.product_table tbody').html(result);
+                                }
+                                if(jQuery('input[name="product_count"]').length > 0) {
+                                    jQuery('input[name="product_count"]').val(product_count);
+                                }
+                                if (jQuery('.tableheight .product_table tbody tr.product_row').length > 0) {
+                                    var scroll_container = jQuery('.tableheight');
+                                    var last_row = jQuery('.tableheight .product_table tbody tr.product_row:last');
+
+                                    scroll_container.stop().animate({
+                                        scrollTop: scroll_container.scrollTop() + last_row.position().top
+                                    }, 300);
+                                }
+                                if(jQuery('select[name="selected_size_id"]').length > 0) {
+                                    jQuery('select[name="selected_size_id"]').val('').trigger('change');
+                                }
+                                if(jQuery('select[name="selected_gsm_id"]').length > 0) {
+                                    jQuery('select[name="selected_gsm_id"]').val('').trigger('change');
+                                }
+                                if(jQuery('select[name="selected_bf_id"]').length > 0) {
+                                    jQuery('select[name="selected_bf_id"]').val('').trigger('change');
+                                }
+                                if(jQuery('input[name="selected_quantity"]').length > 0) {
+                                    jQuery('input[name="selected_quantity"]').val('');
+                                }
+                                if (jQuery('.infos').length > 0) {
+                                    jQuery('.infos').html('');
+                                }
+                                if(jQuery('.add_product_button').length > 0) {
+                                    jQuery('.add_product_button').attr('disabled', false);
+                                }
+                                SnoCalcPlus();
+                                TotalReelsCount();
                             }
-                        }
+                        });
                     }
                     else {
                         if (jQuery('.table-infos').length > 0) {
@@ -188,7 +174,7 @@ function AddConsumptionRow(empty_row) {
 }
 
 
-function DeleteProductRow(id_name, row_index) {
+function DeleteConsumptionRow(id_name, row_index) {
 	var check_login_session = 1;
 	var post_url = "dashboard_changes.php?check_login_session=1";
 	jQuery.ajax({
@@ -225,38 +211,4 @@ function ConsumptionRowCheck(obj) {
         }
     }
     TotalReelsCount();
-}
-
-function GetCurrentStock() {
-    if (jQuery('.current_stock_div').length > 0) {
-        jQuery('.current_stock_div').html('');
-    }
-    var selected_factory_id = ""; var selected_size_id = ""; var selected_gsm_id = ""; var selected_bf_id = "";
-    if (jQuery('select[name="selected_factory_id"]').length > 0) {
-        selected_factory_id = jQuery('select[name="selected_factory_id"]').val();
-    }
-    if (jQuery('select[name="selected_size_id"]').length > 0) {
-        selected_size_id = jQuery('select[name="selected_size_id"]').val();
-    }
-    if (jQuery('select[name="selected_gsm_id"]').length > 0) {
-        selected_gsm_id = jQuery('select[name="selected_gsm_id"]').val();
-    }
-    if (jQuery('select[name="selected_bf_id"]').length > 0) {
-        selected_bf_id = jQuery('select[name="selected_bf_id"]').val();
-    }
- 
-    var post_url = "consumption_entry_changes.php?get_factory_id=" + selected_factory_id + "&selected_size_id=" + selected_size_id + "&selected_gsm_id=" + selected_gsm_id + "&selected_bf_id=" + selected_bf_id;
-
-    jQuery.ajax({
-        url: post_url, success: function (result) {
-            result = result.split("$$$");
-           
-            if (jQuery('.current_stock_div').length > 0) {
-                jQuery('.current_stock_div').html(result[0]);
-            }
-            if (jQuery('input[name="current_stock"]').length > 0) {
-                jQuery('input[name="current_stock"]').val(result[1].trim());
-            }
-        }
-    });
 }

@@ -4,7 +4,8 @@
 
 	date_default_timezone_set('Asia/Calcutta');
 	$GLOBALS['create_date_time_label'] = date('Y-m-d H:i:s');
-	$GLOBALS['site_name_user_prefix'] = "skp_".date("d-m-Y"); $GLOBALS['user_id'] = ""; $GLOBALS['creator'] = "";
+	$GLOBALS['site_name_user_prefix'] = $_SERVER['SERVER_NAME']."_sri_krishna_".date("d-m-Y");
+	$GLOBALS['user_id'] = ""; $GLOBALS['creator'] = "";
 	$GLOBALS['creator_name'] = ""; $GLOBALS['bill_company_id'] = ""; $GLOBALS['null_value'] = "NULL"; $GLOBALS['user_type'] = "";
 
 	$GLOBALS['page_number'] = 1; $GLOBALS['page_limit'] = 10; $GLOBALS['page_limit_list'] = array("10", "25", "50", "100");
@@ -13,7 +14,6 @@
 	$GLOBALS['log_backup_file'] = $GLOBALS['backup_folder_name']."/logs/".date("Y").".csv"; 
 
 	// Factory Id
-    $GLOBALS['bill_company_id'] = '4d4451774f4449774d6a55774d5449774d6a5a664d44453d';
 	$GLOBALS['max_user_count'] = 10; 
 	$GLOBALS['max_role_count'] = 10; 
 	$GLOBALS['max_godown_count'] = 10; 
@@ -78,7 +78,7 @@
 
 	$GLOBALS['Reset_to_one'] = "Reset To 1"; $GLOBALS['continue_last_number'] = "Continue from last number"; $GLOBALS['custom_number'] = "Custom Number";
 	
-	$GLOBALS['admin_user_type'] = "Super Admin"; $GLOBALS['staff_user_type'] = "Staff";
+	$GLOBALS['admin_user_type'] = "Super Admin"; $GLOBALS['staff_user_type'] = "Staff"; $GLOBALS['godown_user_type'] = "Godown Incharge"; 
 
 	if(!empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'])) {
 		$GLOBALS['creator'] = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'];
@@ -89,8 +89,8 @@
 	if(isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type']) && !empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type'])) {
 		$GLOBALS['user_type'] = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type'];
 	}
-	if(!empty($_SESSION['bill_company_id']) && isset($_SESSION['bill_company_id'])) {
-		$GLOBALS['bill_company_id'] = $_SESSION['bill_company_id'];
+	if(!empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_bill_company_id']) && isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_bill_company_id'])) {
+		$GLOBALS['bill_company_id'] = $_SESSION[$GLOBALS['site_name_user_prefix'].'_bill_company_id'];
 	}
 	$stock_action_plus = "Plus"; $stock_action_minus = "Minus";
 ?>

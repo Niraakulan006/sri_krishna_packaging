@@ -237,12 +237,27 @@
             $pdf->SetX(10);
 
             $factory_name = "";
-            if(!empty($factory_id) && $factory_id!=$GLOBALS['null_value']) {
+            if(!empty($factory_id) && $factory_id !=$GLOBALS['null_value']) {
                 $factory_name = $obj->GetTableColumnValue($GLOBALS['factory_table'], 'factory_id', $factory_id, 'factory_name');
             }
             $godown_name = "";
-            if(!empty($godown_id) && $godown_id!=$GLOBALS['null_value']) {
+            if(!empty($godown_id) && $godown_id !=$GLOBALS['null_value']) {
                 $godown_name = $obj->GetTableColumnValue($GLOBALS['godown_table'], 'godown_id', $godown_id, 'godown_name');
+            }
+            $size_name = "";
+            if(!empty($size_id) && $size_id !=$GLOBALS['null_value']) {
+                $size_name = $obj->GetTableColumnValue($GLOBALS['size_table'], 'size_id', $size_id, 'size_name');
+                $size_name = $obj->encode_decode('decrypt',$size_name);
+            }
+            $gsm_name = "";
+            if(!empty($gsm_id) && $gsm_id !=$GLOBALS['null_value']) {
+                $gsm_name = $obj->GetTableColumnValue($GLOBALS['gsm_table'], 'gsm_id', $gsm_id, 'gsm_name');
+                $gsm_name = $obj->encode_decode('decrypt',$gsm_name);
+            }
+            $bf_name = "";
+            if(!empty($bf_id) && $bf_id !=$GLOBALS['null_value']) {
+                $bf_name = $obj->GetTableColumnValue($GLOBALS['bf_table'], 'bf_id', $bf_id, 'bf_name');
+                $bf_name = $obj->encode_decode('decrypt',$bf_name);
             }
 
             if(!empty($factory_name) && $factory_name!=$GLOBALS['null_value']) {
@@ -250,14 +265,15 @@
             }else{
                 $pdf->Cell(190,7,'Godown - '.html_entity_decode($obj->encode_decode('decrypt', $godown_name)).'  - ( '.date('d-m-Y',strtotime($from_date)) .' to '.date('d-m-Y',strtotime($to_date)).' )',1,1,'C',0);
             }
+            $pdf->Cell(190,7,'Size : '.$size_name.' / GSM : '.$gsm_name.' / BF : '.$bf_name,1,1,'C',0);
             
             $product_start_y = $pdf->GetY();
             $pdf->SetX(10);
             $pdf->Cell(10, 8, 'S.No', 1, 0, 'C', 0);
-            $pdf->Cell(25, 8, 'Bill No', 1, 0, 'C', 0);
             $pdf->Cell(25, 8, 'Bill Date', 1, 0, 'C', 0);
+            $pdf->Cell(25, 8, 'Bill No', 1, 0, 'C', 0);
             $pdf->Cell(35, 8, 'Bill Type', 1, 0, 'C', 0);
-            $pdf->Cell(45, 8, 'remarks', 1, 0, 'C', 0);
+            $pdf->Cell(45, 8, 'Remarks', 1, 0, 'C', 0);
             $pdf->Cell(25, 8, 'Inward', 1, 0, 'C', 0);
             $pdf->Cell(25, 8, 'Outward', 1, 1, 'C', 0);
             
@@ -291,17 +307,17 @@
                     $pdf->SetY($bill_to_y);
                     $pdf->SetX(10);
                     if(!empty($factory_name) && $factory_name!=$GLOBALS['null_value']) {
-                        $pdf->Cell(190,7,'Factory - '.html_entity_decode($obj->encode_decode('decrypt', $factory_name)).'  - ( '.date('d-m-Y',strtotime($from_date)) .' to '.date('d-m-Y',strtotime($to_date)).' )',1,1,'C',0);
+                        $pdf->Cell(190,7,'Factory - '.html_entity_decode($obj->encode_decode('decrypt', $factory_name)).' - ('.date('d-m-Y',strtotime($from_date)) .' to '.date('d-m-Y',strtotime($to_date)).')',1,1,'C',0);
                     }else{
-                        $pdf->Cell(190,7,'Godown - '.html_entity_decode($obj->encode_decode('decrypt', $godown_name)).'  - ( '.date('d-m-Y',strtotime($from_date)) .' to '.date('d-m-Y',strtotime($to_date)).' )',1,1,'C',0);
+                        $pdf->Cell(190,7,'Godown - '.html_entity_decode($obj->encode_decode('decrypt', $godown_name)).' - ('.date('d-m-Y',strtotime($from_date)) .' to '.date('d-m-Y',strtotime($to_date)).')',1,1,'C',0);
                     }
 
                     $pdf->SetX(10);
                     $pdf->Cell(10, 8, 'S.No', 1, 0, 'C', 0);
-                    $pdf->Cell(25, 8, 'Bill No', 1, 0, 'C', 0);
                     $pdf->Cell(25, 8, 'Bill Date', 1, 0, 'C', 0);
+                    $pdf->Cell(25, 8, 'Bill No', 1, 0, 'C', 0);
                     $pdf->Cell(35, 8, 'Bill Type', 1, 0, 'C', 0);
-                    $pdf->Cell(45, 8, 'remarks', 1, 0, 'C', 0);
+                    $pdf->Cell(45, 8, 'Remarks', 1, 0, 'C', 0);
                     $pdf->Cell(25, 8, 'Inward', 1, 0, 'C', 0);
                     $pdf->Cell(25, 8, 'Outward', 1, 1, 'C', 0);
                     $start_y = $pdf->GetY();
@@ -329,16 +345,23 @@
                 $date_y = $pdf->GetY() - $start_y;
 
                 $pdf->SetY($start_y);
-                if(!empty($data['bill_unique_number'])) {
-                    $pdf->SetX(45);
-                    $pdf->MultiCell(25, 7, $data['bill_unique_number'], 0, 'C', 0);
-                    
+                if($data['stock_type'] == "Inward Material") {
+                    if(!empty($data['remarks']) && $data['remarks'] != $GLOBALS['null_value']) {
+                        $pdf->SetX(45);
+                        $pdf->MultiCell(25, 7, $obj->encode_decode('decrypt',$data['remarks']), 0, 'C', 0);
+                    }
                 }
-                else{
-                    $pdf->SetY($start_y);
-                    $pdf->SetX(45);
-                    $pdf->MultiCell(25, 7, '-', 0, 'C', 0);
-                    $type_y = $pdf->GetY();
+                else {
+                    if(!empty($data['bill_unique_number'])) {
+                        $pdf->SetX(45);
+                        $pdf->MultiCell(25, 7, $data['bill_unique_number'], 0, 'C', 0);
+                    }
+                    else{
+                        $pdf->SetY($start_y);
+                        $pdf->SetX(45);
+                        $pdf->MultiCell(25, 7, '-', 0, 'C', 0);
+                        $type_y = $pdf->GetY();
+                    }
                 }
                 $type_y = $pdf->GetY() - $start_y;
 
@@ -358,14 +381,9 @@
                 $stock_type_y = $pdf->GetY() - $start_y;
 
                 $pdf->SetY($start_y);
-                if(!empty($data['remarks'])) {
-                    if($data['stock_type'] == 'Inward Material'){
-                        $pdf->SetX(105);
-                        $pdf->MultiCell(45, 7, $obj->encode_decode('decrypt',$data['remarks']), 0, 'C', 0);
-                    }else{
-                        $pdf->SetX(105);
-                        $pdf->MultiCell(45, 7, $data['remarks'], 0, 'C', 0);
-                    }
+                if(!empty($data['remarks']) && $data['remarks'] != $GLOBALS['null_value']) {
+                    $pdf->SetX(105);
+                    $pdf->MultiCell(45, 7, $obj->encode_decode('decrypt',$data['remarks']), 0, 'C', 0);
                 }
                 else{
                     $pdf->SetY($start_y);

@@ -9,6 +9,14 @@
             exit;
         }
     }
+    $factory_list = array(); $factory_count = 0; $factory_id = "";
+    $factory_list = $obj->getTableRecords($GLOBALS['factory_table'], '', '');
+    if(!empty($factory_list)) {
+        $factory_count = count($factory_list);
+    }
+    if($factory_count == '1') {
+        $factory_id = $obj->getTableColumnValue($GLOBALS['factory_table'], 'primary_factory', '1', 'factory_id');
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -74,6 +82,6 @@
     $(document).ready(function(){
         $("#factory").addClass("active");
         // table_listing_records_filter();
-        ShowModalContent('<?php echo $page_title; ?>','4d4451774f4449774d6a55774d5449774d6a5a664d44453d');
+        ShowModalContent('<?php echo $page_title; ?>', '<?php echo $factory_id; ?>');
     });
 </script>

@@ -1,6 +1,7 @@
 <?php 
     $page_title = "Login";
 	include("include_files.php");
+    
     $user_list = array(); $users_count = 0;
 	$user_list = $obj->getTableRecords($GLOBALS['user_table'], '', '');
     if(!empty($user_list)) {
@@ -170,16 +171,34 @@
 							$_SESSION[$GLOBALS['site_name_user_prefix'].'_user_mobile_number'] =  $obj->encode_decode('decrypt', $data['mobile_number']);
 							$_SESSION[$GLOBALS['site_name_user_prefix'].'_user_name_mobile'] =  $obj->encode_decode('decrypt', $data['name_mobile']);
 							$_SESSION[$GLOBALS['site_name_user_prefix'].'_login_id'] = $obj->encode_decode('decrypt', $data['login_id']);
-                            if(!empty($data['role_id']) && $data['role_id'] != $GLOBALS['null_value']){
-                                $role_name = "";
-                                $role_name = $obj->getTableColumnValue($GLOBALS['role_table'], 'role_id', $data['role_id'], 'role_name');
-                                if(!empty($role_name)) {
-                                    $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type'] = $GLOBALS['staff_user_type'];
+                            $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type'] = $data['type'];
+                            if(!empty($data['type']) && $data['type'] != "NULL") {
+                                if ($data['type'] == "Staff") {
+                                    if(!empty($data['role_id']) && $data['role_id'] != $GLOBALS['null_value']){
+                                        $role_name = "";
+                                        $role_name = $obj->getTableColumnValue($GLOBALS['role_table'], 'role_id', $data['role_id'], 'role_name');
+                                        if(!empty($role_name)) {
+                                            $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type'] = $GLOBALS['staff_user_type'];
+                                        }
+                                    }
+                                }
+                                else if ($data['type'] == "Godown Incharge") {
+                                    if(!empty($data['godown_id']) && $data['godown_id'] != $GLOBALS['null_value']) {
+                                        $_SESSION[$GLOBALS['site_name_user_prefix'].'_godown_id'] = $data['godown_id'];
+                                        if(!empty($data['role_id']) && $data['role_id'] != $GLOBALS['null_value']){
+                                            $role_name = "";
+                                            $role_name = $obj->getTableColumnValue($GLOBALS['role_table'], 'role_id', $data['role_id'], 'role_name');
+                                            if(!empty($role_name)) {
+                                                $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type'] = $GLOBALS['godown_user_type'];
+                                            }
+                                        }
+                                    }
+                                }
+                                else{
+                                    $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type'] = $GLOBALS['admin_user_type'];
                                 }
                             }
-                            else{
-                                $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_type'] = $GLOBALS['admin_user_type'];
-                            }
+                            
                         }
 					}
 					
@@ -220,7 +239,7 @@
                             }
 							$_SESSION[$GLOBALS['site_name_user_prefix'].'_user_login_record_id'] = $user_login_record_id;
 							$_SESSION[$GLOBALS['site_name_user_prefix'].'_user_ip_address'] = $ip_address;						
-                            $_SESSION['bill_company_id'] = $company_id;
+                            $_SESSION[$GLOBALS['site_name_user_prefix'].'_bill_company_id'] = $company_id;
 							if(!empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_ip_address']) && isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_ip_address'])) {
 								$result = array('number' => '1', 'msg' => 'Login Successfully');
 							}
@@ -319,7 +338,7 @@
                                                 <div class="form-group mb-1">
                                                     <div class="form-label-group in-border">
                                                         <input type="text" id="name" name="username" class="form-control shadow-none login_controls" onkeydown="Javascript:KeyboardControls(this,'text',25,1);" placeholder="" required>
-                                                        <label>User Name</label>
+                                                        <label>User Name <span class="text-danger">*</span></label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -328,7 +347,7 @@
                                                     <div class="form-label-group in-border">
                                                         <div class="input-group">
                                                             <input type="password" class="form-control shadow-none login_controls" id="password" name="password" value="" onkeyup="Javascript:CheckPassword('password');" onfocus="Javascript:KeyboardControls(this,'password',20,'1');" placeholder="Password">
-                                                            <label for="password">Password(*)</label>
+                                                            <label for="password">Password <span class="text-danger">*</span></label>
                                                             <div style="position: inherit; top: 0px;" class="input-group-append" data-toggle="tooltip" data-placement="right" title="Show Password">
                                                                 <button class="btn btn-danger" type="button" id="passwordBtn" data-toggle="button" aria-pressed="false"><i class="fa fa-eye" aria-hidden="true"></i></button>
                                                             </div>
@@ -420,7 +439,7 @@
                 </div>
         </div>
     </div>
-    <footer class="footer">
+    <!-- <footer class="footer">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -430,7 +449,7 @@
                 </div>
             </div>
         </div>
-    </footer>
+    </footer> -->
 </div>
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.bundle.min.js"></script>

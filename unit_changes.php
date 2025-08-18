@@ -38,18 +38,18 @@
 				</div>
 			</div>
             <div class="row justify-content-center p-3">
-                <input type="hidden" name="edit_id"value="<?php if(!empty($show_unit_id)) {  echo $show_unit_id; } ?>">
+                <input type="hidden" name="edit_id" value="<?php if(!empty($show_unit_id)) {  echo $show_unit_id; } ?>">
                 <div class="col-lg-3 col-md-6 col-12 py-2">
                     <div class="form-group">
                         <div class="form-label-group in-border">
                             <div class="input-group">
-                                <input type="text" class="form-control shadow-none" placeholder=""  id="unit_name" name="unit_name" value="<?php if(!empty($unit_name)) { echo $unit_name; } ?>" onkeydown="Javascript:KeyboardControls(this,'text',30,'');" onkeyup="Javascript:InputBoxColor(this,'text');" required="">
+                                <input type="text" class="form-control shadow-none" placeholder="" name="unit_name" value="<?php if(!empty($unit_name)) { echo $unit_name; } ?>" onkeydown="Javascript:KeyboardControls(this,'text',30,'');" onkeyup="Javascript:InputBoxColor(this,'text');">
                                 <label>Unit<span class="text-danger">*</span></label>
-                                <?php if(empty($show_unit_id)) { ?>                                
+                                <?php /* if(empty($show_unit_id)) { ?>                                
                                 <div class="input-group-append">
                                     <button class="btn btn-danger" type="button" onclick="Javascript:addCreationDetails('unit', 30);"><i class="fa fa-plus" aria-hidden="true"></i></button>
                                 </div>
-                                <?php } ?>
+                                <?php } */ ?>
                             </div>
                         </div>
                         <div class="new_smallfnt">Contains Text, Symbols &amp;, -,',.</div>
@@ -57,7 +57,7 @@
                 </div>
             </div>
             <div class="row justify-content-center"> 
-                <?php if(empty($show_unit_id)) { ?>
+                <?php /*if(empty($show_unit_id)) { ?>
                 <div class="col-lg-6">
                     <div class="table-responsive text-center">
                         <input type="hidden" name="unit_count" value="0">                        
@@ -74,7 +74,7 @@
                         </table>
                     </div>
                 </div>
-                <?php } ?>
+                <?php }*/ ?>
                 <div class="col-md-12 py-3 text-center">
                     <button class="btn btn-danger" type="button" onClick="Javascript:SaveModalContent('unit_form', 'unit_changes.php', 'unit.php');">
                         Submit
@@ -106,7 +106,7 @@
             $edit_id = $_POST['edit_id'];
             $edit_id = trim($edit_id);
         }
-        if(!empty($edit_id)) {
+        /*if(!empty($edit_id)) {*/
             if(isset($_POST['unit_name'])) {
                 $single_unit_name = $_POST['unit_name'];
                 $single_unit_name = trim($single_unit_name);
@@ -128,8 +128,7 @@
                     }
                 }
             }
-        }
-    
+        /* }
         if(empty($edit_id)) {
             if(isset($_POST['unit_names'])) {
                 $unit_name = $_POST['unit_names'];
@@ -176,7 +175,8 @@
                 }
             }
         }
-    
+        */
+
         $result = "";
         if(empty($valid_unit) && empty($unit_name_error)) {
             $check_user_id_ip_address = 0;
@@ -184,6 +184,7 @@
             $bill_company_id = $GLOBALS['bill_company_id'];
             
             if(preg_match("/^\d+$/", $check_user_id_ip_address)) {
+                /*
                 for ($i = 0; $i < count($lower_case_name); $i++) {
                     if(!empty($lower_case_name[$i])) {
                         $prev_unit_id = $obj->CheckUnitAlreadyExists($bill_company_id, $lower_case_name[$i]);
@@ -192,11 +193,13 @@
                         }
                     }
                 }
+                */
                 $created_date_time = $GLOBALS['create_date_time_label'];
                 $creator = $GLOBALS['creator'];
                 $creator_name = $obj->encode_decode('encrypt', $GLOBALS['creator_name']);
     
                 if(empty($unit_error)) {
+                    /*
                     if(empty($edit_id)) {
                         $action = array();
                         for ($p = 0; $p < count($unit_name); $p++) {
@@ -225,6 +228,35 @@
                             else {
                                 $result = array('number' => '2', 'msg' => $unit_error);
                             }
+                        }
+                    } 
+                    */
+                    if(empty($edit_id)) {
+                        $action = "";
+                        if(empty($prev_unit_id)) {
+                            if(empty($add_access_error)) {
+                                if(!empty($single_unit_name)) {
+                                    $action = "New Unit Created. Name - " . $obj->encode_decode('decrypt', $single_unit_name);
+                                }
+    
+                                $null_value = $GLOBALS['null_value'];
+                                $columns = array('created_date_time', 'creator', 'creator_name', 'bill_company_id', 'unit_id', 'unit_name', 'lower_case_name', 'deleted');
+                                $values = array("'".$created_date_time."'", "'".$creator."'", "'".$creator_name."'", "'".$bill_company_id."'", "'".$null_value."'", "'".$single_unit_name."'", "'".$single_lower_case_name."'", "'0'");
+    
+                                $unit_insert_id = $obj->InsertSQL($GLOBALS['unit_table'], $columns, $values, 'unit_id', '', $action);		
+                                if(preg_match("/^\d+$/", $unit_insert_id)) {								
+                                    $result = array('number' => '1', 'msg' => 'Unit Successfully Created');						
+                                }
+                                else {
+                                    $result = array('number' => '2', 'msg' => $unit_insert_id);
+                                }
+                            }
+                            else {
+                                $result = array('number' => '2', 'msg' => $add_access_error);
+                            }
+                        } 
+                        else {
+                            $result = array('number' => '2', 'msg' => $unit_error);
                         }
                     } 
                     else if(!empty($edit_id)) {

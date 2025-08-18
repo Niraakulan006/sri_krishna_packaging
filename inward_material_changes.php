@@ -67,7 +67,14 @@
             $supplier_count = count($supplier_list);
         }
         $godown_list = array();
-        $godown_list = $obj->getTableRecords($GLOBALS['godown_table'], '', '');
+        if(!empty($login_godown_id)) {
+            $godown_id = $login_godown_id;
+            $godown_list = $obj->getTableRecords($GLOBALS['godown_table'], 'godown_id', $login_godown_id, '');
+        }
+        else {
+            $godown_list = $obj->getTableRecords($GLOBALS['godown_table'], '', '', '');
+        }
+        
         $godown_count = 0;
         if(!empty($godown_list)) {
             $godown_count = count($godown_list);
@@ -177,7 +184,7 @@
                 <div class="col-lg-2 col-md-3 col-6 px-lg-1 py-2 <?php if($location_type != '1') { ?>d-none<?php } ?>" id="godown_type_div">
                     <div class="form-group">
                         <div class="form-label-group in-border" <?php if(!empty($show_inward_material_id)) { ?>style="pointer-events:none;"<?php } ?>>
-                            <select name="godown_type" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if(!empty($show_inward_material_id)) { ?>tabindex="1"<?php } ?>>
+                            <select name="godown_type" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if(!empty($show_inward_material_id)) { ?>tabindex="1"<?php } ?> onchange="Javascript:GetCurrentStock('inward_material');">
                                 <option value="">Select Type</option>
                                 <option value="1" <?php if($godown_type == '1') { ?>selected<?php } ?>>Single Godown</option>
                                 <option value="2" <?php if($godown_type == '2') { ?>selected<?php } ?>>Multiple Godown</option>
@@ -191,7 +198,7 @@
                 <div class="col-lg-3 col-md-4 col-12 px-lg-1 py-2">
                     <div class="form-group <?php if($location_type == '2') { ?>d-none<?php } ?>" id="selected_godown_id_div">
                         <div class="form-label-group in-border" <?php if($godown_type == '1') { ?>style="pointer-events:none;"<?php } ?>>
-                            <select name="selected_godown_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if($godown_type == '1') { ?>tabindex="1"<?php } ?>>
+                            <select name="selected_godown_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if($godown_type == '1') { ?>tabindex="1"<?php } ?> onchange="Javascript:GetCurrentStock('inward_material');">
                                 <option value="">Select Godown</option>
                                 <?php
                                     if(!empty($godown_list)) {
@@ -216,7 +223,7 @@
                     </div>
                     <div class="form-group <?php if($location_type != '2') { ?>d-none<?php } ?>" id="selected_factory_id_div">
                         <div class="form-label-group in-border" <?php if($location_type == '2') { ?>style="pointer-events:none;"<?php } ?>>
-                            <select name="selected_factory_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if($location_type == '2') { ?>tabindex="1"<?php } ?>>
+                            <select name="selected_factory_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" <?php if($location_type == '2') { ?>tabindex="1"<?php } ?> onchange="Javascript:GetCurrentStock('inward_material');">
                                 <option value="">Select Factory</option>
                                 <?php
                                     if(!empty($factory_list)) {
@@ -244,7 +251,7 @@
                     <div class="form-group">
                         <div class="form-label-group in-border chargesaction" id="selected_size_id_div">
                             <div class="input-group" id="selected_size_id_group">
-                                <select name="selected_size_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                                <select name="selected_size_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:GetCurrentStock('inward_material');">
                                     <option value="">Select Size</option>
                                     <?php
                                         if(!empty($size_list)) {
@@ -283,7 +290,7 @@
                     <div class="form-group">
                         <div class="form-label-group in-border chargesaction" id="selected_gsm_id_div">
                             <div class="input-group" id="selected_gsm_id_group">
-                                <select name="selected_gsm_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                                <select name="selected_gsm_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:GetCurrentStock('inward_material');">
                                     <option value="">Select GSM</option>
                                     <?php
                                         if(!empty($gsm_list)) {
@@ -322,7 +329,7 @@
                     <div class="form-group">
                         <div class="form-label-group in-border chargesaction" id="selected_bf_id_div">
                             <div class="input-group" id="selected_bf_id_group">
-                                <select name="selected_bf_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                                <select name="selected_bf_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:GetCurrentStock('inward_material');">
                                     <option value="">Select BF</option>
                                     <?php
                                         if(!empty($bf_list)) {
@@ -362,6 +369,11 @@
                         <div class="form-label-group in-border">
                             <input type="text" id="selected_quantity" name="selected_quantity" class="form-control shadow-none" onfocus="Javascript:KeyboardControls(this,'number',8,'');" onkeyup="Javascript:InputBoxColor(this,'text');" placeholder="">
                             <label>QTY <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="smallfnt">
+                            <div class="current_stock_div fw-bold d-none" style="color:red!important;">
+                                Stock : <span class="current_stock_span"></span>
+                            </div>
                         </div>
                     </div> 
                 </div>
@@ -1201,7 +1213,14 @@
             if(!empty($val['total_quantity']) && $val['total_quantity'] != $GLOBALS['null_value']){
                 $total_quantity = $val['total_quantity'];
             }
-            $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['inward_material_table'].'\''.', '.'\''.$val['inward_material_id'].'\''.');"><i class="fa fa-eye"></i></a>';
+            $material_view = "";
+            if(file_exists("images/pupil.gif")) {
+                $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['inward_material_table'].'\''.', '.'\''.$val['inward_material_id'].'\''.');"><img src="images/pupil.gif" alt="View" style="width:30px; height:30px;"></a>';
+            }
+            else {
+                $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['inward_material_table'].'\''.', '.'\''.$val['inward_material_id'].'\''.');"><i class="fa fa-eye"></i></a>';
+            }
+            
             $action = ""; $edit_option = ""; $delete_option = ""; $print_option = ""; $a5_print_option = "";
             if(empty($edit_access_error) && empty($val['cancelled'])) {
                 $edit_option = '<li><a class="dropdown-item" href="Javascript:ShowModalContent('.'\''.$page_title.'\''.', '.'\''.$val['inward_material_id'].'\''.');"><i class="fa fa-pencil"></i>&nbsp; Edit</a></li>';

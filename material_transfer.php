@@ -25,7 +25,14 @@
     }
 
     $godown_list = array();
-    $godown_list = $obj->getTableRecords($GLOBALS['godown_table'], '', '');
+    $godown_list = array();
+    if(!empty($login_godown_id)) {
+        $godown_id = $login_godown_id;
+        $godown_list = $obj->getTableRecords($GLOBALS['godown_table'], 'godown_id', $login_godown_id, '');
+    }
+    else {
+        $godown_list = $obj->getTableRecords($GLOBALS['godown_table'], '', '', '');
+    }
     $godown_count = 0;
     if(!empty($godown_list)) {
         $godown_count = count($godown_list);

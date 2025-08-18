@@ -1,4 +1,5 @@
 var number_regex = /^\d+$/;
+var price_regex = /^(\d*\.)?\d+$/;
 // JavaScript Document
 function CheckPassword(field_name) {
 	var password = "";
@@ -420,10 +421,7 @@ function SendModalContent(form_name, post_send_file, redirection_file) {
 						page_title = jQuery('input[name="page_title"]').val();
 						page_title = page_title.trim();
 					}
-					if(form_name == 'factory_form'){
-						ShowModalContent('factory','4d4451774f4449774d6a55774d5449774d6a5a664d44453d');
-					}
-					else if(x.supplier_id != "" && x.supplier_id != null && typeof x.supplier_id != "undefined" && (page_title == 'Inward Material')) {	
+					if(x.supplier_id != "" && x.supplier_id != null && typeof x.supplier_id != "undefined" && (page_title == 'Inward Material')) {	
 						if(jQuery('#CustomPartyModal .btn-close').length > 0) {
 							jQuery('#CustomPartyModal .btn-close').trigger('click');	
 						}
@@ -768,4 +766,197 @@ function PendingQtyContent(table, bill_id) {
 			}
 		}
 	});
+}
+function ScanBarcode() {
+	if(jQuery('#ScanBarcodeModal').find('#reader').parent().find('span.barcode_infos').length > 0) {
+		jQuery('#ScanBarcodeModal').find('#reader').parent().find('span.barcode_infos').remove();
+	}
+	if (jQuery('.scan_barcode_modal_button').length > 0) {
+		jQuery('.scan_barcode_modal_button').trigger('click');
+	}
+	let html5QrCode;
+	html5QrCode = new Html5Qrcode("reader");
+	html5QrCode.start(
+		{ facingMode: "environment" }, // Rear camera
+		{
+			fps: 10,    // Frames per second
+			qrbox: { width: 400, height: 150 }
+		},
+		
+		(decodedText) => {
+			var split_text = decodedText.split('-');
+			var size = split_text[0];
+			var gsm = split_text[1];
+			var bf = split_text[2];
+			var size_value = ""; var gsm_value = ""; var bf_value = "";
+			if(price_regex.test(size) !== false) {
+				size_value = size;
+			}
+			if(number_regex.test(gsm) !== false) {
+				gsm_value = gsm;
+			}
+			if(price_regex.test(bf) !== false) {
+				bf_value = bf;
+			}
+			if(size_value != "" && gsm_value != "" && bf_value != "") {
+				if(jQuery('#ScanBarcodeModal').find('#reader').parent().find('span.barcode_infos').length == 0) {
+					jQuery('#ScanBarcodeModal').find('#reader').after('<span class="barcode_infos" style="color:green; font-size:12px;">Success</span>');
+				}
+				var product_count = 0;
+                if(jQuery('input[name="product_count"]').length > 0) {
+                    product_count = jQuery('input[name="product_count"]').val().trim();
+                    product_count = parseInt(product_count) + 1;
+                }
+				var error = "";
+				if(jQuery('.product_table').find('tr.product_row').length > 0) {
+                    jQuery('.product_table').find('tr.product_row').each(function() {
+                        var prev_size_value = ""; var prev_gsm_value = ""; var prev_bf_value = "";
+                        if(jQuery(this).find('select[name="size_id[]"]').length > 0) {
+                            prev_size_value = jQuery(this).find('select[name="size_id[]"] option:selected').text().trim();
+                        }
+                        if(jQuery(this).find('select[name="gsm_id[]"]').length > 0) {
+                            prev_gsm_value = jQuery(this).find('select[name="gsm_id[]"] option:selected').text().trim();
+                        }
+                        if(jQuery(this).find('select[name="bf_id[]"]').length > 0) {
+                            prev_bf_value = jQuery(this).find('select[name="bf_id[]"] option:selected').text().trim();
+                        }
+                        if(prev_size_value == size_value && prev_gsm_value == gsm_value && prev_bf_value == bf_value) {
+                            if(error == "") {
+                                error = 1; var prev_qty = 0;
+								if(jQuery(this).find('input[name="quantity[]"]').length > 0) {
+									prev_qty = jQuery(this).find('input[name="quantity[]"]').val().trim();
+									if(number_regex.test(prev_qty) !== false) {
+										prev_qty = parseInt(prev_qty) + 1;
+										jQuery(this).find('input[name="quantity[]"]').val(prev_qty);
+									}
+								}
+                            }
+                        }
+                    });
+                }
+				if(error == "") {
+					var post_url = "delivery_slip_changes.php?barcode_row_index="+product_count+"&barcode_size="+size_value+"&barcode_gsm="+gsm_value+"&barcode_bf="+bf_value;
+					jQuery.ajax({
+						url: post_url, success: function (result) {
+							result = jQuery.trim(result);
+							if (jQuery('.product_table tbody').find('tr.product_row').length > 0) {
+								jQuery('.product_table tbody').find('tr.product_row:last').after(result);
+							}
+							else {
+								jQuery('.product_table tbody').html(result);
+							}
+							if(jQuery('input[name="product_count"]').length > 0) {
+								jQuery('input[name="product_count"]').val(product_count);
+							}
+							if (jQuery('.tableheight .product_table tbody tr.product_row').length > 0) {
+								var scroll_container = jQuery('.tableheight');
+								var last_row = jQuery('.tableheight .product_table tbody tr.product_row:last');
+
+								scroll_container.stop().animate({
+									scrollTop: scroll_container.scrollTop() + last_row.position().top
+								}, 300);
+							}
+							if(jQuery('select[name="godown_id"]').length > 0) {
+								jQuery('select[name="godown_id"]').parent().css('pointer-events', 'none');
+								jQuery('select[name="godown_id"]').parent().find('.select2-selection.select2-selection--single').attr('tabindex', '1');
+							}
+							if(jQuery('select[name="factory_id"]').length > 0) {
+								jQuery('select[name="factory_id"]').parent().css('pointer-events', 'none');
+								jQuery('select[name="factory_id"]').parent().find('.select2-selection.select2-selection--single').attr('tabindex', '1');
+							}
+							if(jQuery('.add_product_button').length > 0) {
+								jQuery('.add_product_button').attr('disabled', false);
+							}
+							SnoCalcPlus();
+							TotalReelsCount();
+						}
+					});
+					
+					html5QrCode.stop(); // stop scanning
+					if(jQuery('#ScanBarcodeModal').find('.btn-close').length > 0) {
+						jQuery('#ScanBarcodeModal').find('.btn-close').trigger('click');
+					}
+				}
+				else {
+					html5QrCode.stop(); // stop scanning
+					if(jQuery('#ScanBarcodeModal').find('.btn-close').length > 0) {
+						jQuery('#ScanBarcodeModal').find('.btn-close').trigger('click');
+					}
+				}
+			}
+			else {
+				if(jQuery('#ScanBarcodeModal').find('#reader').parent().find('span.barcode_infos').length == 0) {
+					jQuery('#ScanBarcodeModal').find('#reader').after('<span class="barcode_infos" style="color:red; font-size:12px;">Invalid Barcode</span>');
+				}
+			}
+		},
+		(errorMessage) => {
+			console.log("No barcode detected", errorMessage);
+		}
+	).catch(err => {
+		console.error("Camera start error:", err);
+	});
+}
+
+function GetCurrentStock(screen) {
+    if (jQuery('.current_stock_div').length > 0) {
+        jQuery('.current_stock_div').addClass('d-none');
+    }
+	if (jQuery('.current_stock_span').length > 0) {
+        jQuery('.current_stock_span').html('');
+    }
+	var location_type = ""; var factory_id = ""; var godown_id = ""; var size_id = ""; var gsm_id = ""; var bf_id = "";
+	if(screen == 'inward_material' || screen == 'stock_adjustment') {
+		if(jQuery('select[name="location_type"]').length > 0) {
+			location_type = jQuery('select[name="location_type"]').val().trim();
+		}
+		if(jQuery('select[name="selected_factory_id"]').length > 0) {
+			factory_id = jQuery('select[name="selected_factory_id"]').val().trim();
+		}
+		if(jQuery('select[name="selected_godown_id"]').length > 0) {
+			godown_id = jQuery('select[name="selected_godown_id"]').val().trim();
+		}
+	}
+	else if(screen == 'material_transfer') {
+		location_type = 2;
+		if(jQuery('select[name="factory_id"]').length > 0) {
+			factory_id = jQuery('select[name="factory_id"]').val().trim();
+		}
+	}
+	else if(screen == 'stock_request' || screen == 'delivery_slip') {
+		location_type = 1;
+		if(jQuery('select[name="godown_id"]').length > 0) {
+			godown_id = jQuery('select[name="godown_id"]').val().trim();
+		}
+	}
+	else if(screen == 'consumption_entry') {
+		location_type = 2;
+		if(jQuery('select[name="selected_factory_id"]').length > 0) {
+			factory_id = jQuery('select[name="selected_factory_id"]').val().trim();
+		}
+	}
+	if(jQuery('select[name="selected_size_id"]').length > 0) {
+		size_id = jQuery('select[name="selected_size_id"]').val().trim();
+	}
+	if(jQuery('select[name="selected_gsm_id"]').length > 0) {
+		gsm_id = jQuery('select[name="selected_gsm_id"]').val().trim();
+	}
+	if(jQuery('select[name="selected_bf_id"]').length > 0) {
+		bf_id = jQuery('select[name="selected_bf_id"]').val().trim();
+	}
+    
+	var post_url = "view_bill_changes.php?stock_location_type="+location_type+"&stock_factory_id="+factory_id+"&stock_godown_id="+godown_id+"&stock_size_id="+size_id+"&stock_gsm_id="+gsm_id+"&stock_bf_id="+bf_id;
+    jQuery.ajax({
+        url: post_url, success: function (result) {
+			result = result.trim();
+			if(result != "") {
+				if (jQuery('.current_stock_span').length > 0) {
+					jQuery('.current_stock_span').html(result);
+				}
+				if (jQuery('.current_stock_div').length > 0) {
+					jQuery('.current_stock_div').removeClass('d-none');
+				}
+			}
+        }
+    });
 }

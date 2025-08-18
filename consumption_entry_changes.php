@@ -7,7 +7,7 @@
         $show_consumption_entry_id = trim($_REQUEST['show_consumption_entry_id']);
 
         $consumption_entry_date = date('Y-m-d'); $consumption_entry_number = "";
-        $product_count = 0; $size_ids = array(); $gsm_ids = array();$bf_ids = array(); $quantity = array(); $selected_godown_id = ""; $factory_id = "";$remarks="";
+        $product_count = 0; $size_ids = array(); $gsm_ids = array();$bf_ids = array(); $quantity = array(); $selected_godown_id = ""; $factory_id = "";$remarks="";$total_quantity ="";
 
         $consumption_entry_list = array();
         $consumption_entry_list = $obj->getTableRecords($GLOBALS['consumption_entry_table'], 'consumption_entry_id', $show_consumption_entry_id);
@@ -37,6 +37,9 @@
                 }
                 if(!empty($data['remarks']) && $data['remarks'] != $GLOBALS['null_value']) {
                     $remarks = $data['remarks'];
+                }
+                if(!empty($data['total_quantity']) && $data['total_quantity'] != $GLOBALS['null_value']) {
+                    $total_quantity = $data['total_quantity'];
                 }
             }
         }
@@ -96,7 +99,7 @@
                         <div class="col-lg-2 col-md-3 col-6 py-2 px-lg-1">
                             <div class="form-group">
                                 <div class="form-label-group in-border">
-                                    <select name="selected_factory_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                                    <select name="selected_factory_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:GetCurrentStock('consumption_entry');">
                                         <option value="">Select Factory</option>
                                         <?php
                                             if(!empty($factory_list)) {
@@ -133,7 +136,7 @@
                         <div class="col-lg-2 col-md-4 col-12 px-lg-1 py-2">
                             <div class="form-group">
                                 <div class="form-label-group in-border" id="selected_size_id_div">
-                                    <select name="selected_size_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="GetCurrentStock();">
+                                    <select name="selected_size_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:GetCurrentStock('consumption_entry');">
                                         <option value="">Select Size</option>
                                         <?php
                                             if(!empty($size_list)) {
@@ -160,7 +163,7 @@
                         <div class="col-lg-2 col-md-4 col-12 px-lg-1 py-2">
                             <div class="form-group">
                                 <div class="form-label-group in-border" id="selected_gsm_id_div">
-                                    <select name="selected_gsm_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="GetCurrentStock();">
+                                    <select name="selected_gsm_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:GetCurrentStock('consumption_entry');">
                                         <option value="">Select GSM</option>
                                         <?php
                                             if(!empty($gsm_list)) {
@@ -187,7 +190,7 @@
                         <div class="col-lg-2 col-md-4 col-12 px-lg-1 py-2">
                             <div class="form-group">
                                 <div class="form-label-group in-border" id="selected_bf_id_div">
-                                    <select name="selected_bf_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="GetCurrentStock();">
+                                    <select name="selected_bf_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:GetCurrentStock('consumption_entry');">
                                         <option value="">Select BF</option>
                                         <?php
                                             if(!empty($bf_list)) {
@@ -217,8 +220,11 @@
                                     <input type="text" id="selected_quantity" name="selected_quantity" class="form-control shadow-none" onfocus="Javascript:KeyboardControls(this,'number',8,'');" onkeyup="Javascript:InputBoxColor(this,'text');" placeholder="">
                                     <label>QTY <span class="text-danger">*</span></label>
                                 </div>
-                                <div class="text-center px-0" style="font-size:11px!important;font-weight:bold!important;color:rgb(253, 10, 10) !important;"><span class="current_stock_div"></span></div>
-                                <input type="hidden" name="current_stock" value="">  
+                                <div class="smallfnt">
+                                    <div class="current_stock_div fw-bold d-none" style="color:red!important;">
+                                        Stock : <span class="current_stock_span"></span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-1 col-md-3 col-12 text-center py-2 px-lg-1">
@@ -268,7 +274,7 @@
                                                             <th class="size_element text-center px-2 py-2">
                                                                 <div class="form-group">
                                                                     <div class="form-label-group in-border">
-                                                                        <select name="size_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                                                                        <select name="size_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:ConsumptionRowCheck(this);">
                                                                             <?php
                                                                                 if(empty($size_ids[$i])) {
                                                                                     ?>
@@ -299,7 +305,7 @@
                                                             <th class="gsm_element text-center px-2 py-2">
                                                                 <div class="form-group">
                                                                     <div class="form-label-group in-border">
-                                                                        <select name="gsm_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                                                                        <select name="gsm_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:ConsumptionRowCheck(this);">
                                                                             <?php
                                                                                 if(empty($gsm_ids[$i])) {
                                                                                     ?>
@@ -330,7 +336,7 @@
                                                             <th class="bf_element text-center px-2 py-2">
                                                                 <div class="form-group">
                                                                     <div class="form-label-group in-border">
-                                                                        <select name="bf_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                                                                        <select name="bf_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:ConsumptionRowCheck(this);">
                                                                             <?php   
                                                                                 if(empty($bf_ids[$i])) {
                                                                                     ?>
@@ -361,12 +367,12 @@
                                                             <th class="quantity_element text-center px-2 py-2">
                                                                 <div class="form-group">
                                                                     <div class="form-label-group in-border">
-                                                                        <input type="text" name="quantity[]" class="form-control shadow-none" style="width:90px;" onfocus="Javascript:KeyboardControls(this,'number',8,'');" value="<?php if(!empty($quantity[$i])) { echo $quantity[$i]; } ?>">
+                                                                        <input type="text" name="quantity[]" class="form-control shadow-none" style="width:90px;" onfocus="Javascript:KeyboardControls(this,'number',8,'');" value="<?php if(!empty($quantity[$i])) { echo $quantity[$i]; } ?>" onkeyup="Javascript:ConsumptionRowCheck(this);">
                                                                     </div>
                                                                 </div> 
                                                             </th>
                                                             <th class="delete_element text-center px-2 py-2">
-                                                                <a class="pe-2" onclick="Javascript:DeleteProductRow('product_row', '<?php echo $i+1; ?>');" style="cursor:pointer;"><i class="fa fa-trash text-white bg-danger p-2 rounded"></i></a>  
+                                                                <a class="pe-2" onclick="Javascript:DeleteConsumptionRow('product_row', '<?php echo $i+1; ?>');" style="cursor:pointer;"><i class="fa fa-trash text-white bg-danger p-2 rounded"></i></a>  
                                                             </th>
                                                         </tr>
                                                         <?php
@@ -505,7 +511,7 @@
                         }
                         
                         if($quantity[$i] > $current_stock) {
-                            $quantity_error = "Max Stock <br> Available : ".$current_stock;
+                            $quantity_error = "Max Stock : ".$current_stock;
                         }
                     }
                     if(!empty($quantity_error)) {
@@ -729,8 +735,10 @@
                         $quantity = array();
                     }
                     if(!empty($size_ids)) {
+                        $remarks = "";
+                        $remarks = $obj->encode_decode('encrypt', $consumption_entry_number);
                         for($i=0; $i < count($size_ids); $i++) {
-                            $stock_update = $obj->StockUpdate($GLOBALS['consumption_entry_table'], 'Out', '', $consumption_entry_id, $consumption_entry_number, $consumption_entry_number, $consumption_entry_date, $selected_factory_id, '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
+                            $stock_update = $obj->StockUpdate($GLOBALS['consumption_entry_table'], 'Out', '', $consumption_entry_id, $consumption_entry_number, $remarks, $consumption_entry_date, $selected_factory_id, '', $size_ids[$i], $gsm_ids[$i], $bf_ids[$i], $quantity[$i]);
                             
                         }
                     }
@@ -821,7 +829,13 @@
             if(!empty($val['total_quantity']) && $val['total_quantity'] != $GLOBALS['null_value']){
                 $total_quantity = $val['total_quantity'];
             }
-            $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['consumption_entry_table'].'\''.', '.'\''.$val['consumption_entry_id'].'\''.');"><i class="fa fa-eye"></i></a>';
+            $material_view = "";
+            if(file_exists("images/pupil.gif")) {
+                $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['consumption_entry_table'].'\''.', '.'\''.$val['consumption_entry_id'].'\''.');"><img src="images/pupil.gif" alt="View" style="width:30px; height:30px;"></a>';
+            }
+            else {
+                $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['consumption_entry_table'].'\''.', '.'\''.$val['consumption_entry_id'].'\''.');"><i class="fa fa-eye"></i></a>';
+            }
             $action = ""; $edit_option = ""; $delete_option = ""; $print_option = ""; $a5_print_option = "";
 
             if(empty($edit_access_error) && empty($val['cancelled'])) {
@@ -973,7 +987,7 @@
             <th class="size_element text-center px-2 py-2">
                 <div class="form-group">
                     <div class="form-label-group in-border">
-                        <select name="size_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                        <select name="size_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:ConsumptionRowCheck(this);">
                             <?php
                                 if(empty($size_id)) {
                                     ?>
@@ -1013,7 +1027,7 @@
             <th class="gsm_element text-center px-2 py-2">
                 <div class="form-group">
                     <div class="form-label-group in-border">
-                        <select name="gsm_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                        <select name="gsm_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:ConsumptionRowCheck(this);">
                             <?php
                                 if(empty($gsm_id)) {
                                     ?>
@@ -1053,7 +1067,7 @@
             <th class="bf_element text-center px-2 py-2">
                 <div class="form-group">
                     <div class="form-label-group in-border">
-                        <select name="bf_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                        <select name="bf_id[]" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;" onchange="Javascript:ConsumptionRowCheck(this);">
                             <?php   
                                 if(empty($bf_id)) {
                                     ?>
@@ -1093,7 +1107,7 @@
             <th class="quantity_element text-center px-2 py-2">
                 <div class="form-group">
                     <div class="form-label-group in-border">
-                        <input type="text" name="quantity[]" class="form-control shadow-none" style="width:90px;" onfocus="Javascript:KeyboardControls(this,'number',8,'');" value="<?php if(!empty($quantity)) { echo $quantity; } ?>">
+                        <input type="text" name="quantity[]" class="form-control shadow-none" style="width:90px;" onfocus="Javascript:KeyboardControls(this,'number',8,'');" onkeyup="Javascript:ConsumptionRowCheck(this);" value="<?php if(!empty($quantity)) { echo $quantity; } ?>">
                     </div>
                 </div> 
             </th>
@@ -1108,28 +1122,4 @@
         </tr>
         <?php
     }
-
-    if(isset($_REQUEST['get_factory_id'])) {
-        $get_factory_id = "";
-        $get_factory_id = $_REQUEST['get_factory_id'];  
-        $selected_size_id = $_REQUEST['selected_size_id'];
-        $selected_gsm_id = $_REQUEST['selected_gsm_id'];
-        $selected_bf_id = $_REQUEST['selected_bf_id'];
-
-        $current_stock = 0;
-        $current_stock = $obj->getCurrentStock($GLOBALS['stock_table'], $get_factory_id,'',$selected_size_id ,$selected_gsm_id, $selected_bf_id);
-        $current_stock=trim($current_stock);
-        ?>
-        <span class="w-100 text-center" style="font-weight:bold!important;">
-            <?php if(!empty($selected_size_id) && !empty($selected_gsm_id) && !empty($selected_bf_id)) { ?>
-            Current Stock (<?php echo number_format($current_stock, 2);?>)
-            <?php } ?>
-        </span>
-        $$$
-        
-        <?php
-        echo $current_stock;
-    }
-
-
 ?>

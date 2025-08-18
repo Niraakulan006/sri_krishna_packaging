@@ -50,7 +50,7 @@
                 if($login_user_type == $GLOBALS['admin_user_type']) {
                     $sidebar_admin_user = 1;
                 }
-                else if($login_user_type == $GLOBALS['staff_user_type']) {
+                else if($login_user_type == $GLOBALS['staff_user_type'] || $login_user_type == $GLOBALS['godown_user_type']) {
                     $staff_id = "";
                     if(!empty($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id']) && isset($_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'])) {
                         $staff_id = $_SESSION[$GLOBALS['site_name_user_prefix'].'_user_id'];
@@ -284,7 +284,7 @@
                             </span>
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="index.php"><i class="bi bi-box-arrow-right text-muted fs-14 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Logout</span></a>
+                            <a class="dropdown-item" href="logout.php"><i class="bi bi-box-arrow-right text-muted fs-14 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Logout</span></a>
                         </div>
                     </div>
                 </div>
@@ -471,20 +471,11 @@
                             </a>
                             <div class="collapse menu-dropdown" id="report">
                                 <ul class="nav nav-lg flex-column">
-                                    <li class="nav-item" id="supplierreport">
-                                        <a href="supplier_report.php" class="nav-link"><i class="bi bi-dash"></i>Supplier Report </a>
-                                    </li>
-                                    <li class="nav-item" id="sizereport">
-                                        <a href="size_report.php" class="nav-link"><i class="bi bi-dash"></i>Size Report </a>
-                                    </li>
-                                    <li class="nav-item" id="bfpreport">
-                                        <a href="bf_report.php" class="nav-link"><i class="bi bi-dash"></i> BF Report </a>
-                                    </li>
-                                    <li class="nav-item" id="gsmreport">
-                                        <a href="gsm_report.php" class="nav-link"><i class="bi bi-dash"></i> GSM Report </a>
-                                    </li>
                                     <li class="nav-item" id="currentstockreport">
                                         <a href="current_stock_report.php" class="nav-link"><i class="bi bi-dash"></i> Current Stock Report </a>
+                                    </li>
+                                    <li class="nav-item" id="supplierreport">
+                                        <a href="supplier_report.php" class="nav-link"><i class="bi bi-dash"></i>Supplier Report </a>
                                     </li>
                                     <li class="nav-item" id="consumptionreport">
                                         <a href="consumption_report.php" class="nav-link"><i class="bi bi-dash"></i> Consumption Report </a>

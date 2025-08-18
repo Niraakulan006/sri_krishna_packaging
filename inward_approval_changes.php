@@ -900,7 +900,13 @@
             if(!empty($val['total_quantity']) && $val['total_quantity'] != $GLOBALS['null_value']){
                 $total_quantity = $val['total_quantity'];
             }
-            $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['inward_approval_table'].'\''.', '.'\''.$val['inward_approval_id'].'\''.');"><i class="fa fa-eye"></i></a>';
+            $material_view = "";
+            if(file_exists("images/pupil.gif")) {
+                $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['inward_approval_table'].'\''.', '.'\''.$val['inward_approval_id'].'\''.');"><img src="images/pupil.gif" alt="View" style="width:30px; height:30px;"></a>';
+            }
+            else {
+                $material_view = '<a href="Javascript:ViewBillContent('.'\''.$GLOBALS['inward_approval_table'].'\''.', '.'\''.$val['inward_approval_id'].'\''.');"><i class="fa fa-eye"></i></a>';
+            }
             $action = ""; $edit_option = ""; $delete_option = ""; $print_option = ""; $a5_print_option = "";
             if(empty($edit_access_error) && empty($val['cancelled'])) {
                 $edit_option = '<li><a class="dropdown-item" href="Javascript:ShowModalContent('.'\''.$page_title.'\''.', '.'\''.$val['inward_approval_id'].'\''.');"><i class="fa fa-pencil"></i>&nbsp; Edit</a></li>';

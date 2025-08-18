@@ -45,6 +45,7 @@ function GetLocation() {
             jQuery('#selected_godown_id_div').removeClass('d-none');
         }
     }
+    GetCurrentStock('stock_adjustment');
 }
 
 function AddStockAdjustmentRow(empty_row) {
@@ -395,41 +396,4 @@ function AdjustmentRowCheck(obj) {
         }
     }
     TotalReelsCount();
-}
-
-function GetCurrentStock() {
-    if (jQuery('.current_stock_div').length > 0) {
-        jQuery('.current_stock_div').html('');
-    }
-    var selected_factory_id = "";var selected_godown_id = ""; var selected_size_id = ""; var selected_gsm_id = ""; var selected_bf_id = "";
-    if (jQuery('select[name="selected_factory_id"]').length > 0) {
-        selected_factory_id = jQuery('select[name="selected_factory_id"]').val();
-    }
-    if (jQuery('select[name="selected_godown_id"]').length > 0) {
-        selected_godown_id = jQuery('select[name="selected_godown_id"]').val();
-    }
-    if (jQuery('select[name="selected_size_id"]').length > 0) {
-        selected_size_id = jQuery('select[name="selected_size_id"]').val();
-    }
-    if (jQuery('select[name="selected_gsm_id"]').length > 0) {
-        selected_gsm_id = jQuery('select[name="selected_gsm_id"]').val();
-    }
-    if (jQuery('select[name="selected_bf_id"]').length > 0) {
-        selected_bf_id = jQuery('select[name="selected_bf_id"]').val();
-    }
- 
-    var post_url = "stock_adjustment_changes.php?get_factory_id=" + selected_factory_id + "&selected_godown_id=" + selected_godown_id + "&selected_size_id=" + selected_size_id + "&selected_gsm_id=" + selected_gsm_id + "&selected_bf_id=" + selected_bf_id;
-
-    jQuery.ajax({
-        url: post_url, success: function (result) {
-            result = result.split("$$$");
-           
-            if (jQuery('.current_stock_div').length > 0) {
-                jQuery('.current_stock_div').html(result[0]);
-            }
-            if (jQuery('input[name="current_stock"]').length > 0) {
-                jQuery('input[name="current_stock"]').val(result[1].trim());
-            }
-        }
-    });
 }

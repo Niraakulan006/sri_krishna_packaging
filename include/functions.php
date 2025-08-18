@@ -308,11 +308,11 @@
 			$result = $stock_obj->GetCurrentStockByMaterial($material, $bill_id, $godown_id, $factory_id);
 			return $result;
 		}
-		public function getCurrentStock($table, $factory_id, $godown_id, $size_id, $gsm_id,$bf_id) {
+		public function ShowCurrentStock($godown_id, $factory_id, $size_id, $gsm_id, $bf_id) {
 			$stock_obj = "";
 			$stock_obj = $this->stock_function_object();
 			$stock_update = "";
-			$stock_update = $stock_obj->getCurrentStock($table, $factory_id, $godown_id, $size_id, $gsm_id,$bf_id);
+			$stock_update = $stock_obj->ShowCurrentStock($godown_id, $factory_id, $size_id, $gsm_id, $bf_id);
 			return $stock_update;
 		}
 

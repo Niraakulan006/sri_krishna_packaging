@@ -336,6 +336,9 @@
             else if($page_table == $GLOBALS['stock_adjustment_table']) {
                 $stock_type = "Stock Adjustment";
             }
+            else if($page_table == $GLOBALS['inward_approval_table']) {
+                $stock_type = "Inward Approval";
+            }
             
             $stock_unique_id = ""; 
             $stock_unique_id = $this->getStockUniqueID($bill_unique_id, $factory_id, $godown_id, $size_id, $gsm_id, $bf_id);
@@ -521,60 +524,27 @@
 			}
 			return $material_list;
 		}
-        public function getCurrentStock($table, $factory_id, $godown_id, $size_id, $gsm_id,$bf_id){
-            $where = "";$select_query = "";$list = array();
-            $current_stock = 0;$inward =0;$outward=0;
-
-            if (!empty($factory_id) && $factory_id != $GLOBALS['null_value']) {
-                if (!empty($where)) {
-                    $where = $where . " factory_id = '" . $factory_id . "' AND ";
-                } else {
-                    $where = " factory_id = '" . $factory_id . "' AND ";
+        public function ShowCurrentStock($godown_id, $factory_id, $size_id, $gsm_id, $bf_id) {
+            $select_query = ""; $list = array(); $where = ""; $inward = 0; $outward = 0; $current_stock = 0;
+            if((!empty($godown_id) || !empty($factory_id)) && !empty($size_id) && !empty($gsm_id) && !empty($bf_id)) {
+                if(!empty($godown_id)) {
+                    $where = " godown_id = '".$godown_id."' AND ";
+                }
+                if(!empty($factory_id)) {
+                    $where = " factory_id = '".$factory_id."' AND ";
+                }
+                if(!empty($where)) {
+                    $select_query = "SELECT SUM(inward_unit) as inward, SUM(outward_unit) as outward FROM ".$GLOBALS['stock_table']." WHERE ".$where." size_id = '".$size_id."' AND gsm_id = '".$gsm_id."'AND bf_id = '".$bf_id."' AND deleted = '0'";
+                    $list = $this->getQueryRecords('', $select_query);
                 }
             }
-            if (!empty($godown_id) && $godown_id != $GLOBALS['null_value']) {
-                if (!empty($where)) {
-                    $where = $where . " godown_id = '" . $godown_id . "' AND ";
-                } else {
-                    $where = " godown_id = '" . $godown_id . "' AND ";
-                }
-            }
-            if (!empty($size_id) && $size_id != $GLOBALS['null_value']) {
-                if (!empty($where)) {
-                    $where = $where . " size_id = '" . $size_id . "' AND ";
-                } else {
-                    $where = " size_id = '" . $size_id . "' AND ";
-                }
-            }
-            if (!empty($gsm_id)) {
-                if (!empty($where)) {
-                    $where = $where . " gsm_id = '" . $gsm_id . "' AND ";
-                } else {
-                    $where = " gsm_id = '" . $gsm_id . "' AND ";
-                }
-            }
-            if (!empty($bf_id)) {
-                if (!empty($where)) {
-                    $where = $where . " bf_id = '" . $bf_id . "' AND ";
-                } else {
-                    $where = " bf_id = '" . $bf_id . "' AND ";
-                }
-            }
-            if (!empty($table)) {
-                if ($table == $GLOBALS['stock_table']) {
-                    $select_query = "SELECT SUM(inward_unit) as inward_unit,SUM(outward_unit) as outward_unit FROM " . $GLOBALS['stock_table'] . " WHERE " . $where . " deleted = '0'";
-                }
-            }
-            if (!empty($select_query)) {
-                $list = $this->getQueryRecords('', $select_query);
-            }
-            if (!empty($list)) {
-                foreach ($list as $data) {
-                    if (!empty($data['inward_unit']) && $data['inward_unit'] != $GLOBALS['null_value']) {
-                        $inward = $data['inward_unit'];
+            if(!empty($list)) {
+                foreach($list as $data) {
+                    if(!empty($data['inward']) && $data['inward'] != $GLOBALS['null_value']) {
+                        $inward = $data['inward'];
                     }
-                    if (!empty($data['outward_unit']) && $data['outward_unit'] != $GLOBALS['null_value']) {
-                        $outward = $data['outward_unit'];
+                    if(!empty($data['outward']) && $data['outward'] != $GLOBALS['null_value']) {
+                        $outward = $data['outward'];
                     }
                 }
             }
