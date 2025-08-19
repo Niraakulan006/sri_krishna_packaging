@@ -142,6 +142,7 @@
                             <th class="text-center px-2 py-2">Quantity</th>
                             <?php if($table == $GLOBALS['inward_material_table']) { ?>
                                 <th class="text-center px-2 py-2">Barcode</th>
+                                <th class="text-center px-2 py-2">Print</th>
                             <?php } ?>
                         </tr>
                     </thead>
@@ -210,8 +211,11 @@
                                                             $gsm_id[$i],
                                                             $bf_id[$i]
                                                         );
-                                                        echo '<img src="' . $obj->barcode_directory() . $barcode_file . '" alt="Barcode" style="width:150px; height:40px;"><br>';
+                                                        echo '<img src="'.$obj->barcode_directory().$barcode_file.'" alt="Barcode" style="width:150px; height:40px;"><br>';
                                                     ?>
+                                                </th>
+                                                <th class="text-center px-2 py-2" style="vertical-align:middle;">
+                                                    <a href="Javascript:OpenBarcode('<?php echo $size_names[$i]; ?>', '<?php echo $gsm_names[$i]; ?>', '<?php echo $bf_names[$i]; ?>', '<?php echo $obj->encode_decode('encrypt', $supplier_name); ?>', '<?php echo $obj->encode_decode('encrypt', $barcode_file); ?>');" class="btn btn-success px-2 py-1 smallfnt">Print</a>
                                                 </th>
                                             <?php } ?>
                                         </tr>
@@ -224,6 +228,12 @@
                 </table>
             </div>
         </div>
+        <script type="text/javascript">
+            function OpenBarcode(size_name, gsm_name, bf_name, supplier_name, barcode_file) {
+                var url = "reports/rpt_print_barcode.php?size_name="+size_name+"&gsm_name="+gsm_name+"&bf_name="+bf_name+"&supplier_name="+supplier_name+"&barcode_file="+barcode_file;
+                window.open(url, "_blank");
+            }
+        </script>
         <?php
         echo "$$$"."Reels in this Bill - ".$bill_number;
     }
