@@ -41,7 +41,7 @@
     }
     
     $total_records_list = array();
-    $factory_list = array();$godown_list = array();
+    $factory_list = array(); $godown_list = array();
     $factory_list = $obj->getTableRecords($GLOBALS['factory_table'], '', '');
     if(!empty($login_godown_id)) {
         $godown_list = $obj->getTableRecords($GLOBALS['godown_table'], 'godown_id', $login_godown_id, '');
@@ -51,7 +51,7 @@
     }
     if($location_type == '1'){
         if(!empty($factory_id)){
-            if(!empty($size_id) || !empty($gsm_id) || !empty($bf_id)){
+            if(!empty($size_id) && !empty($gsm_id) && !empty($bf_id)){
                 $total_records_list = $obj->getCurrentStockList('1',$factory_id,'',$size_id,$gsm_id,$bf_id,$from_date,$to_date);
             }
             else{
@@ -62,17 +62,20 @@
             $total_records_list = $obj->getCurrentStockList('1','','','','','','','');
         }
     }
-    else if($location_type =='2') {
+    else if($location_type == '2') {
         if(!empty($godown_id)){
-            if(!empty($size_id) || !empty($gsm_id) || !empty($bf_id)){
+            if(!empty($size_id) && !empty($gsm_id) && !empty($bf_id)){
                 $total_records_list = $obj->getCurrentStockList('2','',$godown_id,$size_id,$gsm_id,$bf_id,$from_date,$to_date);
-            }else{
+            }
+            else{
                  $total_records_list = $obj->getCurrentStockList('2','',$godown_id,'','','','','');
             }
-        }else{
+        }
+        else{
             $total_records_list = $obj->getCurrentStockList('2','','','','','','','');
         }
-    }else{
+    }
+    else {
         $total_records_list = $obj->getCurrentStockList('','',$login_godown_id,'','','','','');
     }
 
@@ -102,22 +105,24 @@
                             <div class="card-header align-products-center">
                                 <form name="stock_report_form" method="post">
                                     <div class="row mx-0">
-                                        <div class="col-lg-2 col-md-4 col-6 py-2 <?php if(empty($size_id) || empty($gsm_id) || empty($bf_id)){ ?>d-none<?php } ?>">
-                                            <div class="form-group">
-                                                <div class="form-label-group in-border">
-                                                    <input type="date" id="from_date" name="from_date" value="<?php if(!empty($from_date)) { echo $from_date; } ?>" onchange="Javascript:getReport();checkDateCheck();" class="form-control shadow-none" placeholder="" required max="<?php if(!empty($current_date)) { echo $current_date; } ?>">
-                                                    <label>From Date</label>
+                                        <?php if(!empty($factory_id) || !empty($godown_id)) { ?>
+                                            <div class="col-lg-2 col-md-4 col-6 py-2 <?php if(empty($size_id) || empty($gsm_id) || empty($bf_id)){ ?>d-none<?php } ?>">
+                                                <div class="form-group">
+                                                    <div class="form-label-group in-border">
+                                                        <input type="date" id="from_date" name="from_date" value="<?php if(!empty($from_date)) { echo $from_date; } ?>" onchange="Javascript:getReport();checkDateCheck();" class="form-control shadow-none" placeholder="" required max="<?php if(!empty($current_date)) { echo $current_date; } ?>">
+                                                        <label>From Date</label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-2 col-md-4 col-6 py-2 <?php if(empty($size_id) || empty($gsm_id) || empty($bf_id)){ ?>d-none<?php } ?>">
-                                            <div class="form-group">
-                                                <div class="form-label-group in-border">
-                                                    <input type="date" id="to_date" name="to_date" value="<?php if(!empty($to_date)) { echo $to_date; } ?>" onchange="Javascript:getReport();checkDateCheck();" class="form-control shadow-none" placeholder="" required max="<?php if(!empty($current_date)) { echo $current_date; } ?>">
-                                                    <label>To Date</label>
+                                            <div class="col-lg-2 col-md-4 col-6 py-2 <?php if(empty($size_id) || empty($gsm_id) || empty($bf_id)){ ?>d-none<?php } ?>">
+                                                <div class="form-group">
+                                                    <div class="form-label-group in-border">
+                                                        <input type="date" id="to_date" name="to_date" value="<?php if(!empty($to_date)) { echo $to_date; } ?>" onchange="Javascript:getReport();checkDateCheck();" class="form-control shadow-none" placeholder="" required max="<?php if(!empty($current_date)) { echo $current_date; } ?>">
+                                                        <label>To Date</label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <?php } ?>
                                         <div class="col-lg-2 col-md-4 col-6 d-none py-2">
                                             <div class="form-group">
                                                 <div class="form-label-group in-border">
@@ -193,6 +198,7 @@
                                                 <div class="form-group">
                                                     <div class="form-label-group in-border">
                                                         <select name="size_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width:100%!important;" onchange="Javascript:getReport();">
+                                                            <option value="">Select</option>
                                                             <?php
                                                                 if(!empty($size_list)) {
                                                                     foreach($size_list as $data) {
@@ -219,6 +225,7 @@
                                                 <div class="form-group">
                                                     <div class="form-label-group in-border">
                                                         <select name="gsm_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width:100%!important;" onchange="Javascript:getReport();">
+                                                            <option value="">Select</option>
                                                             <?php
                                                                 if(!empty($gsm_list)) {
                                                                     foreach($gsm_list as $data) {
@@ -245,6 +252,7 @@
                                                 <div class="form-group">
                                                     <div class="form-label-group in-border">
                                                         <select name="bf_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width:100%!important;" onchange="Javascript:getReport();">
+                                                            <option value="">Select</option>
                                                             <?php
                                                                 if(!empty($bf_list)) {
                                                                     foreach($bf_list as $data) {
@@ -309,17 +317,16 @@
                                                                     <th><?php echo $sno++; ?></th>
                                                                     <th onclick="Javascript:ShowStockProduct('<?php if(!empty($data['factory_id']) && $data['factory_id'] != $GLOBALS['null_value']) { echo $data['factory_id']; } ?>','<?php if(!empty($data['godown_id']) && $data['godown_id'] != $GLOBALS['null_value']) { echo $data['godown_id']; } ?>','','','');" style="cursor:pointer!important;">
                                                                         <?php
-                                                                           
                                                                             if(!empty($data['factory_id']) && $data['factory_id'] != $GLOBALS['null_value']) {
                                                                                 echo $obj->encode_decode('decrypt', $data['factory_name']);
-                                                                            }else if(!empty($data['godown_id']) && $data['godown_id'] != $GLOBALS['null_value']) {
+                                                                            }
+                                                                            else if(!empty($data['godown_id']) && $data['godown_id'] != $GLOBALS['null_value']) {
                                                                                 echo $obj->encode_decode('decrypt', $data['godown_name']);
                                                                             }
                                                                         ?>
                                                                     </th>
                                                                     <th>
                                                                         <?php
-                                                                           
                                                                             if(!empty($data['inward_unit']) || !empty($data['outward_unit'])) {
                                                                                 echo $data['inward_unit'] - $data['outward_unit'];
                                                                                 $current_stock += $data['inward_unit'] - $data['outward_unit'];
@@ -329,7 +336,7 @@
                                                                         ?>
                                                                     </th>  
                                                                 </tr>
-                                                            <?php 
+                                                                <?php 
                                                             } 
                                                             ?>
                                                             <tr>
@@ -339,17 +346,16 @@
                                                             <?php
                                                         }  
                                                         else {
-                                                    ?>
+                                                            ?>
                                                             <tr>
                                                                 <td colspan="3" class="text-center fw-bold">Sorry! No records found</td>
                                                             </tr>
-                                                    <?php 
+                                                            <?php 
                                                         } 
                                                     ?>
                                                 </tbody>
                                             </table>
-                                        <?php }  ?>
-                                        <?php if(!empty($size_id) || !empty($gsm_id) || !empty($bf_id) && !empty($location_type)) { ?>
+                                        <?php } else if(!empty($size_id) && !empty($gsm_id) && !empty($bf_id) && !empty($location_type)) { ?>
                                             <table class="table table-bordered nowrap text-center smallfnt" id="tbl_stock_report">
                                                 <thead style="font-size:13px!important;font-weight:bold!important;">     
                                                     <tr>
@@ -500,7 +506,7 @@
                                                     ?>
                                                 </tbody>
                                             </table>
-                                        <?php } else if(!empty($factory_id) || !empty($godown_id) && empty($size_id) && empty($gsm_id) && empty($bf_id) && !empty($location_type)) { ?>
+                                        <?php } else if((!empty($factory_id) || !empty($godown_id)) && (empty($size_id) || empty($gsm_id) || empty($bf_id)) && !empty($location_type)) { ?>
                                             <table class="table table-bordered nowrap text-center smallfnt" id="tbl_stock_report">
                                                 <thead style="font-size:13px!important;font-weight:bold!important;">     
                                                     <tr>
@@ -592,8 +598,7 @@
                                                     ?>
                                                 </tbody>
                                             </table>
-                                        <?php }?>
-                                        
+                                        <?php } ?>
                                     </div>
                                 </div>
                             </div>
@@ -644,6 +649,11 @@
             }
             if(jQuery('select[name="factory_id"]').length > 0) {
                 jQuery('select[name="factory_id"]').val('');
+            }
+        }
+        if(factory_id == '' && godown_id == '') {
+            if(jQuery('select[name="location_type"]').length > 0) {
+                jQuery('select[name="location_type"]').val('');
             }
         }
         getReport();

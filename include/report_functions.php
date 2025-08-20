@@ -192,6 +192,22 @@
             return $list;
         
         } 
-
+        public function ShowSizeGSMBFReport($godown_id, $factory_id) {
+            $stock_query = ""; $stock_data = array(); $stock_map = array(); $where = "";
+            if(!empty($godown_id)) {
+                $where = " godown_id = '".$godown_id."' AND ";
+            }
+            if(!empty($factory_id)) {
+                $where = " factory_id = '".$factory_id."' AND ";
+            }
+            $stock_query = "SELECT size_id, gsm_id, bf_id, SUM(inward_unit) AS inward, SUM(outward_unit) AS outward FROM ".$GLOBALS['stock_table']." WHERE ".$where." deleted = '0' GROUP BY size_id, gsm_id, bf_id";
+            $stock_data = $this->getQueryRecords('', $stock_query);
+            $stock_map = [];
+            foreach ($stock_data as $row) {
+                $key = $row['size_id'].'_'.$row['gsm_id'].'_'.$row['bf_id'];
+                $stock_map[$key] = ($row['inward'] ?? 0) - ($row['outward'] ?? 0);
+            }
+            return $stock_map;
+        }
     }
 ?>

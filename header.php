@@ -472,6 +472,9 @@
                             </a>
                             <div class="collapse menu-dropdown" id="report">
                                 <ul class="nav nav-lg flex-column">
+                                    <li class="nav-item" id="size_gsm_bf_report">
+                                        <a href="size_gsm_bf_report.php" class="nav-link"><i class="bi bi-dash"></i> Size, GSM, BF Report </a>
+                                    </li>
                                     <li class="nav-item" id="currentstockreport">
                                         <a href="current_stock_report.php" class="nav-link"><i class="bi bi-dash"></i> Current Stock Report </a>
                                     </li>

@@ -231,11 +231,11 @@
 			$result = $create_obj->MonthwiseChart();
 			return $result;
 		}
-		public function LocationVariationChart() {
+		public function DailyMovementTrend() {
 			$create_obj = "";
 			$create_obj = $this->creation_function_object();
 			$result = "";
-			$result = $create_obj->LocationVariationChart();
+			$result = $create_obj->DailyMovementTrend();
 			return $result;
 		}
 		public function getStockPercentage() {
@@ -418,6 +418,13 @@
 			$report_obj = $this->report_function_object();
 			$report_update = "";
 			$report_update = $report_obj->getSupplierReport($supplier_id, $from_date, $to_date, $login_godown_id);
+			return $report_update;
+		}
+		public function ShowSizeGSMBFReport($godown_id, $factory_id) {
+			$report_obj = "";
+			$report_obj = $this->report_function_object();
+			$report_update = "";
+			$report_update = $report_obj->ShowSizeGSMBFReport($godown_id, $factory_id);
 			return $report_update;
 		}
 	}

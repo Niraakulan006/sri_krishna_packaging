@@ -5,8 +5,11 @@
     $monthwise_list = array();
     $monthwise_list = $obj->MonthwiseChart();
 
-    $location_variation_list = array();
-    $location_variation_list = $obj->LocationVariationChart();
+    /*$location_variation_list = array();
+    $location_variation_list = $obj->LocationVariationChart();*/
+
+    $daily_movement_list = array();
+    $daily_movement_list = $obj->DailyMovementTrend();
 
     $stock_in_out_list = array();
     $stock_in_out_list = $obj->getStockPercentage();
@@ -17,9 +20,14 @@
     <div class="page-content">
         <div class="container-fluid">
             <div class="row mx-0">
-                <div class="col-11 mx-auto my-3 border table-responsive">
+                <!-- <div class="col-11 mx-auto my-3 border table-responsive">
                     <div style="position: relative; height:500px; width:100%">
                         <canvas id="locationChart"></canvas>
+                    </div>
+                </div> -->
+                <div class="col-11 mx-auto my-3 border table-responsive">
+                    <div class="chart-container" style="position: relative; height:50vh; width:100%;">
+                        <canvas id="movementTrend"></canvas>
                     </div>
                 </div>
                 <hr>
@@ -55,6 +63,7 @@
             ]
         }
     });
+    /*
     document.addEventListener("DOMContentLoaded", function(){
         const res = <?php echo $location_variation_list; ?>;
 
@@ -76,6 +85,64 @@
                 scales: {
                     x: { stacked: false },
                     y: { beginAtZero: true }
+                }
+            }
+        });
+    });
+    */
+    document.addEventListener("DOMContentLoaded", function(){
+        const dailyTrend = <?php echo $daily_movement_list; ?>;
+
+        const ctx2 = document.getElementById('movementTrend').getContext('2d');
+        new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: dailyTrend.labels,
+                datasets: [
+                    {
+                        label: 'Inward',
+                        data: dailyTrend.inward,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Outward',
+                        data: dailyTrend.outward,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                stacked: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Daily Stock Movement (Last 30 Days)'
+                    },
+                    tooltip: {
+                        enabled: true
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            maxTicksLimit: 10 // keep it readable
+                        }
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
         });

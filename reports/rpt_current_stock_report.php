@@ -34,27 +34,32 @@
     $total_records_list = array();
     if($location_type =='1'){
         if(!empty($factory_id)){
-            if(!empty($size_id) || !empty($gsm_id) || !empty($bf_id)){
+            if(!empty($size_id) && !empty($gsm_id) && !empty($bf_id)){
                 $total_records_list = $obj->getCurrentStockList('1',$factory_id,'',$size_id,$gsm_id,$bf_id,$from_date,$to_date);
-            }else{
+            }
+            else{
                 $total_records_list = $obj->getCurrentStockList('1',$factory_id,'','','','','','');
             }
-            
-        }else{
+        }
+        else{
             $total_records_list = $obj->getCurrentStockList('1','','','','','','','');
         }
         
-    }else if($location_type =='2'){
+    }
+    else if($location_type =='2'){
         if(!empty($godown_id)){
-            if(!empty($size_id) || !empty($gsm_id) || !empty($bf_id)){
+            if(!empty($size_id) && !empty($gsm_id) && !empty($bf_id)){
                 $total_records_list = $obj->getCurrentStockList('2','',$godown_id,$size_id,$gsm_id,$bf_id,$from_date,$to_date);
-            }else{
-                 $total_records_list = $obj->getCurrentStockList('2','',$godown_id,'','','','','');
             }
-        }else{
+            else{
+                $total_records_list = $obj->getCurrentStockList('2','',$godown_id,'','','','','');
+            }
+        }
+        else{
             $total_records_list = $obj->getCurrentStockList('2','','','','','','','');
         }
-    }else{
+    }
+    else{
         $total_records_list = $obj->getCurrentStockList('','',$login_godown_id,'','','','','');
     }
 
@@ -225,8 +230,7 @@
         $pdf->SetX(10);
         $pdf->Cell(190,4,'Page No : '.$pdf->PageNo().' / {nb}',0,0,'R');
     }
-
-    if((!empty($size_id) || !empty($gsm_id) || !empty($bf_id)) && !empty($location_type)) {
+    else if(!empty($size_id) && !empty($gsm_id) && !empty($bf_id) && !empty($location_type)) {
         $pdf->SetFont('Arial','B',9);
         if(!empty($total_records_list)) {
             $total_pages = array(1);
@@ -480,7 +484,7 @@
         $pdf->SetX(10);
         $pdf->Cell(190,4,'Page No : '.$pdf->PageNo().' / {nb}',0,0,'R');
     }
-    else if((!empty($factory_id) || !empty($godown_id)) && empty($size_id) && empty($gsm_id) && empty($bf_id) && !empty($location_type)) {
+    else if((!empty($factory_id) || !empty($godown_id)) && (empty($size_id) || empty($gsm_id) || empty($bf_id)) && !empty($location_type)) {
         if(!empty($total_records_list)) {
             $total_pages = array(1);
             $page_number = 1;
@@ -653,7 +657,6 @@
         $pdf->SetX(10);
         $pdf->Cell(190,4,'Page No : '.$pdf->PageNo().' / {nb}',0,0,'R');
     }
-   
 
     $pdf_name = "Current Stock Report.pdf";
     $pdf->Output($from, $pdf_name);

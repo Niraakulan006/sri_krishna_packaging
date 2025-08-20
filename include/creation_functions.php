@@ -685,6 +685,56 @@
 						"outward" => array_values($outward_data)
 					]);
 		}
+
+		public function DailyMovementTrend() {
+			$select_query = "SELECT DATE(stock_date) as day, SUM(inward_unit) as inward, SUM(outward_unit) as outward
+				FROM ".$GLOBALS['stock_table']."
+				WHERE deleted = '0'
+				AND stock_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+				GROUP BY DATE(stock_date)
+				ORDER BY day ASC";
+
+			$list = $this->getQueryRecords('', $select_query);
+
+			$days = [];
+			$inward = [];
+			$outward = [];
+
+			// Fill missing days with 0
+			$period = new DatePeriod(
+				new DateTime('-30 days'),
+				new DateInterval('P1D'),
+				new DateTime('+1 day')
+			);
+
+			foreach ($period as $date) {
+				$d = $date->format("Y-m-d");
+				$days[$d] = ['inward' => 0, 'outward' => 0];
+			}
+
+			if (!empty($list)) {
+				foreach ($list as $row) {
+					$d = $row['day'];
+					$days[$d] = [
+						'inward' => (int)$row['inward'],
+						'outward' => (int)$row['outward']
+					];
+				}
+			}
+
+			foreach ($days as $d => $vals) {
+				$labels[] = date("d-m-Y", strtotime($d));
+				$inward[] = $vals['inward'];
+				$outward[] = $vals['outward'];
+			}
+
+			return json_encode([
+				"labels" => $labels,
+				"inward" => $inward,
+				"outward" => $outward
+			]);
+		}
+		/*
 		public function LocationVariationChart() {
 			$distinct_query = ""; $distinct_list = array(); $variations = array();
 			$distinct_query = "SELECT DISTINCT size_id, gsm_id, bf_id FROM ".$GLOBALS['stock_table']." WHERE deleted = '0' ORDER BY size_id, gsm_id, bf_id";
@@ -792,6 +842,7 @@
 						'datasets' => $datasets
 					]);
 		}
+		*/
 
 		public function getStockPercentage() {
 			$select_query = ""; $list = array(); $inward_unit = 0; $outward_unit = 0; $total = 0; $percentage = "";

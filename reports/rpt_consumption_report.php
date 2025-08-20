@@ -38,7 +38,7 @@
     $s_no = 1; $footer_height = 15; $height = 0; $l = 0; 
     $total_stock = 0;
     $pdf->SetFont('Arial','B',9);
-    if(empty($size_id) && empty($gsm_id) && empty($bf_id)) {
+    if(empty($size_id) || empty($gsm_id) || empty($bf_id)) {
         if(!empty($total_records_list)) {
             $total_pages = array(1);
             $page_number = 1;
@@ -221,7 +221,7 @@
         $pdf->SetX(10);
         $pdf->Cell(190,4,'Page No : '.$pdf->PageNo().' / {nb}',0,0,'R');
     }
-    else if(!empty($size_id) ||!empty($gsm_id) || !empty($bf_id)) {
+    else if(!empty($size_id) && !empty($gsm_id) && !empty($bf_id)) {
         if(!empty($total_records_list)) {
             $total_pages = array(1);
             $page_number = 1;

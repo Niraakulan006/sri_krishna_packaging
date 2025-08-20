@@ -44,9 +44,10 @@
     $bf_list = $obj->getTableRecords($GLOBALS['bf_table'], '', '');
 
     $excel_name = "";
-    if(!empty($from_date) && !empty($to_date)){
-    $excel_name = "Consumption Report( ".date('d-m-Y',strtotime($from_date ))." to ".date('d-m-Y',strtotime($to_date )).")";
-    }else{
+    if(!empty($from_date) && !empty($to_date)) {
+        $excel_name = "Consumption Report( ".date('d-m-Y',strtotime($from_date ))." to ".date('d-m-Y',strtotime($to_date )).")";
+    }
+    else {
         $excel_name = "Consumption Report";
     }
 
@@ -92,6 +93,7 @@
                                             <div class="form-group">
                                                 <div class="form-label-group in-border">
                                                     <select name="size_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width:100%!important;" onchange="Javascript:getReport();">
+                                                        <option value="">Select</option>
                                                         <?php
                                                             if(!empty($size_list)) {
                                                                 foreach($size_list as $data) {
@@ -118,6 +120,7 @@
                                             <div class="form-group">
                                                 <div class="form-label-group in-border">
                                                     <select name="gsm_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width:100%!important;" onchange="Javascript:getReport();">
+                                                        <option value="">Select</option>
                                                         <?php
                                                             if(!empty($gsm_list)) {
                                                                 foreach($gsm_list as $data) {
@@ -144,6 +147,7 @@
                                             <div class="form-group">
                                                 <div class="form-label-group in-border">
                                                     <select name="bf_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width:100%!important;" onchange="Javascript:getReport();">
+                                                        <option value="">Select</option>
                                                         <?php
                                                             if(!empty($bf_list)) {
                                                                 foreach($bf_list as $data) {
@@ -181,7 +185,7 @@
                             <div class="row px-2 pb-4 justify-content-center">    
                                 <div class="col-lg-12">
                                     <div class="table-responsive">
-                                        <?php if(empty($size_id) && empty($gsm_id) && empty($bf_id)) { ?>
+                                        <?php if(empty($size_id) || empty($gsm_id) || empty($bf_id)) { ?>
                                             <table class="table table-bordered nowrap text-center smallfnt" id="tbl_stock_report">
                                                 <thead style="font-size:13px!important;font-weight:bold!important;">
                                                     <tr>
@@ -256,8 +260,7 @@
                                                     ?>
                                                 </tbody>
                                             </table>
-                                        <?php }  ?>
-                                        <?php if(!empty($size_id) || !empty($gsm_id) || !empty($bf_id)) { ?>
+                                        <?php } else if(!empty($size_id) && !empty($gsm_id) && !empty($bf_id)) { ?>
                                             <table class="table table-bordered nowrap text-center smallfnt" id="tbl_stock_report">
                                                 <thead style="font-size:13px!important;font-weight:bold!important;">     
                                                     <tr>
