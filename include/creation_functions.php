@@ -666,9 +666,12 @@
 			}
 			return $new_created_id;
 		}
-		public function MonthwiseChart() {
-			$select_query = ""; $list = array(); $inward_data = array_fill(1, 12, 0); $outward_data = array_fill(1, 12, 0);
-			$select_query = "SELECT MONTH(stock_date) as month, SUM(inward_unit) as inward, SUM(outward_unit) as outward FROM ".$GLOBALS['stock_table']." WHERE deleted = '0' GROUP BY MONTH(stock_date)";
+		public function MonthwiseChart($godown_id) {
+			$select_query = ""; $list = array(); $inward_data = array_fill(1, 12, 0); $outward_data = array_fill(1, 12, 0); $where = "";
+			if(!empty($godown_id)) {
+				$where = " godown_id = '".$godown_id."' AND ";
+			}
+			$select_query = "SELECT MONTH(stock_date) as month, SUM(inward_unit) as inward, SUM(outward_unit) as outward FROM ".$GLOBALS['stock_table']." WHERE ".$where." deleted = '0' GROUP BY MONTH(stock_date)";
 			$list = $this->getQueryRecords('', $select_query);
 			if(!empty($list)) {
 				foreach($list as $data) {
@@ -686,10 +689,14 @@
 					]);
 		}
 
-		public function DailyMovementTrend() {
+		public function DailyMovementTrend($godown_id) {
+			$where = "";
+			if(!empty($godown_id)) {
+				$where = " godown_id = '".$godown_id."' AND ";
+			}
 			$select_query = "SELECT DATE(stock_date) as day, SUM(inward_unit) as inward, SUM(outward_unit) as outward
 				FROM ".$GLOBALS['stock_table']."
-				WHERE deleted = '0'
+				WHERE ".$where." deleted = '0'
 				AND stock_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
 				GROUP BY DATE(stock_date)
 				ORDER BY day ASC";
@@ -844,9 +851,13 @@
 		}
 		*/
 
-		public function getStockPercentage() {
+		public function getStockPercentage($godown_id) {
 			$select_query = ""; $list = array(); $inward_unit = 0; $outward_unit = 0; $total = 0; $percentage = "";
-			$select_query = "SELECT SUM(inward_unit) as total_inward, SUM(outward_unit) as total_outward FROM ".$GLOBALS['stock_table']." WHERE deleted = '0'";
+			$where = "";
+			if(!empty($godown_id)) {
+				$where = " godown_id = '".$godown_id."' AND ";
+			}
+			$select_query = "SELECT SUM(inward_unit) as total_inward, SUM(outward_unit) as total_outward FROM ".$GLOBALS['stock_table']." WHERE ".$where." deleted = '0'";
 			$list = $this->getQueryRecords('', $select_query);
 			if(!empty($list)) {
 				foreach($list as $data) {
@@ -865,6 +876,21 @@
 				"outward" => $outward_unit,
 				"percentage" => $percentage
 			];
+		}
+		public function getStockRequestCount($godown_id) {
+			$select_query = ""; $list = array(); $count = 0;
+			if(!empty($godown_id)) {
+				$select_query = "SELECT COUNT(id) as id_count FROM ".$GLOBALS['stock_request_table']." WHERE godown_id = '".$godown_id."' AND is_deliveried = '0' AND cancelled = '0' AND deleted = '0'";
+				$list = $this->getQueryRecords('', $select_query);
+			}
+			if(!empty($list)) {
+				foreach($list as $data) {
+					if(!empty($data['id_count']) && $data['id_count'] != $GLOBALS['null_value']) {
+						$count = $data['id_count'];
+					}
+				}
+			}
+			return $count;
 		}
     }
 ?>

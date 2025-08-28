@@ -31,4 +31,8 @@
             }
         }
     }
+    $stock_request_count = 0;
+    if(!empty($login_godown_id)) {
+        $stock_request_count = $obj->getStockRequestCount($login_godown_id);
+    }
 ?>

@@ -19,6 +19,9 @@
     if(isset($_POST['godown_id'])) {
         $godown_id = trim($_POST['godown_id']);
     }
+    if(!empty($login_godown_id)) {
+        $godown_id = $login_godown_id;
+    }
 
     $excel_name = "";
     $excel_name = "Size, GSM, BF Report";
@@ -26,7 +29,12 @@
     $factory_list = array();
     $factory_list = $obj->getTableRecords($GLOBALS['factory_table'], '', '');
     $godown_list = array();
-    $godown_list = $obj->getTableRecords($GLOBALS['godown_table'], '', '');
+    if(!empty($login_godown_id)) {
+        $godown_list = $obj->getTableRecords($GLOBALS['godown_table'], 'godown_id', $login_godown_id);
+    }
+    else {
+        $godown_list = $obj->getTableRecords($GLOBALS['godown_table'], '', '');
+    }
     $size_list = array();
     $size_list = $obj->getTableRecords($GLOBALS['size_table'], '', '');
     $gsm_list = array();
@@ -55,39 +63,43 @@
                             <div class="card-header align-products-center">
                                 <form name="size_gsm_bf_report_form" method="post">
                                     <div class="row mx-0">
-                                        <div class="col-lg-2 col-md-4 col-6 py-2">
-                                            <div class="form-group">
-                                                <div class="form-label-group in-border">
-                                                    <select name="factory_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width:100%!important;" onchange="Javascript:GetLocation(this.value, '');">
-                                                        <option value="">Select</option>
-                                                        <?php
-                                                            if(!empty($factory_list)) {
-                                                                foreach($factory_list as $data) {
-                                                                    if(!empty($data['factory_id']) && $data['factory_id'] != $GLOBALS['null_value']) {
-                                                                        ?>
-                                                                        <option value="<?php echo $data['factory_id']; ?>" <?php if(!empty($factory_id) && $factory_id == $data['factory_id']) { ?>selected<?php } ?>>
-                                                                            <?php
-                                                                                if(!empty($data['factory_name']) && $data['factory_name'] != $GLOBALS['null_value']) {
-                                                                                    echo $obj->encode_decode('decrypt', $data['factory_name']);
-                                                                                }
+                                        <?php if(empty($login_godown_id)) { ?>
+                                            <div class="col-lg-2 col-md-4 col-6 py-2">
+                                                <div class="form-group">
+                                                    <div class="form-label-group in-border">
+                                                        <select name="factory_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width:100%!important;" onchange="Javascript:GetLocation(this.value, '');">
+                                                            <option value="">Select</option>
+                                                            <?php
+                                                                if(!empty($factory_list)) {
+                                                                    foreach($factory_list as $data) {
+                                                                        if(!empty($data['factory_id']) && $data['factory_id'] != $GLOBALS['null_value']) {
                                                                             ?>
-                                                                        </option>
-                                                                        <?php
+                                                                            <option value="<?php echo $data['factory_id']; ?>" <?php if(!empty($factory_id) && $factory_id == $data['factory_id']) { ?>selected<?php } ?>>
+                                                                                <?php
+                                                                                    if(!empty($data['factory_name']) && $data['factory_name'] != $GLOBALS['null_value']) {
+                                                                                        echo $obj->encode_decode('decrypt', $data['factory_name']);
+                                                                                    }
+                                                                                ?>
+                                                                            </option>
+                                                                            <?php
+                                                                        }
                                                                     }
                                                                 }
-                                                            }
-                                                        ?>
-                                                    </select>
-                                                    <label>Factory</label>
+                                                            ?>
+                                                        </select>
+                                                        <label>Factory</label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <?php } ?>
                                         <div class="col-lg-2 col-md-4 col-6 py-2">
                                             <div class="form-group">
                                                 <div class="form-label-group in-border">
                                                     <select name="godown_id" class="select2 select2-danger" data-dropdown-css-class="select2-danger" style="width:100%!important;" onchange="Javascript:GetLocation('', this.value);">
-                                                        <option value="">Select</option>
+                                                        <?php if(empty($login_godown_id)) { ?>
+                                                            <option value="">Select</option>
                                                         <?php
+                                                            }
                                                             if(!empty($godown_list)) {
                                                                 foreach($godown_list as $data) {
                                                                     if(!empty($data['godown_id']) && $data['godown_id'] != $GLOBALS['null_value']) {

@@ -224,25 +224,32 @@
 			$result = $create_obj->getInwardApprovalList($row, $rowperpage, $searchValue, $from_date, $to_date, $factory_id, $godown_id, $cancelled, $order_column, $order_direction);
 			return $result;
 		}
-		public function MonthwiseChart() {
+		public function MonthwiseChart($godown_id) {
 			$create_obj = "";
 			$create_obj = $this->creation_function_object();
 			$result = "";
-			$result = $create_obj->MonthwiseChart();
+			$result = $create_obj->MonthwiseChart($godown_id);
 			return $result;
 		}
-		public function DailyMovementTrend() {
+		public function DailyMovementTrend($godown_id) {
 			$create_obj = "";
 			$create_obj = $this->creation_function_object();
 			$result = "";
-			$result = $create_obj->DailyMovementTrend();
+			$result = $create_obj->DailyMovementTrend($godown_id);
 			return $result;
 		}
-		public function getStockPercentage() {
+		public function getStockPercentage($godown_id) {
 			$create_obj = "";
 			$create_obj = $this->creation_function_object();
 			$result = "";
-			$result = $create_obj->getStockPercentage();
+			$result = $create_obj->getStockPercentage($godown_id);
+			return $result;
+		}
+		public function getStockRequestCount($godown_id) {
+			$create_obj = "";
+			$create_obj = $this->creation_function_object();
+			$result = "";
+			$result = $create_obj->getStockRequestCount($godown_id);
 			return $result;
 		}
 

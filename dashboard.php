@@ -3,16 +3,16 @@
 	include("include_user_check_and_files.php");
 
     $monthwise_list = array();
-    $monthwise_list = $obj->MonthwiseChart();
+    $monthwise_list = $obj->MonthwiseChart($login_godown_id);
 
     /*$location_variation_list = array();
     $location_variation_list = $obj->LocationVariationChart();*/
 
     $daily_movement_list = array();
-    $daily_movement_list = $obj->DailyMovementTrend();
+    $daily_movement_list = $obj->DailyMovementTrend($login_godown_id);
 
     $stock_in_out_list = array();
-    $stock_in_out_list = $obj->getStockPercentage();
+    $stock_in_out_list = $obj->getStockPercentage($login_godown_id);
 ?>
 <?php include "header.php"; ?>
 <!-- Start right Content here -->

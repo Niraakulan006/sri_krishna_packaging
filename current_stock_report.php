@@ -52,31 +52,38 @@
     if($location_type == '1'){
         if(!empty($factory_id)){
             if(!empty($size_id) && !empty($gsm_id) && !empty($bf_id)){
+                echo "1";
                 $total_records_list = $obj->getCurrentStockList('1',$factory_id,'',$size_id,$gsm_id,$bf_id,$from_date,$to_date);
             }
             else{
-                $total_records_list = $obj->getCurrentStockList('1',$factory_id,'','','','','','');
+                echo "2";
+                $total_records_list = $obj->getCurrentStockList('1',$factory_id,'','','','','',$to_date);
             }
         }
         else{
-            $total_records_list = $obj->getCurrentStockList('1','','','','','','','');
+            echo "3";
+            $total_records_list = $obj->getCurrentStockList('1','','','','','','',$to_date);
         }
     }
     else if($location_type == '2') {
         if(!empty($godown_id)){
             if(!empty($size_id) && !empty($gsm_id) && !empty($bf_id)){
+                echo "4";
                 $total_records_list = $obj->getCurrentStockList('2','',$godown_id,$size_id,$gsm_id,$bf_id,$from_date,$to_date);
             }
             else{
-                 $total_records_list = $obj->getCurrentStockList('2','',$godown_id,'','','','','');
+                echo "5";
+                $total_records_list = $obj->getCurrentStockList('2','',$godown_id,'','','','',$to_date);
             }
         }
         else{
-            $total_records_list = $obj->getCurrentStockList('2','','','','','','','');
+            echo "6";
+            $total_records_list = $obj->getCurrentStockList('2','','','','','','',$to_date);
         }
     }
     else {
-        $total_records_list = $obj->getCurrentStockList('','',$login_godown_id,'','','','','');
+        echo "7";
+        $total_records_list = $obj->getCurrentStockList('','',$login_godown_id,'','','','',$to_date);
     }
 
     $size_list =array(); $gsm_list =array(); $bf_list =array();
@@ -114,15 +121,15 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-2 col-md-4 col-6 py-2 <?php if(empty($size_id) || empty($gsm_id) || empty($bf_id)){ ?>d-none<?php } ?>">
-                                                <div class="form-group">
-                                                    <div class="form-label-group in-border">
-                                                        <input type="date" id="to_date" name="to_date" value="<?php if(!empty($to_date)) { echo $to_date; } ?>" onchange="Javascript:getReport();checkDateCheck();" class="form-control shadow-none" placeholder="" required max="<?php if(!empty($current_date)) { echo $current_date; } ?>">
-                                                        <label>To Date</label>
-                                                    </div>
+                                        <?php } ?>
+                                        <div class="col-lg-2 col-md-4 col-6 py-2">
+                                            <div class="form-group">
+                                                <div class="form-label-group in-border">
+                                                    <input type="date" id="to_date" name="to_date" value="<?php if(!empty($to_date)) { echo $to_date; } ?>" onchange="Javascript:getReport();checkDateCheck();" class="form-control shadow-none" placeholder="" required max="<?php if(!empty($current_date)) { echo $current_date; } ?>">
+                                                    <label>To Date</label>
                                                 </div>
                                             </div>
-                                        <?php } ?>
+                                        </div>
                                         <div class="col-lg-2 col-md-4 col-6 d-none py-2">
                                             <div class="form-group">
                                                 <div class="form-label-group in-border">

@@ -25,59 +25,62 @@
             if (!empty($factory_id) && $factory_id != $GLOBALS['null_value']) {
                 if (!empty($where)) {
                     $where = $where . " factory_id = '" . $factory_id . "' AND ";
-                } else {
+                } 
+                else {
                     $where = " factory_id = '" . $factory_id . "' AND ";
                 }
             }
             if (!empty($godown_id) && $godown_id != $GLOBALS['null_value']) {
                 if (!empty($where)) {
                     $where = $where . " godown_id = '" . $godown_id . "' AND ";
-                } else {
+                } 
+                else {
                     $where = " godown_id = '" . $godown_id . "' AND ";
                 }
             }
             if (!empty($size_id) && $size_id != $GLOBALS['null_value']) {
                 if (!empty($where)) {
                     $where = $where . " size_id = '" . $size_id . "' AND ";
-                } else {
+                } 
+                else {
                     $where = " size_id = '" . $size_id . "' AND ";
                 }
             }
             if (!empty($gsm_id) && $gsm_id != $GLOBALS['null_value']) {
                 if (!empty($where)) {
                     $where = $where . " gsm_id = '" . $gsm_id . "' AND ";
-                } else {
+                } 
+                else {
                     $where = " gsm_id = '" . $gsm_id . "' AND ";
                 }
             }
             if (!empty($bf_id) && $bf_id != $GLOBALS['null_value']) {
                 if (!empty($where)) {
                     $where = $where . " bf_id = '" . $bf_id . "' AND ";
-                } else {
+                } 
+                else {
                     $where = " bf_id = '" . $bf_id . "' AND ";
                 }
             }
-            if (!empty($where)) {
-                if(!empty($size_id) || !empty($gsm_id) || !empty($bf_id)){
-                    $select_query = "SELECT * FROM " . $GLOBALS['stock_table'] . " WHERE " . $where . " deleted = '0'";
-                }else{
-                    $select_query = "SELECT *,SUM(inward_unit) AS inward_unit,SUM(outward_unit) AS outward_unit FROM " . $GLOBALS['stock_table'] . " WHERE " . $where . " deleted = '0' GROUP BY size_id, gsm_id, bf_id";
+            
+            if(empty($size_id) && empty($gsm_id) && empty($bf_id)) {
+                if(empty($factory_id) && empty($godown_id)) {
+                    if($location_type == '1') {
+                        $select_query = "SELECT factory_id, godown_id, factory_name, godown_name, SUM(inward_unit) AS inward_unit, SUM(outward_unit) AS outward_unit FROM ".$GLOBALS['stock_table']." WHERE ".$where." factory_id != '".$GLOBALS['null_value']."' AND deleted = '0' GROUP BY factory_id, godown_id, factory_name, godown_name";
+                    }
+                    else if($location_type =='2') {
+                        $select_query = "SELECT factory_id, godown_id, factory_name, godown_name, SUM(inward_unit) AS inward_unit, SUM(outward_unit) AS outward_unit FROM ".$GLOBALS['stock_table']." WHERE ".$where." godown_id != ".$GLOBALS['null_value']."' AND deleted = '0' GROUP BY factory_id, godown_id, factory_name, godown_name";
+                    }
+                    else {
+                        $select_query = "SELECT factory_id, godown_id, factory_name, godown_name, SUM(inward_unit) AS inward_unit, SUM(outward_unit) AS outward_unit FROM ".$GLOBALS['stock_table']." WHERE ".$where." deleted = '0' GROUP BY factory_id, godown_id, factory_name, godown_name";
+                    }
                 }
-                
-            }else{
-               
-                if($location_type =='1'){
-                    $select_query = "SELECT factory_id,godown_id,factory_name,godown_name,SUM(inward_unit) AS inward_unit,SUM(outward_unit) AS outward_unit FROM " . $GLOBALS['stock_table'] . " WHERE " . $where . " factory_id !='NULL' AND deleted = '0'
-                    GROUP BY factory_id, godown_id, factory_name, godown_name ";
-                }else if($location_type =='2'){
-                    $select_query = "SELECT factory_id,godown_id,factory_name,godown_name,SUM(inward_unit) AS inward_unit,SUM(outward_unit) AS outward_unit FROM " . $GLOBALS['stock_table'] . " WHERE " . $where . " godown_id !='NULL' AND deleted = '0'
-                    GROUP BY factory_id, godown_id, factory_name, godown_name";
-                }else{
-                    $select_query = "SELECT factory_id,godown_id,factory_name,godown_name,SUM(inward_unit) AS inward_unit,SUM(outward_unit) AS outward_unit
-                    FROM " . $GLOBALS['stock_table'] . " WHERE " . $where . " deleted = '0'
-                    GROUP BY factory_id, godown_id, factory_name, godown_name";
+                else {
+                    $select_query = "SELECT *,SUM(inward_unit) AS inward_unit,SUM(outward_unit) AS outward_unit FROM ".$GLOBALS['stock_table']." WHERE ".$where." deleted = '0' GROUP BY size_id, gsm_id, bf_id";
                 }
-                
+            }
+            else {
+                $select_query = "SELECT * FROM ".$GLOBALS['stock_table']." WHERE ".$where." deleted = '0'";
             }
             if (!empty($select_query)) {
                 $list = $this->getQueryRecords('', $select_query);

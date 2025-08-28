@@ -38,11 +38,11 @@
                 $total_records_list = $obj->getCurrentStockList('1',$factory_id,'',$size_id,$gsm_id,$bf_id,$from_date,$to_date);
             }
             else{
-                $total_records_list = $obj->getCurrentStockList('1',$factory_id,'','','','','','');
+                $total_records_list = $obj->getCurrentStockList('1',$factory_id,'','','','','',$to_date);
             }
         }
         else{
-            $total_records_list = $obj->getCurrentStockList('1','','','','','','','');
+            $total_records_list = $obj->getCurrentStockList('1','','','','','','',$to_date);
         }
         
     }
@@ -52,15 +52,15 @@
                 $total_records_list = $obj->getCurrentStockList('2','',$godown_id,$size_id,$gsm_id,$bf_id,$from_date,$to_date);
             }
             else{
-                $total_records_list = $obj->getCurrentStockList('2','',$godown_id,'','','','','');
+                $total_records_list = $obj->getCurrentStockList('2','',$godown_id,'','','','',$to_date);
             }
         }
         else{
-            $total_records_list = $obj->getCurrentStockList('2','','','','','','','');
+            $total_records_list = $obj->getCurrentStockList('2','','','','','','',$to_date);
         }
     }
     else{
-        $total_records_list = $obj->getCurrentStockList('','',$login_godown_id,'','','','','');
+        $total_records_list = $obj->getCurrentStockList('','',$login_godown_id,'','','','',$to_date);
     }
 
     require_once('../fpdf/AlphaPDF.php');
@@ -214,15 +214,15 @@
             
             $pdf->SetFont('Arial','B',9);
             $pdf->SetX(10);
-            $pdf->Cell(140,8,'Total Count',1,0,'R',0);
+            $pdf->Cell(150,8,'Total Count',1,0,'R',0);
 
             if(!empty($total_stock)) {
-                $pdf->SetX(150);
-                $pdf->Cell(50,8, $total_stock,1,1,'R',0);
+                $pdf->SetX(160);
+                $pdf->Cell(40,8, $total_stock,1,1,'R',0);
                 
             } else {
-                $pdf->SetX(150);
-                $pdf->Cell(50,8,' - ',1,1,'R',0);
+                $pdf->SetX(160);
+                $pdf->Cell(40,8,' - ',1,1,'R',0);
             }
         }
         $pdf->SetFont('Arial','I',7);

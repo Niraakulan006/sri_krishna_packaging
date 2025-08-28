@@ -440,7 +440,16 @@
                     <?php if((!empty($sidebar_admin_user) && $sidebar_admin_user == '1') || (!empty($sidebar_stock_request) && $sidebar_stock_request == '1')) { ?>
                         <li class="nav-item" id="stockrequest">
                             <a class="nav-link menu-link" href="stock_request.php">
-                                <i class="bi bi-basket2"></i><span>Stock Request</span>
+                                <i class="bi bi-basket2"></i><span>
+                                    Stock Request 
+                                    <?php 
+                                        if(!empty($login_godown_id)) {
+                                            ?>
+                                            <span class="badge text-bg-danger"><?php echo $stock_request_count; ?></span>
+                                            <?php
+                                        }
+                                    ?>
+                                </span>
                             </a>
                         </li>
                     <?php } ?>
